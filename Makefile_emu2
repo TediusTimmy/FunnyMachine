@@ -1,0 +1,20 @@
+emu: ClockController.o Core.o MemoryController.o mio.o main.o
+	g++ -Wall -Wextra -Wpedantic -O2 -o emu ClockController.o Core.o MemoryController.o mio.o main.o
+
+clean:
+	rm *.o emu.exe
+
+ClockController.o: Base/ClockController.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Base/ClockController.cpp
+
+Core.o: Base/Core.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Base/Core.cpp
+
+MemoryController.o: Base/MemoryController.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Base/MemoryController.cpp
+
+mio.o: Emu1/mio.c
+	gcc -Wall -Wextra -Wpedantic -O2 -c -DUSE_TERMIOS Emu1/mio.c
+
+main.o: Emu1/main.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Emu1/main.cpp
