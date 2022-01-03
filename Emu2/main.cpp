@@ -15,6 +15,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "../Base/Base.h"
+#include "Screen.h"
+#include "KeyBoard.h"
 
 extern "C"
  {
@@ -48,31 +50,12 @@ class Halter : public IODevice
        }
  };
 
-class Printer : public IODevice
- {
-   public:
-      void reset() override
-       {
-       }
-      bool doRead(word, word&) override
-       {
-         return false;
-       }
-      bool doWrite(word addr, word val) override
-       {
-         if (addr == 0xFFE)
-          {
-            std::putchar(val);
-            return true;
-          }
-         return false;
-       }
- };
-
 int main (int argc, char** argv)
  {
+   INIS();
    if (argc < 2)
     {
+      DINI();
       std::printf("usage: emu rom_file_name\n");
       return 1;
     }
@@ -86,13 +69,18 @@ int main (int argc, char** argv)
    Halter halter;
    bus->attach(&halter);
 
-   Printer printer;
-   bus->attach(&printer);
+   KeyBoard keyboard;
+   bus->attach(&keyboard);
+
+   Screen screen;
+   screen.attach(bus.get());
+   devs.attach(&screen);
 
    // Initialize everything and GO!
    bus->reset();
    if (false == bus->readROMFile(argv[1]))
     {
+      DINI();
       std::printf("Error reading rom file. Check that file exists and is less than two megabytes.\n");
       return 1;
     }
@@ -106,5 +94,6 @@ int main (int argc, char** argv)
       devs.doOneOp();
     }
 
+   DINI();
    return 0;
  }

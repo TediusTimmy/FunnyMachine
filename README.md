@@ -159,7 +159,15 @@ This emulator has memory-mapped IO to output characters to the screen. Outputtin
 
 ## EMU2
 
-This is in progress. It will have a more fully featured screen device. That's it. I'll also work on the bank registers and some DMA hardware. I have DMA transfer hardware in mind, it's just not implemented.
+This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now). I plan to work on the bank registers and some DMA hardware. I have DMA transfer hardware in mind, it's just not implemented.
+
+### VRAM
+0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It will be redrawn unconditionally 30 times a second (when done).
+
+### System Area
+The halt command is still there. The print character has been removed.
+BFFD - Keyboard character (the last character read by the keyboard)
+BFFC - Keyboard input present (1 if the current character has not been read before, 0 if you've already read it)
 
 ## EMU3
 

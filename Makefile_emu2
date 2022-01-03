@@ -1,5 +1,5 @@
-emu: ClockController.o Core.o MemoryController.o mio.o main.o
-	g++ -Wall -Wextra -Wpedantic -O2 -o emu ClockController.o Core.o MemoryController.o mio.o main.o
+emu: ClockController.o Core.o MemoryController.o mio.o KeyBoard.o Screen.o main.o
+	g++ -Wall -Wextra -Wpedantic -O2 -o emu ClockController.o Core.o MemoryController.o mio.o KeyBoard.o Screen.o main.o
 
 clean:
 	rm *.o emu.exe
@@ -13,8 +13,14 @@ Core.o: Base/Core.cpp
 MemoryController.o: Base/MemoryController.cpp
 	g++ -Wall -Wextra -Wpedantic -O2 -c Base/MemoryController.cpp
 
-mio.o: Emu1/mio.c
-	gcc -Wall -Wextra -Wpedantic -O2 -c -DUSE_TERMIOS Emu1/mio.c
+mio.o: Emu2/mio.c
+	gcc -Wall -Wextra -Wpedantic -O2 -c -DUSE_TERMIOS Emu2/mio.c
+
+KeyBoard.o: Emu2/KeyBoard.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Emu2/KeyBoard.cpp
+
+Screen.o: Emu2/Screen.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Emu2/Screen.cpp
 
 main.o: Emu1/main.cpp
-	g++ -Wall -Wextra -Wpedantic -O2 -c Emu1/main.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c Emu2/main.cpp

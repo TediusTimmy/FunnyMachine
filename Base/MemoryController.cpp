@@ -30,6 +30,7 @@ void MemoryController::reset()
    B[6] = 0;
    B[7] = 0;
    w = false;
+   gpuRead = false;
    std::memset( RAM, '\0', 2097152);
    std::memset( ROM, '\0', 2097152);
    std::memset(VRAM, '\0', 1048576);
@@ -93,7 +94,14 @@ word MemoryController::doRead(word addr, RequestBytes which)
     {
       if (~addr & 0x1000) // Low 4K -> VRAM
        {
-         res = (((word)VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1]) << 8) | (VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)]);
+         if (false == gpuRead)
+          {
+            res = (((word)VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1]) << 8) | (VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)]);
+          }
+         else
+          {
+            res = ~0;
+          }
        }
       else // System memory : Oh My Lady Gaga....
        {
@@ -159,13 +167,16 @@ void MemoryController::doWrite(word addr, word val, RequestBytes which)
     {
       if (~addr & 0x1000) // Low 4K -> VRAM
        {
-         if ((which == LOW_BYTE) || (which == BOTH_BYTES))
+         if (false == gpuRead)
           {
-            VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)] = val;
-          }
-         if ((which == HIGH_BYTE) || (which == BOTH_BYTES))
-          {
-            VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1] = val >> 8;
+            if ((which == LOW_BYTE) || (which == BOTH_BYTES))
+             {
+               VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)] = val;
+             }
+            if ((which == HIGH_BYTE) || (which == BOTH_BYTES))
+             {
+               VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1] = val >> 8;
+             }
           }
        }
       else // System memory : Oh My Lady Gaga....

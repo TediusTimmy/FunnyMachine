@@ -14,6 +14,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef FM_BASE_H
+#define FM_BASE_H
 
 /*
    The fake architecture is for a 40 pin DIP processor. It has 15 address pins and 16 data pins.
@@ -43,6 +45,7 @@ class Device
  {
    public:
       virtual void reset() = 0;
+      virtual ~Device() { }
  };
 
 // An IO Device is a device for which some read or write into the System memory block has meaning.
@@ -76,6 +79,7 @@ class MemoryController : public Device
       byte  RAM [2097152];
       byte  ROM [2097152];
       byte VRAM [1048576];
+      bool gpuRead;
 
       std::list<IODevice*> devices;
 
@@ -87,6 +91,8 @@ class MemoryController : public Device
       void doWrite(word addr, word val, RequestBytes);
 
       const byte* vram() const { return VRAM; }
+      void lockVRAM() { gpuRead = true; }
+      void unlockVRAM() { gpuRead = false; }
 
       void attach(IODevice*);
       void detach(IODevice*);
@@ -125,3 +131,5 @@ class ClockController : public ClockDevice
       void detach(ClockDevice*);
       void clear();
 };
+
+#endif /* FM_BASE_H */

@@ -1,0 +1,13 @@
+Near-term TODO list (before Emu3):
+- Assembler
+- Make sure the Screen prints and the KeyBoard reads
+- Make it run at 30 fps
+- Bank Registers
+- Determine if GPU has VRAM bus locked
+- DMA transfers
+- Properly handle word read in device space (or declare that only byte reads are valid)
+
+Far-term FUTURE list (maybe never):
+- Add a BCD multiply and divide
+- Add a proper divide instruction
+   If I interpret the value in the belt location as two other belt locations, I can get 3 args (for a price).
