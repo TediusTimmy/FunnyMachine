@@ -25,9 +25,9 @@ class KeyBoard : public IODevice
  {
    private:
       std::unique_ptr<std::thread> thread;
-      int latest;
-      bool consumed;
-      bool running;
+      volatile int latest;
+      volatile bool consumed;
+      volatile bool running;
 
    public:
       void reset() override;

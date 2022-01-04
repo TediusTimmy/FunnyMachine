@@ -21,19 +21,26 @@ extern "C"
    #include "mio.h"
  }
 
+#ifdef DO_TRACE
+ #include <cstdio>
+#endif
+
 void KeyBoard::reset()
  {
    if (false == running)
     {
+      running = true;
       thread = std::make_unique<std::thread>(&KeyBoard::operator(), this);
       thread->detach();
-      running = true;
     }
    consumed = true;
  }
 
 bool KeyBoard::doRead(word addr, word& OUT)
  {
+#ifdef DO_TRACE
+   std::printf("In keyboard read: %03x\n", addr);
+#endif
    // First address : return if there is new input from the keyboard.
    if (0xFFC == addr)
     {
@@ -68,6 +75,9 @@ void KeyBoard::operator()()
     {
       latest = GETC();
       consumed = false;
+#ifdef DO_TRACE
+   std::printf("Got Character: %02x\n", latest);
+#endif
     }
  }
 

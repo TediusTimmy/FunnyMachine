@@ -193,30 +193,30 @@ void Core::printDecompiled(word I, word pc) const
       break;
    case  8:
       if (A3 == 15)
-         std::printf("BRA $%02x ; (%04x)\n", imm8 & 0xFF, NEXT + (imm8 << 1));
+         std::printf("BRA $%02x ; (%04x)\n", imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       else
-         std::printf("BRZ $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+         std::printf("BRZ $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case  9:
-      std::printf("BRN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 10:
-      std::printf("BRO $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRO $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 11:
-      std::printf("BRP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 12:
-      std::printf("BR $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BR $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 13:
-      std::printf("BRZP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRZP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 14:
-      std::printf("BRE $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRE $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 15:
-      std::printf("BRZN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, NEXT + (imm8 << 1));
+      std::printf("BRZN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
     }
 

@@ -125,6 +125,7 @@ word MemoryController::doRead(word addr, RequestBytes which)
              {
                if (device->doRead(addr, res))
                 {
+                  res <<= 8;
                   break;
                 }
              }
