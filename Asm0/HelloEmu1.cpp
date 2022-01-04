@@ -14,51 +14,40 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <memory>
-#include <fstream>
-
 #include "Assembler.h"
 
-int main (void)
+void ROM::generateAssembly()
  {
-   std::unique_ptr<ROM> rom = std::make_unique<ROM>();
-
-   int four   = rom->LDI(4);
-   int base   = rom->LDI(0xBFF);
-   int temp   = rom->SHL(rom->getBeltLocation(base), rom->getBeltLocation(four));
-   int bottom = rom->LDI(0xE);
-   int write  = rom->OR(rom->getBeltLocation(temp), rom->getBeltLocation(bottom));
-   int charH  = rom->LDI('H');
-   int chare  = rom->LDI('e');
-   int charl  = rom->LDI('l');
-   int charo  = rom->LDI('o');
-   int charCo = rom->LDI(',');
-   int charSp = rom->LDI(' ');
-   int charW  = rom->LDI('W');
-   int charr  = rom->LDI('r');
-   int chard  = rom->LDI('d');
-   int charEx = rom->LDI('!');
-   int charNL = rom->LDI('\n');
-                rom->STB(rom->getBeltLocation(charH), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(chare), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charl), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charl), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charo), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charCo), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charSp), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charW), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charo), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charr), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charl), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(chard), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charEx), rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(charNL), rom->getBeltLocation(write));
-   int halt   = rom->INC(rom->getBeltLocation(write));
-                rom->STB(rom->getBeltLocation(halt), rom->getBeltLocation(halt));
-
-   std::ofstream file ("rom.rom");
-   file.write(reinterpret_cast<const char*>(rom->getROM()), rom->getCodeLoc());
-
-   return 0;
+   int four   = LDI(4);
+   int base   = LDI(0xBFF);
+   int temp   = SHL(getBeltLocation(base), getBeltLocation(four));
+   int bottom = LDI(0xE);
+   int write  = OR(getBeltLocation(temp), getBeltLocation(bottom));
+   int charH  = LDI('H');
+   int chare  = LDI('e');
+   int charl  = LDI('l');
+   int charo  = LDI('o');
+   int charCo = LDI(',');
+   int charSp = LDI(' ');
+   int charW  = LDI('W');
+   int charr  = LDI('r');
+   int chard  = LDI('d');
+   int charEx = LDI('!');
+   int charNL = LDI('\n');
+                STB(getBeltLocation(charH), getBeltLocation(write));
+                STB(getBeltLocation(chare), getBeltLocation(write));
+                STB(getBeltLocation(charl), getBeltLocation(write));
+                STB(getBeltLocation(charl), getBeltLocation(write));
+                STB(getBeltLocation(charo), getBeltLocation(write));
+                STB(getBeltLocation(charCo), getBeltLocation(write));
+                STB(getBeltLocation(charSp), getBeltLocation(write));
+                STB(getBeltLocation(charW), getBeltLocation(write));
+                STB(getBeltLocation(charo), getBeltLocation(write));
+                STB(getBeltLocation(charr), getBeltLocation(write));
+                STB(getBeltLocation(charl), getBeltLocation(write));
+                STB(getBeltLocation(chard), getBeltLocation(write));
+                STB(getBeltLocation(charEx), getBeltLocation(write));
+                STB(getBeltLocation(charNL), getBeltLocation(write));
+   int halt   = INC(getBeltLocation(write));
+                STB(getBeltLocation(halt), getBeltLocation(halt));
  }

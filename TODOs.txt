@@ -1,6 +1,6 @@
 Near-term TODO list (before Emu3):
 - Assembler
-- Make sure the Screen prints and the KeyBoard reads
+* Make sure the Screen prints and the KeyBoard reads
 - Make it run at 30 fps
 - Bank Registers
 - Determine if GPU has VRAM bus locked

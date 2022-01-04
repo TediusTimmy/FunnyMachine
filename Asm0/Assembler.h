@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 
 typedef unsigned char  byte;
 typedef unsigned short word;
@@ -29,14 +30,14 @@ class ROM
 
       void emit(word c)
        {
-         M[l] = c;
-         M[l + 1] = c >> 8;
-         l += 2;
          if (l == 2097152)
           {
             std::cerr << "Too much code!" << std::endl;
             l = 0;
           }
+         M[l] = c;
+         M[l + 1] = c >> 8;
+         l += 2;
        }
       void validateBeltAddr(word b) const
        {
@@ -476,4 +477,16 @@ class ROM
        {
          BRZ(15, imm);
        }
+
+      void generateAssembly();
  };
+
+ROM rom;
+
+int main (void)
+ {
+   rom.generateAssembly();
+
+   std::ofstream file ("rom.rom");
+   file.write(reinterpret_cast<const char*>(rom.getROM()), rom.getCodeLoc());
+ }
