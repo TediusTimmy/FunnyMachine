@@ -96,6 +96,10 @@ int main (int argc, char** argv)
    devs.attach(&core);
    devs.reset();
 
+   // DMA happens last. We have to reset the bus before we read the ROM,
+   // and we have to read the ROM before we can reset the core.
+   devs.attach(bus.get());
+
    while (true == doRun)
     {
       devs.doOneOp();

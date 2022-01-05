@@ -143,12 +143,16 @@ There are 256, 8KB banks of RAM that can be selected. Bank FF is special and you
 ## The System Area
 TODO: put in things as I implement them, aiming to document Emu3.
 
+B000-B008 - Bank registers. Readable and writable, control where the banks are pointing.
+B100 - Screen frame : roughly a 1/30 sec timer
+B101 - Screen seconds : rolling count of 30 frame intervals
+
 BFFF - Writing to this memory location will stop the emulator.
 
 ## The VRAM memory map
 
 Currently, there is nothing in VRAM.
-I have a design for the bottom 4KB of VRAM for Emu2.
+I have a design for the bottom 4KB of VRAM for Emu2 : See Emu2.
 I have a design for the top 512KB of VRAM for Emu3.
 
 # The emulator(s)
@@ -166,8 +170,12 @@ This is in progress. It has a more fully featured screen device (80x25 and 16 co
 
 ### System Area
 The halt command is still there. The print character has been removed.
-BFFD - Keyboard character (the last character read by the keyboard)
+
+B008-B000 - Bank registers. Readable and writable, control where the banks are pointing.
+B100 - Screen frame : roughly a 1/30 sec timer
+B101 - Screen seconds : rolling count of 30 frame intervals
 BFFC - Keyboard input present (1 if the current character has not been read before, 0 if you've already read it)
+BFFD - Keyboard character (the last character read by the keyboard)
 
 ## EMU3
 

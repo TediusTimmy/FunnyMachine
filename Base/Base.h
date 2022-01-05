@@ -68,7 +68,8 @@ class ClockDevice : virtual public Device
       virtual void doOneOp() = 0;
  };
 
-class MemoryController : public Device
+// The DMA channels are a ClockDevice and an IODevice, and they are too intimate with the MemoryController to separate them.
+class MemoryController : public ClockDevice, public IODevice
  {
    private:
       // The first 5 selectors select from the RAM bus.
@@ -83,8 +84,12 @@ class MemoryController : public Device
 
       std::list<IODevice*> devices;
 
+      bool doRead(word addr, word& OUT) override;
+      bool doWrite(word addr, word val) override;
+
    public:
       void reset() override;
+      void doOneOp() override;
       bool readROMFile(const std::string& fileName);
 
       word doRead(word addr, RequestBytes);

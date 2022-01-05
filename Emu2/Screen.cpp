@@ -26,9 +26,11 @@ void Screen::attach(MemoryController* mc)
    M = mc;
  }
 
-void Screen::reset()
+void Screen::reset() // Thankfully, this is idempotent.
  {
    ticks = 0;
+   frame = 0;
+   sec = 0;
  }
 
 void Screen::doOneOp()
@@ -48,6 +50,13 @@ void Screen::doOneOp()
    ticks = 0;
    M->unlockVRAM();
 
+   ++frame;
+   if (30 == frame)
+   {
+      ++sec;
+      frame = 0;
+   }
+
    const byte* VRAM = M->vram();
    // Redraw the screen.
    for (int y = 0; y < 25; ++y)
@@ -59,4 +68,24 @@ void Screen::doOneOp()
          PUTC(VRAM[y * 25 + x * 2]);
        }
     }
+ }
+
+bool Screen::doRead(word addr, word& OUT)
+ {
+   if (addr == 0x100)
+    {
+      OUT = frame;
+      return true;
+    }
+   else if (addr == 0x101)
+    {
+      OUT = sec;
+      return true;
+    }
+   return false;
+ }
+
+bool Screen::doWrite(word, word)
+ {
+   return false;
  }

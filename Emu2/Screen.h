@@ -19,16 +19,21 @@
 
 #include "../Base/Base.h"
 
-class Screen : public ClockDevice
+class Screen : public ClockDevice, public IODevice
  {
    private:
       int ticks;
+      byte frame;
+      byte sec;
       MemoryController* M; // Our view into memory
 
    public:
       void attach(MemoryController*); // DO THIS FIRST!
       void reset() override;
       void doOneOp() override;
+
+      bool doRead(word addr, word& OUT) override;
+      bool doWrite(word addr, word val) override;
  };
 
 #endif /* FM_SCREEN_H */

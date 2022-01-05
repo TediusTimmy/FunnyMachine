@@ -222,4 +222,3 @@ void Core::printDecompiled(word I, word pc) const
 
    return;
  }
- 

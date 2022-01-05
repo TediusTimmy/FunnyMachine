@@ -2,10 +2,12 @@ Near-term TODO list (before Emu3):
 - Assembler
 * Make sure the Screen prints and the KeyBoard reads
 - Make it run at 30 fps
-- Bank Registers
-- Determine if GPU has VRAM bus locked
+? Bank Registers
+- Determine if GPU has VRAM bus locked (address to read indicating if GPU has VRAM bus locked)
+? Frame counter (a 1/30th sec clock)
 - DMA transfers
-- Properly handle word read in device space (or declare that only byte reads are valid)
+? Properly handle word read in device space (or declare that only byte reads are valid)
+- Figure out why the screen in Emu2 isn't printed right.
 
 Far-term FUTURE list (maybe never):
 - Add a BCD multiply and divide

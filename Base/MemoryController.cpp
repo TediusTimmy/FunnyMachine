@@ -18,6 +18,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <algorithm>
 
 void MemoryController::reset()
  {
@@ -34,10 +35,17 @@ void MemoryController::reset()
    std::memset( RAM, '\0', 2097152);
    std::memset( ROM, '\0', 2097152);
    std::memset(VRAM, '\0', 1048576);
+   if (devices.end() == std::find(devices.begin(), devices.end(), this))
+    {
+      devices.push_back(this);
+    }
    for (auto& device : devices)
-   {
-      device->reset();
-   }
+    {
+      if (device != this)
+       {
+         device->reset();
+       }
+    }
  }
 
 bool MemoryController::readROMFile(const std::string& fileName)
@@ -84,11 +92,11 @@ word MemoryController::doRead(word addr, RequestBytes which)
    word res = 0;
    if (bank < 5)
     {
-      res = (((word)RAM[(((int)B[bank]) << 13) | (addr & 0x1FFE) | 1]) << 8) | (RAM[(((int)B[bank]) << 13) | (addr & 0x1FFE)]);
+      res = (((word)RAM[(((int)B[bank]) << 13) | (addr & 0x1FFE) | 1]) << 8) | RAM[(((int)B[bank]) << 13) | (addr & 0x1FFE)];
     }
    else if (bank > 5)
     {
-      res = (((word)ROM[(((int)B[bank]) << 13) | (addr & 0x1FFE) | 1]) << 8) | (ROM[(((int)B[bank]) << 13) | (addr & 0x1FFE)]);
+      res = (((word)ROM[(((int)B[bank]) << 13) | (addr & 0x1FFE) | 1]) << 8) | ROM[(((int)B[bank]) << 13) | (addr & 0x1FFE)];
     }
    else // bank 5
     {
@@ -96,40 +104,51 @@ word MemoryController::doRead(word addr, RequestBytes which)
        {
          if (false == gpuRead)
           {
-            res = (((word)VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1]) << 8) | (VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)]);
+            res = (((word)VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE) | 1]) << 8) | VRAM[(((int)B[bank]) << 12) | (addr & 0xFFE)];
           }
          else
           {
             res = ~0;
           }
        }
-      else // System memory : Oh My Lady Gaga....
+      else // System memory
        {
-         // See if someone else will handle it:
-         if (which == LOW_BYTE)
+         word low = 0;
+         word high = 0;
+         // Tame the complexity of this by treating ourself as an IO device.
+         if ((which == LOW_BYTE) || (which == BOTH_BYTES))
           {
-            addr &= 0xFFE;
+            bool serviced = false;
             for (auto& device : devices)
              {
-               if (device->doRead(addr, res))
+               if (device->doRead(addr & 0xFFE, low))
                 {
+                  serviced = true;
                   break;
                 }
              }
+            if (false == serviced)
+             {
+               low = RAM[0x1FF000 | (addr & 0xFFE)];
+             }
           }
-         if (which == HIGH_BYTE)
+         if ((which == HIGH_BYTE) || (which == BOTH_BYTES))
           {
-            addr &= 0xFFE;
-            addr |= 1;
+            bool serviced = false;
             for (auto& device : devices)
              {
-               if (device->doRead(addr, res))
+               if (device->doRead((addr & 0xFFE) | 1, high))
                 {
-                  res <<= 8;
+                  serviced = true;
                   break;
                 }
              }
+            if (false == serviced)
+             {
+               high = RAM[0x1FF001 | (addr & 0xFFE)];
+             }
           }
+         res = (high << 8) | (low & 0xFF);
        }
     }
    return res;
@@ -180,34 +199,67 @@ void MemoryController::doWrite(word addr, word val, RequestBytes which)
              }
           }
        }
-      else // System memory : Oh My Lady Gaga....
+      else // System memory
        {
-         // See if someone else will handle it:
-         if (which == LOW_BYTE)
+         // Tame the complexity of this by treating ourself as an IO device.
+         if ((which == LOW_BYTE) || (which == BOTH_BYTES))
           {
-            addr &= 0xFFE;
+            bool serviced = false;
             for (auto& device : devices)
              {
-               if (device->doWrite(addr, val))
+               if (device->doWrite(addr & 0xFFE, val))
                 {
+                  serviced = true;
                   break;
                 }
              }
+            if (false == serviced)
+             {
+               RAM[0x1FF000 | (addr & 0xFFE)] = val;
+             }
           }
-         if (which == HIGH_BYTE)
+         if ((which == HIGH_BYTE) || (which == BOTH_BYTES))
           {
-            addr &= 0xFFE;
-            addr |= 1;
+            bool serviced = false;
             for (auto& device : devices)
              {
-               if (device->doWrite(addr, val))
+               if (device->doWrite((addr & 0xFFE) | 1, val >> 8))
                 {
+                  serviced = true;
                   break;
                 }
+             }
+            if (false == serviced)
+             {
+               RAM[0x1FF001 | (addr & 0xFFE)] = val >> 8;
              }
           }
        }
     }
+ }
+
+bool MemoryController::doRead(word addr, word& OUT)
+ {
+   if (addr < 8)
+    {
+      OUT = B[addr];
+      return true;
+    }
+   return false;
+ }
+
+bool MemoryController::doWrite(word addr, word val)
+ {
+   if (addr < 8)
+    {
+      B[addr] = val;
+      return true;
+    }
+   return false;
+ }
+
+void MemoryController::doOneOp()
+ {
  }
 
 void MemoryController::attach(IODevice* device)

@@ -55,7 +55,7 @@ bool KeyBoard::doRead(word addr, word& OUT)
       return true;
     }
    // Second address : return the keyboard character.
-   if (0xFFD == addr)
+   else if (0xFFD == addr)
     {
       OUT = latest;
       consumed = true;
