@@ -1,0 +1,29 @@
+emu: ClockController.o Core.o MemoryController.o mio.o KeyBoard.o Screen.o Speed.o main.o
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -o emu ClockController.o Core.o MemoryController.o mio.o KeyBoard.o Screen.o Speed.o main.o -lcurses
+
+clean:
+	rm *.o emu.exe
+
+ClockController.o: Base/ClockController.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Base/ClockController.cpp
+
+Core.o: Base/Core.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Base/Core.cpp
+
+MemoryController.o: Base/MemoryController.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Base/MemoryController.cpp
+
+mio.o: Emu2/mio.c
+	x86_64-w64-mingw32-gcc.exe -Wall -Wextra -Wpedantic -O2 -c -DUSE_CURSES Emu2/mio.c
+
+KeyBoard.o: Emu2/KeyBoard.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/KeyBoard.cpp
+
+Screen.o: Emu2/Screen.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/Screen.cpp
+
+Speed.o: Emu2/Speed.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/Speed.cpp
+
+main.o: Emu1/main.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/main.cpp

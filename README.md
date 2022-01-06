@@ -165,8 +165,6 @@ This emulator has memory-mapped IO to output characters to the screen. Outputtin
 
 This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now). I plan to work on the bank registers and some DMA hardware. I have DMA transfer hardware in mind, it's just not implemented.
 
-The Windows implementation of mio is hot garbage. Don't USE_WAPI if you can avoid it.
-
 ### VRAM
 0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It is redrawn unconditionally 30 times a second.
 
