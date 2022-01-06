@@ -37,7 +37,7 @@ void MemoryController::reset()
    std::memset(VRAM, '\0', 1048576);
    if (devices.end() == std::find(devices.begin(), devices.end(), this))
     {
-      devices.push_back(this);
+      devices.push_front(this); // The Memory controller's IO has priority.
     }
    for (auto& device : devices)
     {
@@ -243,6 +243,14 @@ bool MemoryController::doRead(word addr, word& OUT)
    if (addr < 8)
     {
       OUT = B[addr];
+      return true;
+    }
+   if (addr == 9)
+    {
+      if (true == gpuRead)
+         OUT = 1;
+      else
+         OUT = 0;
       return true;
     }
    return false;

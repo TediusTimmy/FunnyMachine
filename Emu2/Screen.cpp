@@ -64,10 +64,21 @@ void Screen::doOneOp()
       GOTO(0, y);
       for (int x = 0; x < 80; ++x)
        {
-         COLOR(VRAM[y * 25 + x * 2 + 1]);
-         PUTC(VRAM[y * 25 + x * 2]);
+         COLOR(VRAM[y * 50 + x * 2 + 1]);
+         PUTC(VRAM[y * 50 + x * 2]);
        }
     }
+
+/*
+   GOTO(0, 26);
+   COLOR(15);
+   PUTC('0' + sec / 100);
+   PUTC('0' + (sec % 100) / 10);
+   PUTC('0' + sec% 10);
+   PUTC(' ');
+   PUTC('0' + frame / 10);
+   PUTC('0' + frame % 10);
+*/
  }
 
 bool Screen::doRead(word addr, word& OUT)

@@ -17,6 +17,7 @@
 #include "../Base/Base.h"
 #include "Screen.h"
 #include "KeyBoard.h"
+#include "Speed.h"
 
 extern "C"
  {
@@ -75,6 +76,9 @@ int main (int argc, char** argv)
    Screen screen;
    screen.attach(bus.get());
    devs.attach(&screen);
+
+   Speed speed;
+   devs.attach(&speed);
 
    // Initialize everything and GO!
    bus->reset();

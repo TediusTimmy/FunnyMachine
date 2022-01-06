@@ -172,6 +172,7 @@ This is in progress. It has a more fully featured screen device (80x25 and 16 co
 The halt command is still there. The print character has been removed.
 
 B008-B000 - Bank registers. Readable and writable, control where the banks are pointing.
+B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.
 B100 - Screen frame : roughly a 1/30 sec timer
 B101 - Screen seconds : rolling count of 30 frame intervals
 BFFC - Keyboard input present (1 if the current character has not been read before, 0 if you've already read it)
