@@ -144,6 +144,7 @@ There are 256, 8KB banks of RAM that can be selected. Bank FF is special and you
 TODO: put in things as I implement them, aiming to document Emu3.
 
 B000-B008 - Bank registers. Readable and writable, control where the banks are pointing.  
+B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.  
 B100 - Screen frame : roughly a 1/30 sec timer  
 B101 - Screen seconds : rolling count of 30 frame intervals  
 BFFF - Writing to this memory location will stop the emulator.
@@ -163,6 +164,8 @@ This emulator has memory-mapped IO to output characters to the screen. Outputtin
 ## EMU2
 
 This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now). I plan to work on the bank registers and some DMA hardware. I have DMA transfer hardware in mind, it's just not implemented.
+
+The Windows implementation of mio is hot garbage. Don't USE_WAPI if you can avoid it.
 
 ### VRAM
 0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It is redrawn unconditionally 30 times a second.
