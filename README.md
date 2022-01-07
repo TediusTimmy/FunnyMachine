@@ -164,7 +164,7 @@ This emulator has memory-mapped IO to output characters to the screen. Outputtin
 
 ## EMU2
 
-This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now). I plan to work on the bank registers and some DMA hardware. I have DMA transfer hardware in mind, it's just not implemented.
+This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now).
 
 ### VRAM
 0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It is redrawn unconditionally 30 times a second.
@@ -185,7 +185,7 @@ The DMA controllers move banks of data from one bus to another. They move 32 byt
 * DMA 1 - ROM to RAM
 * DMA 2 - ROM to VRAM
 * DMA 3 - RAM to VRAM
-* DMA 4 - VRAM to RAM
+* DMA 4 - VRAM to RAM  
 Each DMA controller has 4 control bytes:
 * Control register. This is zero if inactive, one if a transfer is running, and two if a transfer is being initiated. Write a two to this byte to start a transfer.
 * Destination Bank.
