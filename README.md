@@ -185,7 +185,8 @@ The DMA controllers move banks of data from one bus to another. They move 32 byt
 * DMA 1 - ROM to RAM
 * DMA 2 - ROM to VRAM
 * DMA 3 - RAM to VRAM
-* DMA 4 - VRAM to RAM  
+* DMA 4 - VRAM to RAM
+
 Each DMA controller has 4 control bytes:
 * Control register. This is zero if inactive, one if a transfer is running, and two if a transfer is being initiated. Write a two to this byte to start a transfer.
 * Destination Bank.
