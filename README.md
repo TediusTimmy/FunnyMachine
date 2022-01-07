@@ -145,6 +145,7 @@ TODO: put in things as I implement them, aiming to document Emu3.
 
 B000-B008 - Bank registers. Readable and writable, control where the banks are pointing.  
 B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.  
+B010-B020 - DMA controllers. See description in Emu2.  
 B100 - Screen frame : roughly a 1/30 sec timer  
 B101 - Screen seconds : rolling count of 30 frame intervals  
 BFFF - Writing to this memory location will stop the emulator.
@@ -173,10 +174,23 @@ The halt command is still there. The print character has been removed.
 
 B008-B000 - Bank registers. Readable and writable, control where the banks are pointing.  
 B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.  
+B010-B020 - DMA controllers. See description.  
 B100 - Screen frame : roughly a 1/30 sec timer  
 B101 - Screen seconds : rolling count of 30 frame intervals  
 BFFC - Keyboard input present (1 if the current character has not been read before, 0 if you've already read it)  
 BFFD - Keyboard character (the last character read by the keyboard)
+
+### DMA Controllers
+The DMA controllers move banks of data from one bus to another. They move 32 bytes per instruction. When the VRAM bus is locked, they will block until it is unlocked, and then finish. There is no way to transfer less than a complete bank (4K or 8K) of data.
+* DMA 1 - ROM to RAM
+* DMA 2 - ROM to VRAM
+* DMA 3 - RAM to VRAM
+* DMA 4 - VRAM to RAM
+Each DMA controller has 4 control bytes:
+* Control register. This is zero if inactive, one if a transfer is running, and two if a transfer is being initiated. Write a two to this byte to start a transfer.
+* Destination Bank.
+* Source Bank.
+* Bank count. For transfers to/from VRAM, this is a count of 4K banks. For ROM to RAM transfers, this is in 8K banks.
 
 ## EMU3
 

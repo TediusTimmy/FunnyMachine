@@ -37,8 +37,8 @@ void Screen::doOneOp()
  {
    ++ticks;
    // At 1 MHz and 30 fps, we redraw the screen every 33333 clock cycles.
-   // Our "video card" will read the 4000 bytes of screen in 16 cycles (DMA speed).
-   if (ticks < 33317)
+   // Our "video card" will read the 4000 bytes of screen in 25 cycles (160 bytes per instruction).
+   if (ticks < (33333 - 25))
     {
       return;
     }

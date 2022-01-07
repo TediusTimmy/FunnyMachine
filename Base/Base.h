@@ -81,6 +81,8 @@ class MemoryController : public ClockDevice, public IODevice
       byte  ROM [2097152];
       byte VRAM [1048576];
       bool gpuRead;
+      byte DMA [16]; // 16 control bytes of the 4 DMA controllers.
+      word loc [4]; // Location in a block. DMA transfers 32 bytes per instruction.
 
       std::list<IODevice*> devices;
 

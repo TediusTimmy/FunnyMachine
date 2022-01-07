@@ -253,6 +253,11 @@ bool MemoryController::doRead(word addr, word& OUT)
          OUT = 0;
       return true;
     }
+   if ((addr > 15) && (addr < 32) && (0 == (addr & 3))) // Only the control registers are readable.
+    {
+      OUT = DMA[addr - 16];
+      return true;
+    }
    return false;
  }
 
@@ -263,11 +268,181 @@ bool MemoryController::doWrite(word addr, word val)
       B[addr] = val;
       return true;
     }
+   if ((addr > 15) && (addr < 32))
+    {
+      if (0 == DMA[(addr - 16) & 12]) // Mask out control register : if the DMA is busy, don't write.
+       {
+         DMA[addr - 16] = val;
+       }
+      return true;
+    }
    return false;
  }
 
 void MemoryController::doOneOp()
  {
+   const int DMA1_R = 0;
+   const int DMA1_D = 1;
+   const int DMA1_S = 2;
+   const int DMA1_C = 3;
+   const int DMA2_R = 4;
+   const int DMA2_D = 5;
+   const int DMA2_S = 6;
+   const int DMA2_C = 7;
+   const int DMA3_R = 8;
+   const int DMA3_D = 9;
+   const int DMA3_S = 10;
+   const int DMA3_C = 11;
+   const int DMA4_R = 12;
+   const int DMA4_D = 13;
+   const int DMA4_S = 14;
+   const int DMA4_C = 15;
+   const int DMA1_L = 0;
+   const int DMA2_L = 1;
+   const int DMA3_L = 2;
+   const int DMA4_L = 3;
+
+
+   if (0 != DMA[DMA1_R]) // DMA 1 : ROM to RAM
+    {
+      if (2 == DMA[DMA1_R]) // Initiate Transfer
+       {
+         DMA[DMA1_R] = 1;
+         loc[DMA1_L] = 0;
+         if (0 == DMA[DMA1_C]) // Transfer zero blocks?
+          {
+            DMA[DMA1_R] = 0;
+          }
+       }
+      else // Didn't Understand That
+       {
+         DMA[DMA1_R] = 0;
+       }
+      if (1 == DMA[DMA1_R]) // Are we running a transfer?
+       {
+         std::memcpy(RAM + ((word)DMA[DMA1_D] << 13) + loc[DMA1_L], ROM + ((word)DMA[DMA1_S] << 13) + loc[DMA1_L], 32);
+         loc[DMA1_L] += 32;
+         if (loc[DMA1_L] == 8192) // Have we transferred a full bank?
+          {
+            ++DMA[DMA1_D];
+            ++DMA[DMA1_S];
+            --DMA[DMA1_C];
+            loc[DMA1_L] = 0;
+            if (0 == DMA[DMA1_C])
+             {
+               DMA[DMA1_R] = 0;
+             }
+          }
+       }
+    }
+
+   if (0 != DMA[DMA2_R]) // DMA 2 : ROM to VRAM
+    {
+      if (2 == DMA[DMA2_R]) // Initiate Transfer
+       {
+         DMA[DMA2_R] = 1;
+         loc[DMA2_L] = 0;
+         if (0 == DMA[DMA2_C]) // Transfer zero blocks?
+          {
+            DMA[DMA2_R] = 0;
+          }
+       }
+      else // Didn't Understand That
+       {
+         DMA[DMA2_R] = 0;
+       }
+      if ((1 == DMA[DMA2_R]) && (false == gpuRead)) // Are we running a transfer?
+       {
+         std::memcpy(VRAM + ((word)DMA[DMA2_D] << 12) + (loc[DMA2_L] & 0xFFF), ROM + ((word)DMA[DMA2_S] << 13) + loc[DMA2_L], 32);
+         loc[DMA2_L] += 32;
+         if (0 != (loc[DMA2_L] & 0x3000)) // Have we transferred a full bank of VRAM?
+          {
+            ++DMA[DMA2_D];
+            --DMA[DMA2_C];
+            if (0 == DMA[DMA2_C])
+             {
+               DMA[DMA2_R] = 0;
+             }
+          }
+         if (loc[DMA2_L] == 8192) // Have we transferred a full bank of ROM?
+          {
+            ++DMA[DMA2_S];
+            loc[DMA2_L] = 0;
+          }
+       }
+    }
+
+   if (0 != DMA[DMA3_R]) // DMA 3 : RAM to VRAM
+    {
+      if (2 == DMA[DMA3_R]) // Initiate Transfer
+       {
+         DMA[DMA3_R] = 1;
+         loc[DMA3_L] = 0;
+         if (0 == DMA[DMA3_C]) // Transfer zero blocks?
+          {
+            DMA[DMA3_R] = 0;
+          }
+       }
+      else // Didn't Understand That
+       {
+         DMA[DMA3_R] = 0;
+       }
+      if ((1 == DMA[DMA3_R]) && (false == gpuRead)) // Are we running a transfer?
+       {
+         std::memcpy(VRAM + ((word)DMA[DMA3_D] << 12) + (loc[DMA3_L] & 0xFFF), RAM + ((word)DMA[DMA3_S] << 13) + loc[DMA3_L], 32);
+         loc[DMA3_L] += 32;
+         if (0 != (loc[DMA3_L] & 0x3000)) // Have we transferred a full bank of VRAM?
+          {
+            ++DMA[DMA3_D];
+            --DMA[DMA3_C];
+            if (0 == DMA[DMA3_C])
+             {
+               DMA[DMA3_R] = 0;
+             }
+          }
+         if (loc[DMA3_L] == 8192) // Have we transferred a full bank of RAM?
+          {
+            ++DMA[DMA3_S];
+            loc[DMA3_L] = 0;
+          }
+       }
+    }
+
+   if (0 != DMA[DMA4_R]) // DMA 4 : VRAM to RAM
+    {
+      if (2 == DMA[DMA4_R]) // Initiate Transfer
+       {
+         DMA[DMA4_R] = 1;
+         loc[DMA4_L] = 0;
+         if (0 == DMA[DMA4_C]) // Transfer zero blocks?
+          {
+            DMA[DMA4_R] = 0;
+          }
+       }
+      else // Didn't Understand That
+       {
+         DMA[DMA4_R] = 0;
+       }
+      if ((1 == DMA[DMA4_R]) && (false == gpuRead)) // Are we running a transfer?
+       {
+         std::memcpy(RAM + ((word)DMA[DMA4_D] << 13) + loc[DMA4_L], VRAM + ((word)DMA[DMA4_S] << 12) + (loc[DMA4_L] & 0xFFF), 32);
+         loc[DMA4_L] += 32;
+         if (0 != (loc[DMA4_L] & 0x3000)) // Have we transferred a full bank of VRAM?
+          {
+            ++DMA[DMA4_S];
+            --DMA[DMA4_C];
+            if (0 == DMA[DMA4_C])
+             {
+               DMA[DMA4_R] = 0;
+             }
+          }
+         if (loc[DMA4_L] == 8192) // Have we transferred a full bank of RAM?
+          {
+            ++DMA[DMA4_D];
+            loc[DMA4_L] = 0;
+          }
+       }
+    }
  }
 
 void MemoryController::attach(IODevice* device)
