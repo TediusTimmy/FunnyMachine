@@ -64,8 +64,8 @@ void Screen::doOneOp()
       GOTO(0, y);
       for (int x = 0; x < 80; ++x)
        {
-         COLOR(VRAM[y * 50 + x * 2 + 1]);
-         PUTC(VRAM[y * 50 + x * 2]);
+         COLOR(VRAM[y * 160 + x * 2 + 1]);
+         PUTC(VRAM[y * 160 + x * 2]);
        }
     }
 
