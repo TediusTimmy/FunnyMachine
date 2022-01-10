@@ -40,87 +40,87 @@ void Core::printDecompiled(word I, word pc) const
    switch (I & 15)
     {
    case  0: // NOP
-      std::printf("NOP\n");
+      std::printf("NOP");
       break;
    case  1: // LD
       if (I & 16)
-         std::printf("LD $%x(%04x)\n", A1, V1);
+         std::printf("LD $%x(%04x)", A1, V1);
       else
-         std::printf("LDB $%x(%04x)\n", A1, V1);
+         std::printf("LDB $%x(%04x)", A1, V1);
       break;
    case  2: // ST
       if (I & 16)
-         std::printf("ST $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("ST $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
       else
-         std::printf("STB $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("STB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
       break;
    case  3: // LDI
-      std::printf("LDI $%03x\n", imm12 & 0xFFF);
+      std::printf("LDI $%03x", imm12 & 0xFFF);
       break;
    case  4: // LRA
-      std::printf("LRA $%03x : (%04x)\n", imm12 & 0xFFF, NEXT + (imm12 << 1));
+      std::printf("LRA $%03x : (%04x)", imm12 & 0xFFF, (NEXT + (imm12 << 1)) & 0xFFFF);
       break;
    case  5: // ALU
       switch ((I >> 4) & 15)
        {
       case  0:
          if (A2 == 14)
-            std::printf("DEC $%x(%04x)\n", A1, V1);
+            std::printf("DEC $%x(%04x)", A1, V1);
          else
-            std::printf("ADD $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("ADD $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  1:
-         std::printf("ADC $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("ADC $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  2:
-         std::printf("SBB $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("SBB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  3:
          if (A2 == 14)
-            std::printf("INC $%x(%04x)\n", A1, V1);
+            std::printf("INC $%x(%04x)", A1, V1);
          else if (A1 == 15)
-            std::printf("NEG $%x(%04x)\n", A2, V2);
+            std::printf("NEG $%x(%04x)", A2, V2);
          else
-            std::printf("SUB $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("SUB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  4:
-         std::printf("SHL $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("SHL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  5:
-         std::printf("SHL $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("SHL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  6:
-         std::printf("SHR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("SHR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  7:
-         std::printf("ASR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("ASR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  8:
-         std::printf("AND $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("AND $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  9:
-         std::printf("OR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("OR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 10:
          if (A2 == 14)
-            std::printf("NOT $%x(%04x)\n", A1, V1);
+            std::printf("NOT $%x(%04x)", A1, V1);
          else
-            std::printf("XOR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("XOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 11:
-         std::printf("ROL $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("ROL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 12:
-         std::printf("NAND $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("NAND $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 13:
-         std::printf("NOR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("NOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 14:
-         std::printf("XNOR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("XNOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 15:
-         std::printf("ROR $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("ROR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
        }
       break;
@@ -130,16 +130,16 @@ void Core::printDecompiled(word I, word pc) const
          switch ((I >> 4) & 3)
           {
          case  0:
-            std::printf("BADD $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("BADD $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  1:
-            std::printf("BADC $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("BADC $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  2:
-            std::printf("BSBB $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("BSBB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  3:
-            std::printf("BSUB $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("BSUB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
           }
        }
@@ -148,16 +148,16 @@ void Core::printDecompiled(word I, word pc) const
          switch ((I >> 4) & 3)
           {
          case  0:
-            std::printf("MUL $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("MUL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  1:
-            std::printf("UMUL $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("UMUL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  2:
-            std::printf("DIV $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("DIV $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
          case  3:
-            std::printf("UDIV $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+            std::printf("UDIV $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
             break;
           }
        }
@@ -166,59 +166,63 @@ void Core::printDecompiled(word I, word pc) const
       switch ((I >> 4) & 7)
        {
       case 0:
-         std::printf("RETZ $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETZ $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 1:
-         std::printf("RETN $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETN $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 2:
-         std::printf("RETO $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETO $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 3:
-         std::printf("RETP $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETP $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 4:
-         std::printf("RET $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RET $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 5:
-         std::printf("RETZP $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETZP $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 6:
-         std::printf("RETE $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETE $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 7:
-         std::printf("RETZN $%x(%04x), $%x(%04x)\n", A1, V1, A2, V2);
+         std::printf("RETZN $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
        }
       break;
    case  8:
       if (A3 == 15)
-         std::printf("BRA $%02x ; (%04x)\n", imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+         std::printf("BRA $%02x ; (%04x)", imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       else
-         std::printf("BRZ $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+         std::printf("BRZ $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case  9:
-      std::printf("BRN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRN $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 10:
-      std::printf("BRO $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRO $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 11:
-      std::printf("BRP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRP $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 12:
-      std::printf("BR $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BR $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 13:
-      std::printf("BRZP $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRZP $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 14:
-      std::printf("BRE $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRE $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
    case 15:
-      std::printf("BRZN $%x(%04x), $%02x ; (%04x)\n", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
+      std::printf("BRZN $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
     }
+   std::printf(" [%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x]\n",
+      B[P], B[(P + 1) & 15], B[(P + 2) & 15], B[(P + 3) & 15], B[(P + 4) & 15], B[(P + 5) & 15],
+      B[(P + 6) & 15], B[(P + 7) & 15], B[(P + 8) & 15], B[(P + 9) & 15], B[(P + 10) & 15],
+      B[(P + 11) & 15], B[(P + 12) & 15], B[(P + 13) & 15], B[(P + 14) & 15]);
 
    return;
  }
