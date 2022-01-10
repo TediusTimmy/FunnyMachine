@@ -176,20 +176,24 @@ void ROM::generateAssembly()
                         LDI(160); // Current Addend
                         LDI(0); // Current Sum
 
-                        AND(2, 3);
-                        BRZ(0, 5);
-                        ADD(4, 15);
-                        ADD(4, 15);
-                        ADD(4, 15);
-                        ADD(4, 0);
-                        LDI(0);
+// While it would be easy to use the multiplication instruction, I am going to limit myself to not do it.
+// I'm going to do this algorithmically with shifts and adds.
+// The following block of code we run five times, in order to multiply a number by up to 31.
+
+                        AND(2, 3);  // Test if the current bit is set.
+                        BRZ(0, 5);  // If the current bit is not set, jump down.
+                        ADD(4, 15); // The current bit is set, so recreate the belt with the modified sum. Copy the paddle position.
+                        ADD(4, 15); // Copy the current bit
+                        ADD(4, 15); // Copy the current addend.
+                        ADD(4, 0);  // Add the current addend to the sum to make the new sum.
+                        LDI(0);     // This is the result of the AND, needed to keep belt coherency.
                         LDI(1);
-                        SHL(4, 0);
-                        SHL(4, 1);
-                        ADD(7, 15);
-                        ADD(2, 15);
-                        ADD(2, 15);
-                        ADD(7, 15);
+                        SHL(4, 0);  // Multiply the current bit by 2
+                        SHL(4, 1);  // Multiply the current addend by two.
+                        ADD(7, 15); // Copy the paddle position.
+                        ADD(2, 15); // Copy the new current bit.
+                        ADD(2, 15); // Copy the new addend.
+                        ADD(7, 15); // Copy the current sum.
 
                         AND(2, 3);
                         BRZ(0, 5);
@@ -242,7 +246,7 @@ void ROM::generateAssembly()
                         ADD(4, 15);
                         ADD(4, 15);
                         ADD(4, 0);
-                        LDI(0);
+                        LDI(0);        // I could CUT everything from here down to the next portion.
                         LDI(1);
                         SHL(4, 0);
                         SHL(4, 1);
@@ -250,6 +254,9 @@ void ROM::generateAssembly()
                         ADD(2, 15);
                         ADD(2, 15);
                         ADD(7, 15);
+
+// We now have 160 * the y position of the paddle (which should be less than 31).
+// Now, lets assume that a paddle is 5 characters tall and unroll that loop, too:
 
                         LDI(4);
                         LDI(0xA00);
@@ -294,7 +301,7 @@ void ROM::generateAssembly()
                         INC(0);
                         INC(0);
                         ST(3, 0);
-                        LDI(0x9E);
+                        LDI(0x9E);               // We can CUT from here to LDI if need be.
                         LDI('L' | (7 << 8));
                         ADD(2, 1);
 
