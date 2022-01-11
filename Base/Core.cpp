@@ -84,7 +84,13 @@ void Core::doOneOp()
    case  1: // LD
       P = (P - 1) & 15;
       B[P] = M->doRead(A1 & 0xFFFE, ((I & 16) ? BOTH_BYTES : ((A1 & 1) ? HIGH_BYTE : LOW_BYTE)));
-      if ((~I & 16) && (A1 & 1)) B[P] >>= 8; // If we only asked for the high byte, give me the high byte.
+      if (~I & 16) // If we aren't doing a word read...
+       {
+         if (A1 & 1)
+            B[P] >>= 8; // If we only asked for the high byte, give me the high byte.
+         else
+            B[P] &= 0xFF; // Else, give me only the low byte.
+       }
       break;
    case  2: // ST
       if ((~I & 16) && (A2 & 1)) A1 <<= 8; // If we are only writing the high byte, write it in that position.
