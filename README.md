@@ -123,6 +123,26 @@ This is just XORing belt location 14 with some other belt location.
 ### BRA
 This is a conditional jump if location 15 is zero (and location 15 is hard-coded to be zero). Don't frown at my childish jokes. I did decide that SEX was unnecessary, though I could fit it in with the BCD instructions.
 
+## Postmortem
+This is a list of nice-to-haves. I will collect them here, before either deciding against them or implementing them.
+### LDN
+Load nybble. An instruction to compliment LDI that takes a belt location, shifts it left by four, and then uses the second argument slot of the instruction to fill in those four bits.
+### PICK
+It will be very hard to incorporate PICK, because it is a three argument conditional operator. It is conditional, so there needs to be a belt location to query. If true, copy the first argument. If false, copy the second argument. This is a Mill conditional operation, and it needs operations like this because of how hard it is to keep the belt consistent. I'd have to drop the branch instructions for PICK. It's a tough call.  
+Maybe, move BRCC family into RET, and if the high bit of operation select is set, then argument 2 is sign extended into a 4-bit immediate.... The farthest that Pong branches is 12 instructions....
+### MIN / MAX
+An instruction to do this would be nice. Writing conditional code is a pain, because testing for certain conditions changes the belt.
+### CBW or CBTW or MOVSX or EXT or SEX
+The Pong game doesn't store up/down as -1/1 because it can't sign extend a byte to a word.
+### Unconditional Return
+BRA may have been a joke, but I should have made a RETA. But, RETA should really be RET.... ARG!
+### Rescue
+Some instruction that allows me to grab multiple belt entries and retain them or rearrange them. Or, some means of limiting the impact certain ephemeral results: the destination computed for a conditional branch, or a 12-bit immediate that I'm going to immediately extend to 16 bits.
+
+#### Other pie in the sky instructions:
+### LDS and STS
+Load from and store to scratchpad. Have a 16 register "scratchpad", which are registers. They don't change constantly. Data could be "stored" in them.
+
 # The Memory Map
 
 CPU Memory is broken into eight, 8KB banks:
@@ -164,7 +184,7 @@ This emulator has memory-mapped IO to output characters to the screen. Outputtin
 
 ## EMU2
 
-This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard (they may not work right now).
+This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard.
 
 ### VRAM
 0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It is redrawn unconditionally 30 times a second.
