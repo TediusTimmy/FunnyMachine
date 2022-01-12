@@ -76,6 +76,7 @@ int main (int argc, char** argv)
    Screen screen;
    screen.attach(bus.get());
    devs.attach(&screen);
+   bus->attach(&screen);
 
    Speed speed;
    devs.attach(&speed);

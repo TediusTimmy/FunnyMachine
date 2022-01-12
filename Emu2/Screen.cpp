@@ -83,6 +83,9 @@ void Screen::doOneOp()
 
 bool Screen::doRead(word addr, word& OUT)
  {
+#ifdef DO_TRACE
+   std::printf("In screen read: %03x, %d, %d\n", addr, frame, sec);
+#endif
    if (addr == 0x100)
     {
       OUT = frame;

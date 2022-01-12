@@ -23,7 +23,7 @@ KeyBoard.o: Emu2/KeyBoard.cpp
 	g++ -Wall -Wextra -Wpedantic -O2 -c -DDO_TRACE Emu2/KeyBoard.cpp
 
 Screen.o: Emu2/Screen.cpp
-	g++ -Wall -Wextra -Wpedantic -O2 -c Emu2/Screen.cpp
+	g++ -Wall -Wextra -Wpedantic -O2 -c -DDO_TRACE Emu2/Screen.cpp
 
 Speed.o: Emu2/Speed.cpp
 	g++ -Wall -Wextra -Wpedantic -O2 -c Emu2/Speed.cpp

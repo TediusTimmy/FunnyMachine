@@ -4,7 +4,7 @@ Near-term TODO list (before Emu3):
 * Make it run at 30 fps
 ? Bank Registers
 ? Determine if GPU has VRAM bus locked (address to read indicating if GPU has VRAM bus locked)
-? Frame counter (a 1/30th sec clock)
+* Frame counter (a 1/30th sec clock)
 ? DMA transfers
 ? Properly handle word read in device space (or declare that only byte reads are valid)
 * Figure out why the screen in Emu2 isn't printed right. (Printing \0 isn't printing a space.)
