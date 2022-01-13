@@ -142,6 +142,8 @@ Some instruction that allows me to grab multiple belt entries and retain them or
 #### Other pie in the sky instructions:
 ### LDS and STS
 Load from and store to scratchpad. Have a 16 register "scratchpad", which are registers. They don't change constantly. Data could be "stored" in them.
+### Address belt
+If LRA dropped on a separate belt, and RET used that belt for the destination, and I had a load/store for that belt, then I could get rid of BRCC.
 
 # The Memory Map
 
