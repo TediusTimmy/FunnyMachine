@@ -373,7 +373,7 @@ class ROM
          emit(7 | (3 << 4) | (code << 8) | (dest << 12));
          std::cout << "RETP " << code << ", " << dest << std::endl;
        }
-      void RET(word code, word dest)
+      void RETC(word code, word dest)
        {
          validateBeltAddr(code);
          validateBeltAddr(dest);
@@ -476,6 +476,10 @@ class ROM
       void BRA(word imm)
        {
          BRZ(15, imm);
+       }
+      void RET(word imm)
+       {
+         RETZ(15, imm);
        }
 
       void generateAssembly();

@@ -166,7 +166,10 @@ void Core::printDecompiled(word I, word pc) const
       switch ((I >> 4) & 7)
        {
       case 0:
-         std::printf("RETZ $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         if (A3 == 15)
+            std::printf("RET $%x(%04x)", A2, V2);
+         else
+            std::printf("RETZ $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 1:
          std::printf("RETN $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
@@ -178,7 +181,7 @@ void Core::printDecompiled(word I, word pc) const
          std::printf("RETP $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 4:
-         std::printf("RET $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         std::printf("RETC $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 5:
          std::printf("RETZP $%x(%04x), $%x(%04x)", A1, V1, A2, V2);

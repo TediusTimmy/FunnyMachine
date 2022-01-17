@@ -24,7 +24,7 @@ void ROM::generateAssembly()
    int start = getCodeLoc();
 
                         LRA(42);     // TODO : Figure out where the main loop is and make this point there.
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear Screen : (This just BARELY fits between frames...)
@@ -52,7 +52,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the dividing line in the court
@@ -85,7 +85,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
    std::cout << "Jump location: " << (-getRelativeLocation(start) >> 1) << std::endl;
@@ -100,5 +100,5 @@ void ROM::generateAssembly()
                         BRA(convertLocationImm8(getRelativeLocation(drawCourt)));
 
                         LRA(0);
-                        RET(14, 0);
+                        RET(0);
  }

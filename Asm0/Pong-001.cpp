@@ -39,7 +39,7 @@ void ROM::generateAssembly()
    int start = getCodeLoc();
 
                         LRA(326);     // A print later will tell you where this needs to jump to.
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear Screen : (This just BARELY fits between frames...)
@@ -67,7 +67,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the dividing line in the court
@@ -100,7 +100,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear the left side of the court
@@ -131,7 +131,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear the right side of the court
@@ -164,7 +164,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the left paddle
@@ -307,7 +307,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the right paddle
@@ -445,7 +445,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
    std::cout << "Jump location: " << ((-(getRelativeLocation(start) + 4)) >> 1) << " : " << getCodeLoc() << std::endl;
@@ -461,33 +461,33 @@ void ROM::generateAssembly()
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(cls)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawCourt)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearLeft)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearRight)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawLeft)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawRight)));
-                        RET(14, 0);
+                        RET(0);
 
                         LRA(0);
-                        RET(14, 0);
+                        RET(0);
  }

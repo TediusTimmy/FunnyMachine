@@ -8,9 +8,10 @@ Near-term TODO list (before Emu3):
 ? DMA transfers
 ? Properly handle word read in device space (or declare that only byte reads are valid)
 * Figure out why the screen in Emu2 isn't printed right. (Printing \0 isn't printing a space.)
+* Make RET RETC and add RET.
 
 Far-term FUTURE list (maybe never):
 - Add a BCD multiply and divide
 - Add a proper divide instruction
-   If I interpret the value in the belt location as two other belt locations, I can get 3 args (for a price).
-- If I add a scratchpad, I can have long division without that, but I'll need to use a scratchpad location like a register.
+- Add a scratchpad: use scratchpad location 0 like a register.
+- LDN, MIN, MAX

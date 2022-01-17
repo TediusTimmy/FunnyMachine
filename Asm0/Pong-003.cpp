@@ -42,7 +42,7 @@ void ROM::generateAssembly()
    int start = getCodeLoc();
 
                         LRA(592);     // A print later will tell you where this needs to jump to.
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear Screen : (This just BARELY fits between frames...)
@@ -70,7 +70,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the dividing line in the court
@@ -103,7 +103,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear the left side of the court
@@ -134,7 +134,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear the right side of the court
@@ -167,7 +167,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the left paddle
@@ -310,7 +310,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the right paddle
@@ -448,7 +448,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Clear the ball. (I really need to make multiplication a subroutine!)
@@ -564,7 +564,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Draw the ball.
@@ -680,7 +680,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 
 // Check for paddle up/down. (This only flags whether the user is pressing a key for left/right paddle up/down.)
@@ -722,7 +722,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 // Update left paddle.
    int updateLeft = getCodeLoc();
@@ -760,7 +760,7 @@ void ROM::generateAssembly()
 
                         LDI(2);
                         LD(0);
-                        RET(14, 0);
+                        RET(0);
 
 // Update right paddle.
 // Update the ball.
@@ -785,42 +785,42 @@ void ROM::generateAssembly()
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(cls)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawCourt)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearLeft)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearRight)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawLeft)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawRight)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearBall)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawBall)));
-                        RET(14, 0);
+                        RET(0);
 */
    int smallLoop = getCodeLoc();
 
@@ -828,13 +828,13 @@ void ROM::generateAssembly()
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(checkInput)));
-                        RET(14, 0);
+                        RET(0);
 
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(updateLeft)));
-                        RET(14, 0);
+                        RET(0);
 
                         LDI(4);
                         LDI(0xB10);
@@ -860,16 +860,16 @@ void ROM::generateAssembly()
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(clearLeft)));
-                        RET(14, 0);
+                        RET(0);
                         LDI(2);
                         LRA(3);
                         ST(0, 1);
                         LRA(convertLocationImm12(getRelativeLocation(drawLeft)));
-                        RET(14, 0);
+                        RET(0);
 
                         LRA(convertLocationImm12(getRelativeLocation(smallLoop)));
-                        RET(14, 0);
+                        RET(0);
 
                         LRA(0);
-                        RET(14, 0);
+                        RET(0);
  }
