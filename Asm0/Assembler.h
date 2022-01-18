@@ -378,7 +378,7 @@ class ROM
          validateBeltAddr(code);
          validateBeltAddr(dest);
          emit(7 | (4 << 4) | (code << 8) | (dest << 12));
-         std::cout << "RET " << code << ", " << dest << std::endl;
+         std::cout << "RETC " << code << ", " << dest << std::endl;
        }
       void RETZP(word code, word dest)
        {
@@ -459,11 +459,11 @@ class ROM
        }
       int DEC(word loc)
        {
-         return ADD(loc, 14);
+         return SBB(loc, 15);
        }
       int INC(word loc)
        {
-         return SUB(loc, 14);
+         return ADC(loc, 15);
        }
       int NEG(word loc)
        {
@@ -471,7 +471,7 @@ class ROM
        }
       int NOT(word loc)
        {
-         return XOR(loc, 14);
+         return NOR(loc, 15);
        }
       void BRA(word imm)
        {

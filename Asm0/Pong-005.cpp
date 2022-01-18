@@ -42,7 +42,7 @@ void ROM::generateAssembly()
 
    int start = getCodeLoc();
 
-                        LRA(695);     // A print later will tell you where this needs to jump to.
+                        LRA(697);     // A print later will tell you where this needs to jump to.
                         RET(0);
 
 
@@ -858,12 +858,13 @@ void ROM::generateAssembly()
                         LDI(1);
                         LDI(0x15);
                         STB(1, 0);
-                        BRA(5);
+                        BRA(6);
                         LDI(23);
                         SUB(0, 1);
-                        BRP(0, 2);
+                        BRP(0, 3);
                         LDI(0x15);
-                        STB(14, 0);
+                        NOT(15);
+                        STB(0, 1);
 
                         LDI(0x12); // Change X
                         LDI(0x14);
@@ -878,12 +879,13 @@ void ROM::generateAssembly()
                         LDI(1);
                         LDI(0x14);
                         STB(1, 0);
-                        BRA(5);
+                        BRA(6);
                         LDI(78);
                         SUB(0, 1);
-                        BRP(0, 2);
+                        BRP(0, 3);
                         LDI(0x14);
-                        STB(14, 0);
+                        NOT(15);
+                        STB(0, 1);
 
                         // TODO : Detect collision with paddle.
 
@@ -930,8 +932,9 @@ void ROM::generateAssembly()
                         BRO(1, 3);
                         LDI(1);
                         STB(0, 1);
-                        BRA(1);
-                        STB(14, 0);
+                        BRA(2);
+                        NOT(15);
+                        STB(0, 1);
 
                         LDI(9);    // Y direction : random
                         LDB(0);
@@ -941,8 +944,9 @@ void ROM::generateAssembly()
                         BRO(1, 3);
                         LDI(1);
                         STB(0, 1);
-                        BRA(1);
-                        STB(14, 0);
+                        BRA(2);
+                        NOT(15);
+                        STB(0, 1);
 
                         LDI(2);
                         LRA(3);

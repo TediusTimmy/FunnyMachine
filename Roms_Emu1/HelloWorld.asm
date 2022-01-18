@@ -32,5 +32,5 @@ stb $8, $B
 stb $2, $B
 stb $1, $B
 stb $0, $B
-sub $B, $E
+adc $B, $F
 stb $1, $0

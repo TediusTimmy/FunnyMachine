@@ -28,6 +28,10 @@ It's a 16 bit RISC-belt processor. The RISC design is for simplicity in decoding
 I was disinclined to put in a multiply and divide instruction. They're there, but I don't like them. And divide is not implemented to be useful in arbitrary-precision arithmetic. Maybe I'll do that later?
 Also, the branch instructions were added at the last minute so that branches wouldn't pollute the belt so much. Using LRA and RET can do everything the branches do, but with better range (at the cost of dropping an intermediate).
 
+### Update
+
+I made a change to the logic: all of the synthetic instructions are now zero-based logic, and the belt has been expanded to 15 entries. The "always -1 constant" has been removed.
+
 ## The Instructions:
 * No Operation
 * Load from memory
@@ -112,22 +116,23 @@ This drops the least significant word, then the most significant word onto the b
 This drops the quotient and then the remainder onto the belt. If the divisor is zero, then the quotient is zero and the remainder is the dividend.
 
 ## Notes on Synthetic Instructions (and How the Belt Works):
-At this point, I need to describe how the belt works. This belt is implemented as a ring buffer. Belt location 0 is the most recently generated result. This ring buffer retains the last 14 results (0 to 13). Locations 14 and 15 have special values. 14 is always -1 or NOT 0 and 15 is always zero.
+At this point, I need to describe how the belt works. This belt is implemented as a ring buffer. Belt location 0 is the most recently generated result. This ring buffer retains the last 15 results (0 to 14). Locations 15 has a special value: zero.
 ### DEC
-This is just adding belt location 14 to some other belt location.
+This is just subtracting belt location 15 from some other belt location with the borrow in flag set.
 ### INC
-This is just subtracting belt location 14 from some other belt location.
+This is just adding belt location 15 to some other belt location with the carry in flag set.
 ### NEG
 This is just subtracting some belt location from belt location 15.
 ### NOT
-This is just XORing belt location 14 with some other belt location.
+This is just NORing belt location 15 with some other belt location.
 ### BRA
 This is a conditional jump if location 15 is zero (and location 15 is hard-coded to be zero). Don't frown at my childish jokes. I did decide that SEX was unnecessary, though I could fit it in with the BCD instructions.
 ### RET
 This is a conditional jump if location 15 is zero.
 
 ## Postmortem
-This is a list of nice-to-haves. I will collect them here, before either deciding against them or implementing them.
+This is a list of nice-to-haves. I will collect them here, before either deciding against them or implementing them.  
+I think that I have firmly decided against all of these. Changing to zero-based logic and adding a belt location is my last tweak of the ISA.
 ### LDN
 Load nybble. An instruction to compliment LDI that takes a belt location, shifts it left by four, and then uses the second argument slot of the instruction to fill in those four bits.  
 Given that the second argument slot is the 4 most-significant bits, it could replace those bits in the argument with those bits in the instruction. Hmm....

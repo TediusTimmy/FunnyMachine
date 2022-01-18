@@ -23,11 +23,11 @@ void Core::printDecompiled(word I, word pc) const
    word NEXT = pc + 2;
 
    word A1 = (I >> 8) & 15;
-   word V1 = (A1 > 13) ? C[A1] : B[(P + A1) & 15];
+   word V1 = (A1 == 15) ? 0 : B[(P + A1) & 15];
    word A2 = (I >> 12) & 15;
-   word V2 = (A2 > 13) ? C[A2] : B[(P + A2) & 15];
+   word V2 = (A2 == 15) ? 0 : B[(P + A2) & 15];
    word A3 = (I >> 4) & 15;
-   word V3 = (A3 > 13) ? C[A3] : B[(P + A3) & 15];
+   word V3 = (A3 == 15) ? 0 : B[(P + A3) & 15];
    word imm12 = (I >> 4) | ((I & 0x8000) ? 0xF000 : 0);
    word imm8 = (I >> 8) | ((I & 0x8000) ? 0xFF00 : 0);
 
@@ -64,21 +64,22 @@ void Core::printDecompiled(word I, word pc) const
       switch ((I >> 4) & 15)
        {
       case  0:
-         if (A2 == 14)
-            std::printf("DEC $%x(%04x)", A1, V1);
-         else
-            std::printf("ADD $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         std::printf("ADD $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  1:
-         std::printf("ADC $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         if (A2 == 15)
+            std::printf("INC $%x(%04x)", A1, V1);
+         else
+            std::printf("ADC $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  2:
-         std::printf("SBB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         if (A2 == 15)
+            std::printf("DEC $%x(%04x)", A1, V1);
+         else
+            std::printf("SBB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  3:
-         if (A2 == 14)
-            std::printf("INC $%x(%04x)", A1, V1);
-         else if (A1 == 15)
+         if (A1 == 15)
             std::printf("NEG $%x(%04x)", A2, V2);
          else
             std::printf("SUB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
@@ -102,10 +103,7 @@ void Core::printDecompiled(word I, word pc) const
          std::printf("OR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 10:
-         if (A2 == 14)
-            std::printf("NOT $%x(%04x)", A1, V1);
-         else
-            std::printf("XOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         std::printf("XOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 11:
          std::printf("ROL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
@@ -114,7 +112,10 @@ void Core::printDecompiled(word I, word pc) const
          std::printf("NAND $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 13:
-         std::printf("NOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         if (A2 == 15)
+            std::printf("NOT $%x(%04x)", A1, V1);
+         else
+            std::printf("NOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 14:
          std::printf("XNOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
@@ -222,10 +223,10 @@ void Core::printDecompiled(word I, word pc) const
       std::printf("BRZN $%x(%04x), $%02x ; (%04x)", A3, V3, imm8 & 0xFF, (NEXT + (imm8 << 1)) & 0xFFFF);
       break;
     }
-   std::printf(" [%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x]\n",
+   std::printf(" [%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x]\n",
       B[P], B[(P + 1) & 15], B[(P + 2) & 15], B[(P + 3) & 15], B[(P + 4) & 15], B[(P + 5) & 15],
       B[(P + 6) & 15], B[(P + 7) & 15], B[(P + 8) & 15], B[(P + 9) & 15], B[(P + 10) & 15],
-      B[(P + 11) & 15], B[(P + 12) & 15], B[(P + 13) & 15], B[(P + 14) & 15]);
+      B[(P + 11) & 15], B[(P + 12) & 15], B[(P + 13) & 15], B[(P + 14) & 15], B[(P + 15) & 15]);
 
    return;
  }

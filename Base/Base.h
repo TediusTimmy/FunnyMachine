@@ -111,7 +111,6 @@ class Core : public ClockDevice
    private:
       word PC;
       word B [16]; // The belt
-      word C [16]; // The not-belt : it's a waste of memory for two constants, to simplify the code to select them.
       byte P; // The location in the belt's ring buffer of the next write
       MemoryController* M; // Our view into memory
 
