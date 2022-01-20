@@ -116,7 +116,7 @@ This drops the least significant word, then the most significant word onto the b
 This drops the quotient and then the remainder onto the belt. If the divisor is zero, then the quotient is zero and the remainder is the dividend.
 
 ## Notes on Synthetic Instructions (and How the Belt Works):
-At this point, I need to describe how the belt works. This belt is implemented as a ring buffer. Belt location 0 is the most recently generated result. This ring buffer retains the last 15 results (0 to 14). Locations 15 has a special value: zero.
+At this point, I need to describe how the belt works. This belt is implemented as a FIFO ring buffer. The destination of all operations that generate a result is implicitly the back of the queue. Belt locations are referenced relative to the back of the queue. Belt location 0 is the most recently generated result. This ring buffer retains the last 15 results (0 to 14). Belt location 14 is the least recently generated result (it was first into the queue) and it will be replaced by the next result (it is the first out). Location 15 has a special value: zero. There is a balance between having useful values available, and belt depth, and I'm not sure if I've hit it.
 ### DEC
 This is just subtracting belt location 15 from some other belt location with the borrow in flag set.
 ### INC
@@ -142,7 +142,7 @@ Maybe, move BRCC family into RET, and if the high bit of operation select is set
 ### MIN / MAX
 An instruction to do this would be nice. Writing conditional code is a pain, because testing for certain conditions changes the belt.
 ### CBW or CBTW or MOVSX or EXT or SEX
-The Pong game doesn't store up/down as -1/1 because it can't sign extend a byte to a word.
+The Pong game doesn't store up/down as -1/1 because it can't sign extend a byte to a word. And where it does store -1/1, it does a store followed by a load to truncate the high bits.
 ### Rescue
 Some instruction that allows me to grab multiple belt entries and retain them or rearrange them. Or, some means of limiting the impact certain ephemeral results: the destination computed for a conditional branch, or a 12-bit immediate that I'm going to immediately extend to 16 bits.
 
