@@ -11,7 +11,6 @@ Near-term TODO list (before Emu3):
 * Make RET RETC and add RET.
 
 Far-term FUTURE list (maybe never):
-- Add a BCD multiply and divide
-- Add a proper divide instruction
 - Add a scratchpad: use scratchpad location 0 like a register.
+- Add a proper divide instruction
 - LDN, MIN, MAX

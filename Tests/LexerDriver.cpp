@@ -51,6 +51,8 @@ int main (int argc, char ** argv)
    Token token = lexer.GetNextToken();
    while (Lexeme::END_OF_FILE != token.lexeme)
     {
+      if (Lexeme::INVALID == token.lexeme)
+         std::putchar('I');
       std::printf("%s ", token.text.c_str());
       token = lexer.GetNextToken();
     }

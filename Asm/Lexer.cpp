@@ -147,7 +147,6 @@ void Lexer::Get_NextToken (void)
                break;
 
             case '\'':
-               nextToken.text = "";
                n = PeekNextChar();
                while ((n != '\'') && (n != '\0') && (n != '\n'))
                 {
@@ -155,8 +154,12 @@ void Lexer::Get_NextToken (void)
                   nextToken.text += static_cast<char>(n);
                   n = PeekNextChar();
                 }
+               if (n == '\'')
+                {
+                  GetNextChar();
+                }
 
-               if ((n == '\n') || (n == '\0'))
+               if ((n == '\n') || (n == '\0') || ("'" == nextToken.text))
                 {
                   nextToken.lexeme = INVALID;
                 }
@@ -174,6 +177,10 @@ void Lexer::Get_NextToken (void)
                   GetNextChar();
                   nextToken.text += static_cast<char>(n);
                   n = PeekNextChar();
+                }
+               if (n == '"')
+                {
+                  GetNextChar();
                 }
 
                if ((n == '\n') || (n == '\0'))
