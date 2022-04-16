@@ -57,7 +57,8 @@ enum Lexeme
    LESS_THAN_OR_EQUAL_TO,     // <=   
    SHORT_OR,                  // ||
    SHORT_AND,                 // &&
-   BOOL_NOT                   // !
+   BOOL_NOT,                  // !
+   LOCAL_REF                  // `
  };
 
 #endif /* LEXEMES_H */

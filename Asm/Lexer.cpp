@@ -327,6 +327,10 @@ void Lexer::Get_NextToken (void)
                nextToken.lexeme = BOOL_NOT;
                break;
 
+            case '`':
+               nextToken.lexeme = LOCAL_REF;
+               break;
+
             default:
                nextToken.lexeme = INVALID;
                break;
