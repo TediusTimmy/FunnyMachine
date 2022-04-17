@@ -28,33 +28,33 @@
       @charEx  LDI '!' | (7 << 8)
       @two     LDI 2
                ST  charH, write
-      $write   ADD write, two                ; $ Tells the assembler to generate an error if the result by this name is not still alive.
+      %write   ADD write, two                ; % Tells the assembler to generate an error if the result by this name is not still alive.
                ST  chare, write              ; We are insisting that we are overwriting the name of a previous result.
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charl, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charl, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charo, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charCo, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charSp, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charW, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charo, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charr, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charl, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  chard, write
-      $write   ADD write, two
+      %write   ADD write, two
                ST  charEx, write
-      $write   ADD write, two
+      %write   ADD write, two
                LDI ' ' | (7 << 8)
-      $write   ADD 1, 15
+      %write   ADD 1, 15
 
 stloop:        ST 1, 0
 
@@ -77,14 +77,14 @@ loop: #four    LDI 4                         ; # Tells the assembler to generate
       @chars   LDB write
                BRZ chars, loop
 
-      $write   INC write
+      %write   INC write
                LDB write
 
                LDI 10
                SUB 1, 0
                BR  0, loop
 
-      @four    LDI 4                         ; And, sometimes, we don't care. Both $ and # are tools for the programmer to check assertions.
+      @four    LDI 4                         ; And, sometimes, we don't care. Both % and # are tools for the programmer to check assertions.
       @base    LDI $BFF
       @temp    SHL base, four
       @bottom  LDI $F
