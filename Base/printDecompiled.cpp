@@ -167,7 +167,7 @@ void Core::printDecompiled(word I, word pc) const
       switch ((I >> 4) & 7)
        {
       case 0:
-         if (A3 == 15)
+         if (A1 == 15)
             std::printf("RET $%x(%04x)", A2, V2);
          else
             std::printf("RETZ $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
