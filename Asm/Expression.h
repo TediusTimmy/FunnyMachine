@@ -190,7 +190,6 @@ class UnaryOperation : public Expression
 class ValueOf : public UnaryOperation
  {
    public:
-      int location;
       int evaluate (const SymbolTable&) const;
  };
 

@@ -23,7 +23,7 @@ int SymbolTable::getLabel (const std::string& name) const
 
 void SymbolTable::setLabel (const std::string& name, int value)
  {
-   m_labels.find(name)->second = value;
+   m_labels[name] = value;
  }
 
 bool SymbolTable::hasLabel (const std::string& name) const
@@ -38,7 +38,7 @@ int SymbolTable::getResult (const std::string& name) const
 
 void SymbolTable::setResult (const std::string& name, int value)
  {
-   m_results.find(name)->second = value;
+   m_results[name] = value;
  }
 
 bool SymbolTable::hasResult (const std::string& name) const

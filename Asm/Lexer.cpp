@@ -60,7 +60,6 @@ void Lexer::Get_NextToken (void)
  {
    nextToken = Token(lineNumber);
 
-   nextToken.lexeme = BLANK;
    while (nextToken.lexeme == BLANK)
     {
       int n = GetNextNonWhite();
@@ -79,6 +78,8 @@ void Lexer::Get_NextToken (void)
        }
       else if (std::isdigit(n)) //Read a decimal number or the beginning of one
        { //Read in a number
+         nextToken.text = static_cast<char>(n);
+         n = PeekNextChar();
          while (std::isdigit(n))
           {
             GetNextChar();

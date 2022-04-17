@@ -55,6 +55,7 @@ class Parser /* Syntax Analyzer */
 
       static std::map<std::string, int> args;
       static std::map<std::string, int> opcodes;
+      static std::map<std::string, int> results;
 
    public:
 

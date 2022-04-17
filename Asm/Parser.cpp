@@ -47,7 +47,7 @@ static int InterpretNumber(const std::string& val)
     }
    else if ('\'' == val[0])
     {
-      return val[0] | ((val.size() > 1) ? ((int)((unsigned char)val[1])) << 8 : 0);
+      return val[1] | ((val.size() > 2) ? ((int)((unsigned char)val[2])) << 8 : 0);
     }
    return std::stod(val);
  }
@@ -300,11 +300,7 @@ std::shared_ptr<Expression> Parser::unary (const SymbolTable& context, bool isRe
           temp = std::make_shared<LowByte>();
          break;
       case LOCAL_REF:
-       {
-          std::shared_ptr<ValueOf> temp1 = std::make_shared<ValueOf>();
-          temp1->location = context.getCurrentLocation();
-          temp = temp1;
-       }
+          temp = std::make_shared<ValueOf>();
          break;
       default: break;
        }
@@ -335,7 +331,11 @@ std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool is
          if (true == context.hasResult(nextToken.text))
           {
             std::shared_ptr<Constant> op = std::make_shared<Constant>();
-            op->value = context.getResult(nextToken.text);
+            op->value = context.getCurrentResult() - context.getResult(nextToken.text);
+            if (op->value > 14)
+             {
+               std::cerr << "Use of result \"" << nextToken.text << "\" that has left the belt on " << nextToken.lineNumber << "." << " " << op->value << std::endl;
+             }
 
             op->lineNo = nextToken.lineNumber;
             GNT();
@@ -498,6 +498,61 @@ std::map<std::string, int> Parser::opcodes = {
    { "RET",   0xf07 }
  };
 
+std::map<std::string, int> Parser::results = {
+   { "NOP",   0 },
+   { "LD",    1 },
+   { "LDB",   1 },
+   { "ST",    0 },
+   { "STB",   0 },
+   { "LDI",   1 },
+   { "LRA",   1 },
+   { "ADD",   1 },
+   { "ADC",   1 },
+   { "SUB",   1 },
+   { "SBB",   1 },
+   { "SHL",   1 },
+   { "SHR",   1 },
+   { "ASR",   1 },
+   { "AND",   1 },
+   { "OR",    1 },
+   { "XOR",   1 },
+   { "NAND",  1 },
+   { "NOR",   1 },
+   { "XNOR",  1 },
+   { "ROL",   1 },
+   { "ROR",   1 },
+   { "BADD",  1 },
+   { "BADC",  1 },
+   { "BSUB",  1 },
+   { "BSBB",  1 },
+   { "MUL",   2 },
+   { "UMUL",  2 },
+   { "DIV",   2 },
+   { "UDIV",  2 },
+   { "RETZ",  0 },
+   { "RETN",  0 },
+   { "RETO",  0 },
+   { "RETP",  0 },
+   { "RETC",  0 },
+   { "RETZP", 0 },
+   { "RETE",  0 },
+   { "RETZN", 0 },
+   { "BRZ",   0 },
+   { "BRN",   0 },
+   { "BRO",   0 },
+   { "BRP",   0 },
+   { "BR",    0 },
+   { "BRZP",  0 },
+   { "BRE",   0 },
+   { "BRZN",  0 },
+   { "DEC",   1 },
+   { "INC",   1 },
+   { "NEG",   1 },
+   { "NOT",   1 },
+   { "BRA",   0 },
+   { "RET",   0 }
+ };
+
 static std::string TO_UPPER(std::string str)
  {
    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
@@ -511,9 +566,120 @@ std::vector<unsigned short> Parser::assembly()
 
    while (END_OF_FILE != nextToken.lexeme)
     {
+      // Cache the results to update so that we can use the prior state of results in the current opcode.
+      std::map<std::string, int> resultsToUpdate;
+
       while (END_OF_LINE == nextToken.lexeme)
        {
          GNT();
+       }
+
+         // In general, a line of assembly has one of these two formats:
+         //    [label]  [result] opcode
+         //    assembler directive
+         // So, we'll do this in three passes
+      switch(nextToken.lexeme)
+       {
+      case AT: // Either a local label (TODO: Local Labels) or a result
+       {
+         GNT();
+         if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
+          {
+            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << ".";
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         std::string name = nextToken.text;
+         GNT();
+         if (COLON == nextToken.lexeme) // This is a local symbol.
+          {
+            std::cerr << "Local symbols are not implemented.";
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         else // Maybe there is garbage, but assume this is a result.
+          {
+            resultsToUpdate.insert(std::make_pair(name, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
+          }
+       }
+         break;
+      case IDENTIFIER: // Either a label (TODO: Labels) or a symbol (TODO: Symbols)
+         // If this IS an opcode, defer to pass three
+         if (opcodes.end() == opcodes.find(TO_UPPER(nextToken.text)))
+          {
+            std::cerr << "Labels and Symbols not implemented." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         break;
+      case PERIOD: // Assembler directive (TODO: Assembler Directives)
+         std::cerr << "No assembler directives currently defined." << std::endl;
+         while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+          {
+            GNT();
+          }
+         break;
+      default: break;
+       }
+
+      switch(nextToken.lexeme)
+       {
+      case AT: // Must be a result
+         GNT();
+         if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
+          {
+            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
+         GNT();
+         break;
+      case POUND:
+         GNT();
+         if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
+          {
+            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         if ((false == context.hasResult(nextToken.text)) ||
+            (context.getCurrentResult() + 1 - context.getResult(nextToken.text) < 15))
+          {
+            std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name is still on the belt." << std::endl;
+          }
+         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
+         GNT();
+         break;
+      case MOD:
+         GNT();
+         if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
+          {
+            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
+         if ((false == context.hasResult(nextToken.text)) ||
+            (context.getCurrentResult() + 1 - context.getResult(nextToken.text) > 14))
+          {
+            std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name has left the belt." << std::endl;
+          }
+         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
+         GNT();
+         break;
+      default: break;
        }
 
       switch(nextToken.lexeme)
@@ -521,10 +687,20 @@ std::vector<unsigned short> Parser::assembly()
       case IDENTIFIER:
          if (opcodes.end() != opcodes.find(TO_UPPER(nextToken.text)))
           {
+            int resultCount = results[TO_UPPER(nextToken.text)];
             result.push_back(instruction(context));
+            if (0 != resultCount)
+             {
+               context.addResult(resultCount - 1);
+             }
           }
          break;
       default: break;
+       }
+
+      for (auto pair : resultsToUpdate)
+       {
+         context.setResult(pair.first, pair.second);
        }
     }
 

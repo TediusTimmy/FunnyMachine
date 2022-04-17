@@ -30,6 +30,7 @@ class SymbolTable
 
       int currentResult;
       int currentLocation;
+      int useLocation;
 
    public:
       std::map<std::string, int> & Labels() { return m_labels; }
@@ -46,6 +47,8 @@ class SymbolTable
 
       int getCurrentResult() const { return currentResult; }
       int getCurrentLocation() const { return currentLocation; }
+      int getUseLocation() const { return useLocation; }
+      void setUseLocation(int newLocation) { useLocation = newLocation; }
 
       void addResult (int extra) { currentResult += 1 + extra; }
       void addLocation () { currentLocation += 2; }

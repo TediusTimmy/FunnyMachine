@@ -139,7 +139,7 @@ int ShortAnd::evaluate (const SymbolTable& context) const
 
 int ValueOf::evaluate (const SymbolTable& context) const
  {
-   return (arg->evaluate(context) + location) & 0x1FFF;
+   return (arg->evaluate(context) + context.getUseLocation()) & 0x1FFF;
  }
 
 int Abs::evaluate (const SymbolTable& context) const
