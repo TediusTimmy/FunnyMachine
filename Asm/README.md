@@ -40,8 +40,8 @@ Note that the `@` won't be part of the label name with local labels. Local
 labels are only valid between two normal labels, and can't be used outside of
 them. The purpose of local labels is to allow the reuse of common label names
 in sections of assembly: for example `loop`. Also note that, currently,
-labels cannot be referenced before they are used. It's a one-pass assembler,
-and I haven't added that infrastructure.
+labels cannot be referenced before they are defined. It's a one-pass
+assembler, and I haven't added that infrastructure.
 
 ## Other syntax
 
