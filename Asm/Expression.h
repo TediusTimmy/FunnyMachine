@@ -21,6 +21,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <set>
 
 class Expression
  {
@@ -29,6 +30,7 @@ class Expression
 
       virtual int evaluate (const SymbolTable&) const = 0;
       virtual bool canEvaluate (const SymbolTable&) const = 0;
+      virtual void cantEvaluate (const SymbolTable&, std::set<std::string>&) const = 0;
       virtual ~Expression() { }
  };
 
@@ -39,6 +41,7 @@ class Constant : public Expression
 
       int evaluate (const SymbolTable&) const { return value; }
       bool canEvaluate (const SymbolTable&) const { return true; }
+      void cantEvaluate (const SymbolTable&, std::set<std::string>&) const { }
  };
 
 class Label : public Expression
@@ -48,6 +51,7 @@ class Label : public Expression
 
       int evaluate (const SymbolTable& context) const { return context.getLabel(referent) - context.getUseLocation(); }
       bool canEvaluate (const SymbolTable& context) const { return context.hasLabel(referent); }
+      void cantEvaluate (const SymbolTable& context, std::set<std::string>& needed) const { if (false == context.hasLabel(referent)) needed.insert(referent); }
  };
 
 class BinaryOperation : public Expression
@@ -57,6 +61,7 @@ class BinaryOperation : public Expression
 
       int evaluate (const SymbolTable&) const = 0;
       bool canEvaluate (const SymbolTable& context) const { return lhs->canEvaluate(context) && rhs->canEvaluate(context); };
+      void cantEvaluate (const SymbolTable& context, std::set<std::string>& needed) const { lhs->cantEvaluate(context, needed); rhs->cantEvaluate(context, needed); }
       BinaryOperation() { }
       ~BinaryOperation() { }
  };
@@ -183,6 +188,7 @@ class UnaryOperation : public Expression
       std::shared_ptr<Expression> arg;
       int evaluate (const SymbolTable&) const = 0;
       bool canEvaluate (const SymbolTable& context) const { return arg->canEvaluate(context); };
+      void cantEvaluate (const SymbolTable& context, std::set<std::string>& needed) const { arg->cantEvaluate(context, needed); }
       UnaryOperation() { }
       ~UnaryOperation() { }
  };

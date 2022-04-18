@@ -36,7 +36,7 @@ class SymbolTable
       std::map<std::string, int> & Labels() { return m_labels; }
       std::map<std::string, int> & Results() { return m_results; }
 
-      SymbolTable() : currentResult(0), currentLocation(0) { }
+      SymbolTable() : currentResult(0), currentLocation(0), useLocation(0) { }
 
       int getLabel (const std::string &) const;
       void setLabel (const std::string &, int);

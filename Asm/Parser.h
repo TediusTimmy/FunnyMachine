@@ -21,11 +21,13 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <list>
 
 #include "Lexer.h"
 
 class SymbolTable;
 class Expression;
+class RefContainer;
 
 class Parser /* Syntax Analyzer */
  {
@@ -35,7 +37,7 @@ class Parser /* Syntax Analyzer */
 
       std::vector<unsigned short> assembly ();
 
-      unsigned short instruction (const SymbolTable& context);
+      unsigned short instruction (const SymbolTable& context, std::list<RefContainer>& references);
 
       std::shared_ptr<Expression> expression (const SymbolTable& context, bool isResult);
       std::shared_ptr<Expression> disjunction (const SymbolTable& context, bool isResult);

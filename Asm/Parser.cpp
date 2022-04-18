@@ -559,10 +559,60 @@ static std::string TO_UPPER(std::string str)
    return str;
  }
 
+class RefContainer
+ {
+public:
+   int codeLocation;
+   int type; // Should be an enum.
+   std::shared_ptr<Expression> expr;
+   bool done;
+
+   RefContainer() = default;
+   RefContainer(const RefContainer&) = default;
+   RefContainer(RefContainer&&) = default;
+   RefContainer(int codeLocation, int type, std::shared_ptr<Expression> expr) : codeLocation(codeLocation), type(type), expr(expr), done(false) { }
+   RefContainer& operator= (const RefContainer&) = default;
+   RefContainer& operator= (RefContainer&&) = default;
+ };
+
+static void processReferences(SymbolTable& context, std::vector<unsigned short>& result, std::list<RefContainer>& references)
+ {
+   for (auto& ref : references)
+    {
+      if (true == ref.expr->canEvaluate(context))
+       {
+         switch (ref.type)
+          {
+         case 1: // LDI 12-bit immediate
+          {
+            int arg = ref.expr->evaluate(context);
+            result[ref.codeLocation] |= (arg & 0xfff) << 4;
+          }
+            break;
+         case 2: // LRA 12-bit immediate code location
+          {
+            int arg = ref.expr->evaluate(context);
+            result[ref.codeLocation] |= ((arg >> 1) & 0xfff) << 4;
+          }
+            break;
+         case 3: // BR 8-bit immediate
+          {
+            int arg = ref.expr->evaluate(context);
+            result[ref.codeLocation] |= ((arg >> 1) & 0xff) << 8;
+          }
+            break;
+          }
+         ref.done = true;
+       }
+    }
+   references.remove_if([](const RefContainer& a){ return a.done; });
+ }
+
 std::vector<unsigned short> Parser::assembly()
  {
    SymbolTable context;
    std::vector<unsigned short> result;
+   std::list<RefContainer> references;
 
    while (END_OF_FILE != nextToken.lexeme)
     {
@@ -607,7 +657,7 @@ std::vector<unsigned short> Parser::assembly()
           }
        }
          break;
-      case IDENTIFIER: // Either a label (TODO: Labels) or a symbol (TODO: Symbols)
+      case IDENTIFIER: // Either a label or a symbol (TODO: Symbols)
          // If this IS an opcode, defer to pass three
          if (opcodes.end() == opcodes.find(TO_UPPER(nextToken.text)))
           {
@@ -617,7 +667,7 @@ std::vector<unsigned short> Parser::assembly()
             {
                context.setLabel(name, context.getCurrentLocation());
                expect(COLON);
-               // TODO : back-references (back references from definition, forward references from use)
+               processReferences(context, result, references);
             }
             else if (EQUALITY == nextToken.lexeme)
             {
@@ -709,7 +759,7 @@ std::vector<unsigned short> Parser::assembly()
             int resultCount = results[TO_UPPER(nextToken.text)];
             context.addLocation();
             context.setUseLocation(context.getCurrentLocation());
-            result.push_back(instruction(context));
+            result.push_back(instruction(context, references));
             if (0 != resultCount)
              {
                context.addResult(resultCount - 1);
@@ -725,10 +775,22 @@ std::vector<unsigned short> Parser::assembly()
        }
     }
 
+   for (auto& ref : references)
+    {
+      std::set<std::string> refd;
+      ref.expr->cantEvaluate(context, refd);
+      std::cerr << "Missing references on line " << ref.expr->lineNo << " to ";
+      for (const auto& str : refd)
+       {
+         std::cerr << str << ", ";
+       }
+      std::cerr << std::endl;
+    }
+
    return result;
  }
 
-unsigned short Parser::instruction (const SymbolTable& context)
+unsigned short Parser::instruction (const SymbolTable& context, std::list<RefContainer>& references)
  {
    unsigned int ret = 0U; // NOP
 
@@ -803,7 +865,16 @@ unsigned short Parser::instruction (const SymbolTable& context)
           {
             ret = opcodes[operation];
 
-            int arg = expression(context, false)->evaluate(context); // TODO - Forward references
+            std::shared_ptr<Expression> expr = expression(context, false);
+            int arg = 0;
+            if (true == expr->canEvaluate(context))
+             {
+               arg = expr->evaluate(context);
+             }
+            else
+             {
+               references.push_back(RefContainer(context.getCurrentLocation(), ((3 == ret) ? 1 : 2), expr));
+             }
 
             if (3 == ret) // LDI
                ret |= (arg & 0xfff) << 4;
@@ -830,7 +901,17 @@ unsigned short Parser::instruction (const SymbolTable& context)
                lhs = expression(context, true)->evaluate(context);
                expect(COMMA);
             }
-            int rhs = expression(context, false)->evaluate(context); // TODO - Forward references
+
+            std::shared_ptr<Expression> expr = expression(context, false);
+            int rhs = 0;
+            if (true == expr->canEvaluate(context))
+             {
+               rhs = expr->evaluate(context);
+             }
+            else
+             {
+               references.push_back(RefContainer(context.getCurrentLocation(), 3, expr));
+             }
 
             ret |= ((lhs & 15) << 4) | (((rhs >> 1) & 0xFF) << 8);
           }
