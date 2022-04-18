@@ -585,20 +585,23 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
           {
          case 1: // LDI 12-bit immediate
           {
+            context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
-            result[ref.codeLocation] |= (arg & 0xfff) << 4;
+            result[ref.codeLocation / 2 - 1] |= (arg & 0xfff) << 4;
           }
             break;
          case 2: // LRA 12-bit immediate code location
           {
+            context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
-            result[ref.codeLocation] |= ((arg >> 1) & 0xfff) << 4;
+            result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xfff) << 4;
           }
             break;
          case 3: // BR 8-bit immediate
           {
+            context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
-            result[ref.codeLocation] |= ((arg >> 1) & 0xff) << 8;
+            result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xff) << 8;
           }
             break;
           }
@@ -779,10 +782,19 @@ std::vector<unsigned short> Parser::assembly()
     {
       std::set<std::string> refd;
       ref.expr->cantEvaluate(context, refd);
-      std::cerr << "Missing references on line " << ref.expr->lineNo << " to ";
+      std::cerr << "ERROR: Missing " << ((refd.size() < 2) ? "reference" : "references") << " on line " << ref.expr->lineNo << " to ";
+      bool first = true;
       for (const auto& str : refd)
        {
-         std::cerr << str << ", ";
+         if (true == first)
+          {
+            first = false;
+          }
+         else
+          {
+            std::cerr << ", ";
+          }
+         std::cerr << str;
        }
       std::cerr << std::endl;
     }

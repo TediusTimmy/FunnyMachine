@@ -31,17 +31,16 @@ things. The assembly system gives three ways to name the result of an operation:
 The last two are for the programmer to check their understanding of what is going on: they are diagnostic in nature.
 
 ### Label definition
-There is currently only one way to define labels, and it is not fully
-implemented, but two are planned.
+There is currently only one way to define labels, but two are planned.
 * Normal labels `label:`
 * Local labels `@label:`
 
 Note that the `@` won't be part of the label name with local labels. Local
 labels are only valid between two normal labels, and can't be used outside of
 them. The purpose of local labels is to allow the reuse of common label names
-in sections of assembly: for example `loop`. Also note that, currently,
-labels cannot be referenced before they are defined. It's a one-pass
-assembler, and I haven't added that infrastructure.
+in sections of assembly: for example `loop`. Labels resolve to the relative
+location of the label with respect to the next instruction. This is how they
+are used in LRA and the BR opcodes.
 
 ## Other syntax
 
