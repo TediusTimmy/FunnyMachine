@@ -27,6 +27,7 @@ things. The assembly system gives three ways to name the result of an operation:
 * `@` - Assign this name to the result, overwriting any previous name.
 * `#` - Assign this name to the result, warning if the previous result by this name is still on the belt.
 * `%` - Assign this name to the result, warning if the previous result by this name has fallen off of the belt.
+
 The last two are for the programmer to check their understanding of what is going on: they are diagnostic in nature.
 
 ### Label definition
@@ -34,6 +35,7 @@ There is currently only one way to define labels, and it is not fully
 implemented, but two are planned.
 * Normal labels `label:`
 * Local labels `@label:`
+
 Note that the `@` won't be part of the label name with local labels. Local
 labels are only valid between two normal labels, and can't be used outside of
 them. The purpose of local labels is to allow the reuse of common label names
