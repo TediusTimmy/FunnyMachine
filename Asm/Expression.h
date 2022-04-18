@@ -46,7 +46,7 @@ class Label : public Expression
    public:
       std::string referent;
 
-      int evaluate (const SymbolTable& context) const { return context.getLabel(referent); }
+      int evaluate (const SymbolTable& context) const { return context.getLabel(referent) - context.getUseLocation(); }
       bool canEvaluate (const SymbolTable& context) const { return context.hasLabel(referent); }
  };
 

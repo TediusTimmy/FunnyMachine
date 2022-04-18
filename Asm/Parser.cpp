@@ -319,7 +319,7 @@ std::shared_ptr<Expression> Parser::unary (const SymbolTable& context, bool isRe
    return ret;
  }
 
-std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool isResult) // TODO FIXME FROM HERE DOWN
+std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool isResult)
  {
    std::shared_ptr<Expression> ret;
 
@@ -611,10 +611,29 @@ std::vector<unsigned short> Parser::assembly()
          // If this IS an opcode, defer to pass three
          if (opcodes.end() == opcodes.find(TO_UPPER(nextToken.text)))
           {
-            std::cerr << "Labels and Symbols not implemented." << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            std::string name = nextToken.text;
+            GNT();
+            if (COLON == nextToken.lexeme)
+            {
+               context.setLabel(name, context.getCurrentLocation());
+               expect(COLON);
+               // TODO : back-references (back references from definition, forward references from use)
+            }
+            else if (EQUALITY == nextToken.lexeme)
+            {
+               std::cerr << "Symbols aren't implemented on " << nextToken.lineNumber << "." << std::endl;
+               while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+                {
+                  GNT();
+                }
+            }
+            else
              {
-               GNT();
+               std::cerr << "Expected a label declaration ':' or symbol declaration '=' but found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+               while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+                {
+                  GNT();
+                }
              }
           }
          break;
@@ -688,6 +707,8 @@ std::vector<unsigned short> Parser::assembly()
          if (opcodes.end() != opcodes.find(TO_UPPER(nextToken.text)))
           {
             int resultCount = results[TO_UPPER(nextToken.text)];
+            context.addLocation();
+            context.setUseLocation(context.getCurrentLocation());
             result.push_back(instruction(context));
             if (0 != resultCount)
              {
@@ -739,11 +760,11 @@ unsigned short Parser::instruction (const SymbolTable& context)
 
             int arg = expression(context, true)->evaluate(context);
 
-            if (0xf35 != ret) // Normal opcode
+            if (0 == (ret & 0xf00)) // Normal opcode
              {
                ret |= (arg & 15) << 8;
              }
-            else // NEG
+            else // NEG or RET
              {
                ret |= (arg & 15) << 12;
              }
@@ -799,6 +820,28 @@ unsigned short Parser::instruction (const SymbolTable& context)
           }
          break;
       case 4: // 1 result and an 8-bit immediate
+         try
+          {
+            ret = opcodes[operation];
+
+            int lhs = 0;
+            if (0 == (ret & 0xf0)) // Is this not BRA?
+            {
+               lhs = expression(context, true)->evaluate(context);
+               expect(COMMA);
+            }
+            int rhs = expression(context, false)->evaluate(context); // TODO - Forward references
+
+            ret |= ((lhs & 15) << 4) | (((rhs >> 1) & 0xFF) << 8);
+          }
+         catch (const ParserException& ex)
+          {
+            std::cerr << ex.what() << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
+          }
          break;
        }
     }
