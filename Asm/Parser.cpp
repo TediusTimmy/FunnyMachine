@@ -334,8 +334,18 @@ std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool is
             op->value = context.getCurrentResult() - context.getResult(nextToken.text);
             if (op->value > 14)
              {
-               std::cerr << "Use of result \"" << nextToken.text << "\" that has left the belt on " << nextToken.lineNumber << "." << " " << op->value << std::endl;
+               std::cerr << "Use of result \"" << nextToken.text << "\" that has left the belt on " << nextToken.lineNumber << "." << std::endl;
              }
+
+            op->lineNo = nextToken.lineNumber;
+            GNT();
+
+            ret = op;
+          }
+         else if (true == context.hasSymbol(nextToken.text))
+          {
+            std::shared_ptr<Constant> op = std::make_shared<Constant>();
+            op->value = context.getSymbol(nextToken.text);
 
             op->lineNo = nextToken.lineNumber;
             GNT();
@@ -351,13 +361,26 @@ std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool is
        }
       else
        {
-         std::shared_ptr<Label> op = std::make_shared<Label>();
-         op->referent = nextToken.text;
+         if (true == context.hasSymbol(nextToken.text))
+          {
+            std::shared_ptr<Constant> op = std::make_shared<Constant>();
+            op->value = context.getSymbol(nextToken.text);
 
-         op->lineNo = nextToken.lineNumber;
-         GNT();
+            op->lineNo = nextToken.lineNumber;
+            GNT();
 
-         ret = op;
+            ret = op;
+          }
+         else
+          {
+            std::shared_ptr<Label> op = std::make_shared<Label>();
+            op->referent = nextToken.text;
+
+            op->lineNo = nextToken.lineNumber;
+            GNT();
+
+            ret = op;
+          }
        }
       break;
    case NUMBER:
@@ -664,6 +687,10 @@ std::vector<unsigned short> Parser::assembly()
              {
                std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
              }
+            if (true == context.hasSymbol(name))
+             {
+               std::cerr << "Definition of label \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+             }
             context.setLabel(name, context.getCurrentLocation());
             context.addLocalLabel(name);
             expect(COLON);
@@ -671,11 +698,15 @@ std::vector<unsigned short> Parser::assembly()
           }
          else // Maybe there is garbage, but assume this is a result.
           {
+            if (true == context.hasSymbol(name))
+             {
+               std::cerr << "Definition of result \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+             }
             resultsToUpdate.insert(std::make_pair(name, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
           }
        }
          break;
-      case IDENTIFIER: // Either a label or a symbol (TODO: Symbols)
+      case IDENTIFIER: // Either a label or a symbol
          // If this IS an opcode, defer to pass three
          if (opcodes.end() == opcodes.find(TO_UPPER(nextToken.text)))
           {
@@ -687,6 +718,10 @@ std::vector<unsigned short> Parser::assembly()
                 {
                   std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
                 }
+               if (true == context.hasSymbol(name))
+                {
+                  std::cerr << "Definition of label \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+                }
                context.setLabel(name, context.getCurrentLocation());
                expect(COLON);
                processReferences(context, result, references);
@@ -694,10 +729,28 @@ std::vector<unsigned short> Parser::assembly()
              }
             else if (EQUALITY == nextToken.lexeme)
              {
-               std::cerr << "Symbols aren't implemented on " << nextToken.lineNumber << "." << std::endl;
-               while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+               if ((true == context.hasLabel(name)) || (true == context.hasResult(name)))
                 {
-                  GNT();
+                  std::cerr << "Predefined label or result will mask symbol \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
+                }
+               if (true == context.hasSymbol(name))
+                {
+                  std::cerr << "Redefinition of symbol \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
+                }
+               expect(EQUALITY); // What commie wrote this line of code?
+               try
+                {
+                  // Symbols should be able to reference labels, but that is a WHOLE other ball of wax.
+                  int val = expression(context, true)->evaluate(context);
+                  context.setSymbol(name, val);
+                }
+               catch (const ParserException& ex)
+                {
+                  std::cerr << ex.what() << std::endl;
+                  while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+                   {
+                     GNT();
+                   }
                 }
              }
             else
@@ -731,6 +784,11 @@ std::vector<unsigned short> Parser::assembly()
              {
                GNT();
              }
+          }
+         // Don't check for symbol existence in the next two cases, because both of them imply that a result by that name exists.
+         if (true == context.hasSymbol(nextToken.text))
+          {
+            std::cerr << "Definition of result \"" << nextToken.text << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
           }
          resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
          GNT();
@@ -854,6 +912,11 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
 
             int arg = expression(context, true)->evaluate(context);
 
+            if (arg > 15)
+             {
+               std::cerr << "Specified result " << arg << " that has left the belt on " << nextToken.lineNumber << "." << std::endl;
+             }
+
             if (0 == (ret & 0xf00)) // Normal opcode
              {
                ret |= (arg & 15) << 8;
@@ -880,6 +943,15 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
             int lhs = expression(context, true)->evaluate(context);
             expect(COMMA);
             int rhs = expression(context, true)->evaluate(context);
+
+            if (lhs > 15)
+             {
+               std::cerr << "Specified result " << lhs << " that has left the belt on " << nextToken.lineNumber << "." << std::endl;
+             }
+            if (rhs > 15)
+             {
+               std::cerr << "Specified result " << rhs << " that has left the belt on " << nextToken.lineNumber << "." << std::endl;
+             }
 
             ret |= ((lhs & 15) << 8) | ((rhs & 15) << 12);
           }
@@ -943,10 +1015,15 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
 
             int lhs = 0;
             if (0 == (ret & 0xf0)) // Is this not BRA?
-            {
+             {
                lhs = expression(context, true)->evaluate(context);
                expect(COMMA);
-            }
+             }
+
+            if (lhs > 15)
+             {
+               std::cerr << "Specified result " << lhs << " that has left the belt on " << nextToken.lineNumber << "." << std::endl;
+             }
 
             std::shared_ptr<Expression> expr = expression(context, false);
             int rhs = 0;

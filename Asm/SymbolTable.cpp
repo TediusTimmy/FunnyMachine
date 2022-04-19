@@ -18,32 +18,47 @@
 
 int SymbolTable::getLabel (const std::string& name) const
  {
-   return m_labels.find(name)->second;
+   return labels.find(name)->second;
  }
 
 void SymbolTable::setLabel (const std::string& name, int value)
  {
-   m_labels[name] = value;
+   labels[name] = value;
  }
 
 bool SymbolTable::hasLabel (const std::string& name) const
  {
-   return m_labels.find(name) != m_labels.end();
+   return labels.find(name) != labels.end();
  }
 
 int SymbolTable::getResult (const std::string& name) const
  {
-   return m_results.find(name)->second;
+   return results.find(name)->second;
  }
 
 void SymbolTable::setResult (const std::string& name, int value)
  {
-   m_results[name] = value;
+   results[name] = value;
  }
 
 bool SymbolTable::hasResult (const std::string& name) const
  {
-   return m_results.find(name) != m_results.end();
+   return results.find(name) != results.end();
+ }
+
+int SymbolTable::getSymbol (const std::string& name) const
+ {
+   return symbols.find(name)->second;
+ }
+
+void SymbolTable::setSymbol (const std::string& name, int value)
+ {
+   symbols[name] = value;
+ }
+
+bool SymbolTable::hasSymbol (const std::string& name) const
+ {
+   return symbols.find(name) != symbols.end();
  }
 
 void SymbolTable::addLocalLabel(const std::string& name)
@@ -55,7 +70,7 @@ void SymbolTable::flushLocalLabels()
  {
    for (const auto& label : localLabels)
     {
-      m_labels.erase(label);
+      labels.erase(label);
     }
    localLabels.clear();
  }

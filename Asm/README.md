@@ -45,8 +45,11 @@ are used in LRA and the BR opcodes.
 ## Other syntax
 
 ### Symbols
-Symbols aren't implemented, but are intended to have the syntax
-`symbol = value`. They are for implementing named constants in code.
+Symbols are for implementing named constants in code:
+`symbol = value`
+
+Symbols can only reference other symbols in their creation. There isn't the
+infrastructure to allow them to depend on labels.
 
 ### Assembler directives
 There also aren't any assembler directives. I'm not sure what to add. There

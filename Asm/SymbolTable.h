@@ -25,8 +25,9 @@
 class SymbolTable
  {
    private:
-      std::map<std::string, int> m_labels;
-      std::map<std::string, int> m_results;
+      std::map<std::string, int> labels;
+      std::map<std::string, int> results;
+      std::map<std::string, int> symbols;
 
       int currentResult;
       int currentLocation;
@@ -35,17 +36,21 @@ class SymbolTable
       std::set<std::string> localLabels;
 
    public:
-      std::map<std::string, int> & Labels() { return m_labels; }
-      std::map<std::string, int> & Results() { return m_results; }
+      std::map<std::string, int>& Labels() { return labels; }
+      std::map<std::string, int>& Results() { return results; }
+      std::map<std::string, int>& Symbols() { return symbols; }
 
       SymbolTable() : currentResult(0), currentLocation(0), useLocation(0) { }
 
-      int getLabel (const std::string &) const;
-      void setLabel (const std::string &, int);
-      bool hasLabel (const std::string &) const;
-      int getResult (const std::string &) const;
-      void setResult (const std::string &, int);
-      bool hasResult (const std::string &) const;
+      int getLabel (const std::string&) const;
+      void setLabel (const std::string&, int);
+      bool hasLabel (const std::string&) const;
+      int getResult (const std::string&) const;
+      void setResult (const std::string&, int);
+      bool hasResult (const std::string&) const;
+      int getSymbol (const std::string&) const;
+      void setSymbol (const std::string&, int);
+      bool hasSymbol (const std::string&) const;
 
       int getCurrentResult() const { return currentResult; }
       int getCurrentLocation() const { return currentLocation; }

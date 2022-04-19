@@ -1,5 +1,5 @@
 asm: Assembler.o Expression.o Lexer.o Parser.o SymbolTable.o
-	g++ -Wall -Wextra -Wpedantic -O2 -o asm Assembler.o Expression.o Lexer.o Parser.o SymbolTable.o
+	g++ -Wall -Wextra -Wpedantic -O2 -o asm.exe Assembler.o Expression.o Lexer.o Parser.o SymbolTable.o
 
 clean:
 	rm *.o asm.exe
