@@ -31,7 +31,7 @@ things. The assembly system gives three ways to name the result of an operation:
 The last two are for the programmer to check their understanding of what is going on: they are diagnostic in nature.
 
 ### Label definition
-There is currently only one way to define labels, but two are planned.
+There are two ways to define a label:
 * Normal labels `label:`
 * Local labels `@label:`
 
@@ -52,3 +52,33 @@ Symbols aren't implemented, but are intended to have the syntax
 There also aren't any assembler directives. I'm not sure what to add. There
 definitely needs to be a way to declare data, and possibly conditional
 assembly. Assembler directives will have the syntax `.directive and stuff`.
+
+### Expressions
+Any result, label, or symbol can be used in expressions that do math.
+
+Operator precedence:
+* `` + - ~ < > ` ``
+* `* / % << >> >>>`
+* `+ -`
+* `& | ^`
+* `= <> >= <= > <`
+* `||`
+* `&&`
+* `!`
+
+The first line is all unary operators. The `+` operator is absolute value,
+because unary plus is dumb. The `<` operator takes the low byte of an
+expression, and the `>` operator takes the high byte. This is a 16-bit
+architecture. The `` ` `` operator converts a label from the relative
+location with respect to the next instruction to the absolute offset within
+the current 8KB block. The `~` operator is bit-wise negation, while the `!`
+operator is logical negation.
+
+The `>>>` operator is a logical shift right. Both truncate their operand to
+sixteen bits first.
+
+Remember that `%10` is ALWAYS "the number 2" and NEVER "mod 10". The space
+is necessary `% 10`. Also, div and mod by zero will probably crash the
+assembler.
+
+Finally, `&&` and `||` short-circuit. Not that it should matter at this time.

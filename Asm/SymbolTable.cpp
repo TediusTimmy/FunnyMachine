@@ -45,3 +45,17 @@ bool SymbolTable::hasResult (const std::string& name) const
  {
    return m_results.find(name) != m_results.end();
  }
+
+void SymbolTable::addLocalLabel(const std::string& name)
+ {
+   localLabels.insert(name);
+ }
+
+void SymbolTable::flushLocalLabels()
+ {
+   for (const auto& label : localLabels)
+    {
+      m_labels.erase(label);
+    }
+   localLabels.clear();
+ }

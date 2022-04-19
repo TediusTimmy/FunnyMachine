@@ -587,6 +587,10 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
           {
             context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
+            if ((arg > 4095) || (arg < -2048))
+             {
+               std::cerr << "Immediate offset exceeds field on " << ref.expr->lineNo << std::endl;
+             }
             result[ref.codeLocation / 2 - 1] |= (arg & 0xfff) << 4;
           }
             break;
@@ -594,6 +598,10 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
           {
             context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
+            if ((arg > 4094) || (arg < -4096))
+             {
+               std::cerr << "Relative offset exceeds field on " << ref.expr->lineNo << std::endl;
+             }
             result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xfff) << 4;
           }
             break;
@@ -601,6 +609,10 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
           {
             context.setUseLocation(ref.codeLocation);
             int arg = ref.expr->evaluate(context);
+            if ((arg > 254) || (arg < -256))
+             {
+               std::cerr << "BRANCH offset exceeds field on " << ref.expr->lineNo << std::endl;
+             }
             result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xff) << 8;
           }
             break;
@@ -633,7 +645,7 @@ std::vector<unsigned short> Parser::assembly()
          // So, we'll do this in three passes
       switch(nextToken.lexeme)
        {
-      case AT: // Either a local label (TODO: Local Labels) or a result
+      case AT: // Either a local label or a result
        {
          GNT();
          if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
@@ -646,13 +658,16 @@ std::vector<unsigned short> Parser::assembly()
           }
          std::string name = nextToken.text;
          GNT();
-         if (COLON == nextToken.lexeme) // This is a local symbol.
+         if (COLON == nextToken.lexeme) // This is a local label.
           {
-            std::cerr << "Local symbols are not implemented.";
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            if (true == context.hasLabel(name))
              {
-               GNT();
+               std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
              }
+            context.setLabel(name, context.getCurrentLocation());
+            context.addLocalLabel(name);
+            expect(COLON);
+            processReferences(context, result, references);
           }
          else // Maybe there is garbage, but assume this is a result.
           {
@@ -667,19 +682,24 @@ std::vector<unsigned short> Parser::assembly()
             std::string name = nextToken.text;
             GNT();
             if (COLON == nextToken.lexeme)
-            {
+             {
+               if (true == context.hasLabel(name))
+                {
+                  std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
+                }
                context.setLabel(name, context.getCurrentLocation());
                expect(COLON);
                processReferences(context, result, references);
-            }
+               context.flushLocalLabels();
+             }
             else if (EQUALITY == nextToken.lexeme)
-            {
+             {
                std::cerr << "Symbols aren't implemented on " << nextToken.lineNumber << "." << std::endl;
                while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
                 {
                   GNT();
                 }
-            }
+             }
             else
              {
                std::cerr << "Expected a label declaration ':' or symbol declaration '=' but found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
@@ -823,7 +843,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
        }
 
       switch (iter->second)
-      {
+       {
       case 0:
          ret = opcodes[operation];
          break;
@@ -882,6 +902,20 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
             if (true == expr->canEvaluate(context))
              {
                arg = expr->evaluate(context);
+               if (3 == ret)
+                {
+                  if ((arg > 4095) || (arg < -2048))
+                   {
+                     std::cerr << "Immediate offset exceeds field on " << expr->lineNo << std::endl;
+                   }
+                }
+               else
+                {
+                  if ((arg > 4094) || (arg < -4096))
+                   {
+                     std::cerr << "Relative offset exceeds field on " << expr->lineNo << std::endl;
+                   }
+                }
              }
             else
              {
@@ -919,6 +953,10 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
             if (true == expr->canEvaluate(context))
              {
                rhs = expr->evaluate(context);
+               if ((rhs > 254) || (rhs < -256))
+                {
+                  std::cerr << "BRANCH offset exceeds field on " << expr->lineNo << std::endl;
+                }
              }
             else
              {

@@ -32,6 +32,8 @@ class SymbolTable
       int currentLocation;
       int useLocation;
 
+      std::set<std::string> localLabels;
+
    public:
       std::map<std::string, int> & Labels() { return m_labels; }
       std::map<std::string, int> & Results() { return m_results; }
@@ -52,6 +54,9 @@ class SymbolTable
 
       void addResult (int extra) { currentResult += 1 + extra; }
       void addLocation () { currentLocation += 2; }
+
+      void addLocalLabel(const std::string&);
+      void flushLocalLabels();
  };
 
 #endif /* SYMBOLTABLE_H */

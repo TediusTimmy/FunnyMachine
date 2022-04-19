@@ -160,7 +160,7 @@ int BitNot::evaluate (const SymbolTable& context) const
 
 int HighByte::evaluate (const SymbolTable& context) const
  {
-   return arg->evaluate(context) >> 8;
+   return (arg->evaluate(context) >> 8) & 0xFF;
  }
 
 int LowByte::evaluate (const SymbolTable& context) const
