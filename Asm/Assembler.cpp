@@ -25,7 +25,7 @@ int main (int argc, char ** argv)
  {
    if (argc < 3)
     {
-      printf("usage: Assembler asmfile.asm result.rom\n");
+      printf("usage: asm asmfile.asm result.rom\n");
       return 1;
     }
 

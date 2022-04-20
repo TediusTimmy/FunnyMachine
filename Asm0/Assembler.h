@@ -118,6 +118,7 @@ class ROM
       void NOP()
        {
          emit(0);
+         std::cout << "NOP" << std::endl;
        }
       int LD(word loc)
        {
