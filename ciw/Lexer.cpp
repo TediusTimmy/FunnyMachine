@@ -122,293 +122,294 @@ void Lexer::Get_NextToken (void)
          if ((n != '\0') && (n != '\n')) nextToken.text = static_cast<char>(n);
          switch (n)
           {
-            case '<':
-               switch (GetNextChar())
-                {
-                  case '-':
-                     nextToken.text += '-';
-                     nextToken.lexeme = ASSIGNMENT;
-                     break;
-                  case '>':
-                     nextToken.text += '>';
-                     nextToken.lexeme = INEQUALITY;
-                     break;
-                  case '=':
-                     nextToken.text += '=';
-                     nextToken.lexeme = LESS_THAN_OR_EQUAL_TO;
-                     break;
-                  case '<':
-                     nextToken.text += '<';
-                     nextToken.lexeme = SHIFT_LEFT;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = LESS_THAN;
-                     break;
-                }
+         case '<':
+            switch (GetNextChar())
+             {
+            case '-':
+               nextToken.text += '-';
+               nextToken.lexeme = ASSIGNMENT;
                break;
-
-            case '/':
-               switch (GetNextChar())
-                {
-                  case '/':
-                     n = GetNextChar();
-                     while ((n != '\n') && (n != '\0')) n = GetNextChar();
-                     nextToken.text = "__NEWLINE__";
-                     nextToken.lexeme = NEW_LINE;
-                     break;
-                  case '\\':
-                     nextToken.text += '\\';
-                     nextToken.lexeme = AND_OP;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = DIVIDE;
-                     break;
-                }
-               break;
-
             case '>':
-               switch (GetNextChar())
-                {
-                  case '>':
-                     nextToken.text += '>';
-                     if ('>' == GetNextChar())
-                     {
-                        nextToken.text += '>';
-                        nextToken.lexeme = UNSIGNED_SHIFT_RIGHT;
-                     }
-                     else
-                      {
-                        UnGetNextChar();
-                        nextToken.lexeme = SHIFT_RIGHT;
-                      }
-                     break;
-                  case '=':
-                     nextToken.text += '=';
-                     nextToken.lexeme = GREATER_THAN_OR_EQUAL_TO;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = GREATER_THAN;
-                     break;
-                }
-               break;
-
-            case '\\':
-               switch (GetNextChar())
-                {
-                  case '/':
-                     nextToken.text += '/';
-                     nextToken.lexeme = OR_OP;
-                     break;
-                  case '\n':
-                     nextToken.lexeme = COMMENT;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = INVALID;
-                     break;
-                }
-               break;
-
-            case ':':
-               switch (GetNextChar())
-                {
-                  case '=':
-                     nextToken.text += '=';
-                     nextToken.lexeme = ASSIGNMENT;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = COLON;
-                     break;
-                }
-               break;
-
-            case '!':
-               switch (GetNextChar())
-                {
-                  case '=':
-                     nextToken.text += '=';
-                     nextToken.lexeme = INEQUALITY;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = NOT;
-                     break;
-                }
-               break;
-
-            case '=':
-               switch (GetNextChar())
-                {
-                  case '=':
-                     nextToken.text += '=';
-                     nextToken.lexeme = EQUALITY;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = EQUAL_SIGN;
-                     break;
-                }
-               break;
-
-            case '&':
-               switch (GetNextChar())
-                {
-                  case '&':
-                     nextToken.text += '&';
-                     nextToken.lexeme = SHORT_AND;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = AND_OP;
-                     break;
-                }
-               break;
-
-            case '|':
-               switch (GetNextChar())
-                {
-                  case '|':
-                     nextToken.text += '|';
-                     nextToken.lexeme = SHORT_OR;
-                     break;
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = OR_OP;
-                     break;
-                }
-               break;
-
-            case '(':
-               switch (GetNextChar())
-                {
-                  case '*':
-                   {
-                     nextToken.text = "";
-                     nextToken.lexeme = COMMENT;
-                     bool done = false;
-                     while (!done)
-                      {
-                        n = GetNextChar();
-                        while ((n != '*') && (n != '\0')) n = GetNextChar();
-                        if (n != '\0') n = GetNextChar();
-                        while ((n == '*') && (n != '\0')) n = GetNextChar();
-                        if ((n == ')') || (n == '\0')) done = true;
-                      }
-                     if (n == '\0') Error("End of File found before comment terminated.");
-                     break;
-                   }
-                  default:
-                     UnGetNextChar();
-                     nextToken.lexeme = OPEN_PARENS;
-                     break;
-                }
-               break;
-
-            case '?':
-               nextToken.lexeme = XOR_OP;
-               break;
-
-            case '@':
-               nextToken.lexeme = AT;
-               break;
-
-            case '*':
-               nextToken.lexeme = MULTIPLY;
-               break;
-
-            case '#':
+               nextToken.text += '>';
                nextToken.lexeme = INEQUALITY;
                break;
-
-            case ';':
-               nextToken.lexeme = SEMICOLON;
+            case '=':
+               nextToken.text += '=';
+               nextToken.lexeme = LESS_THAN_OR_EQUAL_TO;
                break;
-
-            case '+':
-               nextToken.lexeme = PLUS;
+            case '<':
+               nextToken.text += '<';
+               nextToken.lexeme = SHIFT_LEFT;
                break;
-
-            case '-':
-               nextToken.lexeme = MINUS;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = LESS_THAN;
                break;
+             }
+            break;
 
-            case '%':
-               nextToken.lexeme = REMAINDER;
-               break;
-
-            case ')':
-               nextToken.lexeme = CLOSE_PARENS;
-               break;
-
-            case '[':
-               nextToken.lexeme = LEFT_BRACKET;
-               break;
-
-            case ']':
-               nextToken.lexeme = RIGHT_BRACKET;
-               break;
-
-            case '{':
-               nextToken.lexeme = LEFT_BRACE;
-               break;
-
-            case '}':
-               nextToken.lexeme = RIGHT_BRACE;
-               break;
-
-            case '\0':
-               nextToken.text = "__EOF__";
-               nextToken.lexeme = END_OF_FILE;
-               break;
-
-            case '\n':
+         case '/':
+            switch (GetNextChar())
+             {
+            case '/':
+               n = GetNextChar();
+               while ((n != '\n') && (n != '\0')) n = GetNextChar();
                nextToken.text = "__NEWLINE__";
                nextToken.lexeme = NEW_LINE;
                break;
-
-            case '"':
-               nextToken.text = "";
-               n = GetNextChar();
-               while ((n != '"') && (n != '\0') && (n != '\n'))
-                {
-                  nextToken.text += n;
-                  n = GetNextChar();
-                }
-               if (n == '\n')
-                {
-                  Error("End of Line found before string terminated.");
-                  UnGetNextChar();
-                }
-               if (n == '\0') Error("End of File found before string terminated.");
-
-               nextToken.lexeme = STRING;
+            case '\\':
+               nextToken.text += '\\';
+               nextToken.lexeme = AND_OP;
                break;
-
-            case '\'':
-               nextToken.text = "";
-               n = GetNextChar();
-               while ((n != '\'') && (n != '\0') && (n != '\n'))
-                {
-                  nextToken.text += n;
-                  n = GetNextChar();
-                }
-               if (n == '\n')
-                {
-                  Error("End of Line found before string terminated.");
-                  UnGetNextChar();
-                }
-               if (n == '\0') Error("End of File found before string terminated.");
-
-               nextToken.lexeme = STRING;
-               break;
-
             default:
+               UnGetNextChar();
+               nextToken.lexeme = DIVIDE;
+               break;
+             }
+            break;
+
+         case '>':
+            switch (GetNextChar())
+             {
+            case '>':
+               nextToken.text += '>';
+               switch (GetNextChar())
+                {
+               case '>':
+                  nextToken.text += '>';
+                  nextToken.lexeme = UNSIGNED_SHIFT_RIGHT;
+                  break;
+               default:
+                  UnGetNextChar();
+                  nextToken.lexeme = SHIFT_RIGHT;
+                  break;
+                }
+               break;
+            case '=':
+               nextToken.text += '=';
+               nextToken.lexeme = GREATER_THAN_OR_EQUAL_TO;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = GREATER_THAN;
+               break;
+             }
+            break;
+
+         case '\\':
+            switch (GetNextChar())
+             {
+            case '/':
+               nextToken.text += '/';
+               nextToken.lexeme = OR_OP;
+               break;
+            case '\n':
+               nextToken.lexeme = COMMENT;
+               break;
+            default:
+               UnGetNextChar();
                nextToken.lexeme = INVALID;
                break;
+             }
+            break;
+
+         case ':':
+            switch (GetNextChar())
+             {
+            case '=':
+               nextToken.text += '=';
+               nextToken.lexeme = ASSIGNMENT;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = COLON;
+               break;
+             }
+            break;
+
+         case '!':
+            switch (GetNextChar())
+             {
+            case '=':
+               nextToken.text += '=';
+               nextToken.lexeme = INEQUALITY;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = NOT;
+               break;
+             }
+            break;
+
+         case '=':
+            switch (GetNextChar())
+             {
+            case '=':
+               nextToken.text += '=';
+               nextToken.lexeme = EQUALITY;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = EQUAL_SIGN;
+               break;
+             }
+            break;
+
+         case '&':
+            switch (GetNextChar())
+             {
+            case '&':
+               nextToken.text += '&';
+               nextToken.lexeme = SHORT_AND;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = AND_OP;
+               break;
+             }
+            break;
+
+         case '|':
+            switch (GetNextChar())
+             {
+            case '|':
+               nextToken.text += '|';
+               nextToken.lexeme = SHORT_OR;
+               break;
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = OR_OP;
+               break;
+             }
+            break;
+
+         case '(':
+            switch (GetNextChar())
+             {
+            case '*':
+             {
+               nextToken.text = "";
+               nextToken.lexeme = COMMENT;
+               bool done = false;
+               while (!done)
+                {
+                  n = GetNextChar();
+                  while ((n != '*') && (n != '\0')) n = GetNextChar();
+                  if (n != '\0') n = GetNextChar();
+                  while ((n == '*') && (n != '\0')) n = GetNextChar();
+                  if ((n == ')') || (n == '\0')) done = true;
+                }
+               if (n == '\0') Error("End of File found before comment terminated.");
+               break;
+             }
+            default:
+               UnGetNextChar();
+               nextToken.lexeme = OPEN_PARENS;
+               break;
+             }
+            break;
+
+         case '?':
+            nextToken.lexeme = XOR_OP;
+            break;
+
+         case '@':
+            nextToken.lexeme = AT;
+            break;
+
+         case '*':
+            nextToken.lexeme = MULTIPLY;
+            break;
+
+         case '#':
+            nextToken.lexeme = INEQUALITY;
+            break;
+
+         case ';':
+            nextToken.lexeme = SEMICOLON;
+            break;
+
+         case '+':
+            nextToken.lexeme = PLUS;
+            break;
+
+         case '-':
+            nextToken.lexeme = MINUS;
+            break;
+
+         case '%':
+            nextToken.lexeme = REMAINDER;
+            break;
+
+         case ')':
+            nextToken.lexeme = CLOSE_PARENS;
+            break;
+
+         case '[':
+            nextToken.lexeme = LEFT_BRACKET;
+            break;
+
+         case ']':
+            nextToken.lexeme = RIGHT_BRACKET;
+            break;
+
+         case '{':
+            nextToken.lexeme = LEFT_BRACE;
+            break;
+
+         case '}':
+            nextToken.lexeme = RIGHT_BRACE;
+            break;
+
+         case '\0':
+            nextToken.text = "__EOF__";
+            nextToken.lexeme = END_OF_FILE;
+            break;
+
+         case '\n':
+            nextToken.text = "__NEWLINE__";
+            nextToken.lexeme = NEW_LINE;
+            break;
+
+         case '"':
+            nextToken.text = "";
+            n = GetNextChar();
+            while ((n != '"') && (n != '\0') && (n != '\n'))
+             {
+               nextToken.text += n;
+               n = GetNextChar();
+             }
+            if (n == '\n')
+             {
+               Error("End of Line found before string terminated.");
+               UnGetNextChar();
+             }
+            if (n == '\0') Error("End of File found before string terminated.");
+
+            nextToken.lexeme = STRING;
+            break;
+
+         case '\'':
+            nextToken.text = "";
+            n = GetNextChar();
+            while ((n != '\'') && (n != '\0') && (n != '\n'))
+             {
+               nextToken.text += n;
+               n = GetNextChar();
+             }
+            if (n == '\n')
+             {
+               Error("End of Line found before string terminated.");
+               UnGetNextChar();
+             }
+            if (n == '\0') Error("End of File found before string terminated.");
+
+            nextToken.lexeme = STRING;
+            break;
+
+         default:
+            nextToken.lexeme = INVALID;
+            break;
           }
        }
     }
@@ -422,63 +423,64 @@ Token Lexer::GetNextToken (void)
 
    switch (result.lexeme)
     {
-      case AND:
-         switch (nextToken.lexeme)
-          {
-            case THEN:
-               result.lexeme = SHORT_AND;
-               result.text = result.text + " " + nextToken.text;
+   case AND:
+      switch (nextToken.lexeme)
+       {
+      case THEN:
+         result.lexeme = SHORT_AND;
+         result.text = result.text + " " + nextToken.text;
 
-               Get_NextToken();
+         Get_NextToken();
 
-               break;
-            default:
-               result.lexeme = AND_OP;
-               break;
-          }
+         break;
+      default:
+         result.lexeme = AND_OP;
+         break;
+       }
+      break;
+
+   case OR:
+      switch (nextToken.lexeme)
+       {
+      case ELSE:
+         result.lexeme = SHORT_OR;
+         result.text = result.text + " " + nextToken.text;
+
+         Get_NextToken();
+
+         break;
+      default:
+         result.lexeme = OR_OP;
+         break;
+       }
+      break;
+
+   case END:
+      switch (nextToken.lexeme)
+       {
+      case IF:
+         result.lexeme = FI;
+         result.text = result.text + " " + nextToken.text;
+
+         Get_NextToken();
          break;
 
-      case OR:
-         if (ELSE == nextToken.lexeme)
-          {
-            result.lexeme = SHORT_OR;
-            result.text = result.text + " " + nextToken.text;
+      case FUNCTION:
+         result.lexeme = END_FUNCTION;
+         result.text = result.text + " " + nextToken.text;
 
-            Get_NextToken();
-          }
-         else
-          {
-            result.lexeme = OR_OP;
-          }
-         break;
-
-      case END:
-         switch (nextToken.lexeme)
-          {
-
-            case IF:
-               result.lexeme = FI;
-               result.text = result.text + " " + nextToken.text;
-
-               Get_NextToken();
-               break;
-
-            case FUNCTION:
-               result.lexeme = END_FUNCTION;
-               result.text = result.text + " " + nextToken.text;
-
-               Get_NextToken();
-               break;
-
-            default:
-               Error("END without IF or FUNCTION");
-               result.lexeme = INVALID;
-               break;
-          }
+         Get_NextToken();
          break;
 
       default:
+         Error("END without IF or FUNCTION");
+         result.lexeme = INVALID;
          break;
+       }
+      break;
+
+   default:
+      break;
     }
 
    return result;

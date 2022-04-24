@@ -61,11 +61,11 @@
 
 <clause>       =>      <predicate> { ( "&&" | "and" "then" ) <predicate> }
 
-<predicate>    =>      <relation> { <equivalence> <relation> }
+<predicate>    =>      <relation> [ <equivalence> <relation> ]
 
 <equivalence>  =>      "=" | "==" | "#" | "<>" | "!="
 
-<relation>     =>      <shift> { <relate> <shift> }
+<relation>     =>      <shift> [ <relate> <shift> ]
 
 <relate>       =>      ">=" | ">" | "<=" | "<"
 
@@ -75,7 +75,7 @@
 
 <term>         =>      <primary> { ( "*" | "/" | "%" ) <primary> }
 
-<primary>      =>      ( "+" | "-" | "!" | "not" | "~" ) <primary>
+<primary>      =>      ( "+" | "-" | "!" | "not" ) <primary>
                        <constant>
                        <location>
                        "(" <expression> ")"
@@ -114,3 +114,4 @@ Notes:
    string constants are the way to create array constants
       naked strings in expressions resolve to their first two bytes
    array accesses are not bounds checked
+   Use true -1, false 0 so that logical not and bit-wise not are the same

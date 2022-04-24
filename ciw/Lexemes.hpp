@@ -86,8 +86,7 @@ enum Lexeme
    MULTIPLY,
    DIVIDE,
    REMAINDER,
-   NOT,
-   BITNOT      //
+   NOT
  };
 
 #endif /* LEXEME_HPP */
