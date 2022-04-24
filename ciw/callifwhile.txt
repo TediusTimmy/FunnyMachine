@@ -1,0 +1,116 @@
+<program>      =>      <constants> <globals> <functions>
+
+<constants>    =>      { "const" <identifier> <assign> <const_expr> <nl> }
+
+<globals>      =>      { "dim" [ "@" <const_expr> ] <identifier> [ "[" <const_expr> "]" ]
+                               { ";" [ "@" <const_expr> ] <identifier> [ "[" <const_expr> "]" ] } <nl> }
+
+<variables>    =>      { "dim" [ "static" [ "@" <const_expr> ] ] <identifier> [ "[" <const_expr> "]" ]
+                               { ";" [ "static" [ "@" <const_expr> ] ] <identifier> [ "[" <const_expr> "]" ] } <nl> }
+
+<functions>    =>      <function_def> <nl> <functions>
+                       ""
+
+<function_def> =>      "function" <identifier> "(" <params> ")" <nl>
+                               <variables> <statements>
+                               "end" "function"
+                       "declare" <identifier> "(" <params> ")"
+
+<params>       =>      [ <identifier> { ";" <identifier> } ]
+
+<statements>   =>      <statement> <nl> <statements>
+                       ""
+
+<statement>    =>      <location> <assign> <expression>
+                       "if" <expression> "then" <nl> <statements>
+                               { "else" "if" <expression> "then" <nl> <statements> }
+                               [ "else" <nl> <statements> ]
+                               ("end if" | "fi")
+                       "if" <expression> "then" <statement> [ "else" <statement> ]
+                       [ ":" <identifier> ":" ]
+                               "do" [ ( "while" | "until" ) <expression> ] <nl> 
+                               <statements>
+                               "loop" [ ( "while" | "until" ) <expression> ]
+                       "break" [ ":" <label> ":" ]
+                       "continue" [ ":" <label> ":" ]
+                       ( "while" | "until" ) [ ":" <label> ":" ] <expression> <nl>
+
+                       "return" [ <expression> ]
+                       "tailcall" <arguments>
+                       "call" <function> "(" <arguments> ")"
+                       ""
+
+<nl>           =>      "//" .* "\n"
+                       "\n"
+
+<identifier>   =>      <letter> { <letter> | <number> }
+
+<label>        =>      <identifier>
+
+<variable>     =>      <identifier>
+
+<function>     =>      <identifier>
+
+<location>     =>      <variable> [ "[" <expression> "]" ]
+
+<assign>       =>      "=" | ":=" | "<-"
+
+<expression>   =>      <boolean> { ( "|" | "\/" | "or" | "&" | "/\" | "and" | "?" | "xor" ) <boolean> }
+
+<boolean>      =>      <clause> { ( "||" | "or" "else" ) <clause> }
+
+<clause>       =>      <predicate> { ( "&&" | "and" "then" ) <predicate> }
+
+<predicate>    =>      <relation> { <equivalence> <relation> }
+
+<equivalence>  =>      "=" | "==" | "#" | "<>" | "!="
+
+<relation>     =>      <shift> { <relate> <shift> }
+
+<relate>       =>      ">=" | ">" | "<=" | "<"
+
+<shift>        =>      <simple> { ( "<<" | ">>" ) <simple> }
+
+<simple>       =>      <term> { ( "+" | "-" ) <term> }
+
+<term>         =>      <primary> { ( "*" | "/" | "%" ) <primary> }
+
+<primary>      =>      ( "+" | "-" | "!" | "not" | "~" ) <primary>
+                       <constant>
+                       <location>
+                       "(" <expression> ")"
+                       <function> "(" <arguments> ")"
+
+<const_expr>   =>      Any <expression> such that all <primary>s are not a <location>
+                       or a <function> call.
+
+<arguments>    =>      [ <expression> { ";" <expression> } ]
+
+<constant>     =>      <number>+
+                       <identifier>
+                       "'" [~\n]* "'"
+                       '"' [~\n]* '"'
+                       "{" <constant> { ";" <constant> } "}"
+
+<comment>      =>      ^"#" .* "\n"
+                       "(*" .* "*)"
+
+
+Notes:
+   break and continue with labels work as in Java
+   lines can be continued by ending them with a '\' before the newline
+      there must be no space between the '\' and the '\n'
+   lines that begin with a '#' are comment lines
+      the FIRST byte of the line must be the '#'
+   Pascal/Oberon-style multi-line comments were included to allow
+      code to be commented out easily
+   '?' is bitwise XOR, so it has a one character token
+      not that I need to copy that C abomination, anyhow
+   arrays cannot be passed to functions,
+      and must always be fully qualified array[value]
+   the only data type is the SIGNED 16 bit word
+   tailcall is return f(args)
+   the program begins with a function called "program"
+   string constants are the way to create array constants
+      naked strings in expressions resolve to their first two bytes
+   array accesses are not bounds checked
