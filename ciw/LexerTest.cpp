@@ -82,6 +82,8 @@ int main (void)
    tests.push_back(std::make_pair("<<", SHIFT_LEFT));
    tests.push_back(std::make_pair(">>", SHIFT_RIGHT));
    tests.push_back(std::make_pair(">>>", UNSIGNED_SHIFT_RIGHT));
+   tests.push_back(std::make_pair(">><", ROTATE_RIGHT));
+   tests.push_back(std::make_pair("<<>", ROTATE_LEFT));
    tests.push_back(std::make_pair("!", NOT));
    tests.push_back(std::make_pair("not", NOT));
    tests.push_back(std::make_pair(":", COLON));

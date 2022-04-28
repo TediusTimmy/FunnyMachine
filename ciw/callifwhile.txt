@@ -69,7 +69,7 @@
 
 <relate>       =>      ">=" | ">" | "<=" | "<"
 
-<shift>        =>      <simple> { ( "<<" | ">>" ) <simple> }
+<shift>        =>      <simple> { ( "<<" | ">>" | ">>>" | ">><" | "<<>" ) <simple> }
 
 <simple>       =>      <term> { ( "+" | "-" ) <term> }
 

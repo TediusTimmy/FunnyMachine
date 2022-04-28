@@ -139,7 +139,17 @@ void Lexer::Get_NextToken (void)
                break;
             case '<':
                nextToken.text += '<';
-               nextToken.lexeme = SHIFT_LEFT;
+               switch (GetNextChar())
+                {
+               case '>':
+                  nextToken.text += '>';
+                  nextToken.lexeme = ROTATE_LEFT;
+                  break;
+               default:
+                  UnGetNextChar();
+                  nextToken.lexeme = SHIFT_LEFT;
+                  break;
+                }
                break;
             default:
                UnGetNextChar();
@@ -178,6 +188,10 @@ void Lexer::Get_NextToken (void)
                case '>':
                   nextToken.text += '>';
                   nextToken.lexeme = UNSIGNED_SHIFT_RIGHT;
+                  break;
+               case '<':
+                  nextToken.text += '<';
+                  nextToken.lexeme = ROTATE_RIGHT;
                   break;
                default:
                   UnGetNextChar();
