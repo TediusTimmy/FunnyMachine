@@ -11,3 +11,5 @@ The "callifwhile" concept became, by January of 2014, DB 14. DB 14 had three typ
 Later in 2014, I bought my first house, and there's a gap there in programming productivity. By August, I was working on attempts to demonstrate that I had learned enough, on my own, to write a simple scripting language interpreter for a program I maintained at work. In May of 2015, I finished "the demonstrator", which was obviously based on an improved DB 14 from March 2014. It demonstrated a scripting language that we could use at work (simple enough to re-implement by hand, and it didn't add new library dependencies to the code base, which Python or Lua would have).
 
 Needless to say, "the demonstrator" went nowhere. But, the code to "the demonstrator" and the original DB 14 were what I cannibalized to make the assembler and my new "callifwhile", which is closer to the old "ifwhile" then it is to the old "callifwhile".
+
+I'm going to leave the 2014 copyright date on everything. Under the laws of the United States, I won't live to see the copyright expire anyway.

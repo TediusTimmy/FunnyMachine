@@ -112,6 +112,5 @@ Notes:
    tailcall is return f(args)
    the program begins with a function called "program"
    string constants are the way to create array constants
-      naked strings in expressions resolve to their first two bytes
    array accesses are not bounds checked
    Use true -1, false 0 so that logical not and bit-wise not are the same
