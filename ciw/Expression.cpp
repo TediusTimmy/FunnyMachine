@@ -23,13 +23,46 @@ void DB_panic (const std::string &, const CallingContext &, size_t) __attribute_
 
 void Constant::emit(const CallingContext&) const
  {
-   std::cout << "Push " << value << " to stack." << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   if (value > 0xFFF)
+   {
+      std::cout << "        LDI " << ((value >> 4) & 0xFFF) << std::endl;
+      std::cout << "        LDI 4" << std::endl;
+      std::cout << "        SHL 1, 0" << std::endl;
+      std::cout << "        LDI " << (value & 0xF) << std::endl;
+      std::cout << "        OR 1, 0" << std::endl;
+   }
+   else
+   {
+      std::cout << "        LDI " << value << std::endl;
+   }
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 
-void Variable::emit(const CallingContext&) const
+void Variable::emit(const CallingContext& context) const
  {
-   std::cout << "Push value of " << referent << " to stack." << std::endl;
+   int location = context.getValue(referent, lineNo);
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   if (location > 0xFFF)
+   {
+      std::cout << "        LDI " << ((location >> 4) & 0xFFF) << std::endl;
+      std::cout << "        LDI 4" << std::endl;
+      std::cout << "        SHL 1, 0" << std::endl;
+      std::cout << "        LDI " << (location & 0xF) << std::endl;
+      std::cout << "        OR 1, 0" << std::endl;
+   }
+   else
+   {
+      std::cout << "        LDI " << location << std::endl;
+   }
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int Variable::evaluate(const CallingContext& context) const
@@ -42,7 +75,14 @@ void OrOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        OR  0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int OrOp::evaluate(const CallingContext& context) const
@@ -55,7 +95,14 @@ void AndOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        AND 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int AndOp::evaluate(const CallingContext& context) const
@@ -68,7 +115,14 @@ void XorOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        XOR 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int XorOp::evaluate(const CallingContext& context) const
@@ -189,7 +243,14 @@ void ShiftLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SHL 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int ShiftLeft::evaluate(const CallingContext& context) const
@@ -202,7 +263,14 @@ void ShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        ASR 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int ShiftRight::evaluate(const CallingContext& context) const
@@ -215,7 +283,14 @@ void UnsignedShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SHR 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int UnsignedShiftRight::evaluate(const CallingContext& context) const
@@ -228,7 +303,14 @@ void RotateLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        ROL 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int RotateLeft::evaluate(const CallingContext& context) const
@@ -243,7 +325,14 @@ void RotateRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        ROR 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int RotateRight::evaluate(const CallingContext& context) const
@@ -258,7 +347,14 @@ void Plus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        ADD 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int Plus::evaluate(const CallingContext& context) const
@@ -271,7 +367,14 @@ void Minus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int Minus::evaluate(const CallingContext& context) const
@@ -284,7 +387,14 @@ void Multiply::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        MUL 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int Multiply::evaluate(const CallingContext& context) const
@@ -297,7 +407,14 @@ void Divide::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        DIV 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 1" << std::endl;
  }
 
 int Divide::evaluate(const CallingContext& context) const
@@ -310,7 +427,14 @@ void Remainder::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        DIV 0, 1" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int Remainder::evaluate(const CallingContext& context) const
@@ -323,7 +447,15 @@ void DerefVar::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        ADD 0, 1" << std::endl;
+   std::cout << "        LD  0" << std::endl;
+   std::cout << "        ST  nsp, 0" << std::endl;
  }
 
 int DerefVar::evaluate(const CallingContext& context) const
@@ -348,7 +480,11 @@ int Abs::evaluate(const CallingContext& context) const
 void Negate::emit(const CallingContext& context) const
  {
    arg->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        NEG 0" << std::endl;
+   std::cout << "        ST  sp, 0" << std::endl;
  }
 
 int Negate::evaluate(const CallingContext& context) const
@@ -360,7 +496,11 @@ int Negate::evaluate(const CallingContext& context) const
 void Not::emit(const CallingContext& context) const
  {
    arg->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        NOT 0" << std::endl;
+   std::cout << "        ST  sp, 0" << std::endl;
  }
 
 int Not::evaluate(const CallingContext& context) const
