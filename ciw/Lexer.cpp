@@ -79,7 +79,6 @@ void Lexer::Get_NextToken (void)
  {
    nextToken = Token(lineNumber);
 
-   nextToken.lexeme = COMMENT;
    while (nextToken.lexeme == COMMENT)
     {
       long n = GetNextNonWhite();

@@ -31,7 +31,7 @@ class Token
       size_t lineNumber;
 
       Token(const Token&) = default;
-      Token(size_t lineNo) : lineNumber(lineNo) { }
+      Token(size_t lineNo) : lexeme(COMMENT), lineNumber(lineNo) { }
       Token(Lexeme lexeme, std::string text, size_t lineNo) : lexeme(lexeme), text(text), lineNumber(lineNo) { }
 
       Token& operator= (const Token & src) = default;
