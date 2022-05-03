@@ -105,7 +105,7 @@ void Lexer::Get_NextToken (void)
           }
          // Get_NextToken doesn't do Token collapsing. That is GetNextToken's job.
        }
-      else if (std::isdigit(n) || ('.' == n) || (',' == n)) //Read a number or the begining of one
+      else if (std::isdigit(n)) //Read a number or the begining of one
        { //Read in a number
          nextToken.text = ""; // Clear a previous \\\n comment, if present.
          while (std::isdigit(n))
@@ -421,6 +421,8 @@ void Lexer::Get_NextToken (void)
             break;
 
          default:
+            nextToken.text = "INVALID : ";
+            nextToken.text += n;
             nextToken.lexeme = INVALID;
             break;
           }

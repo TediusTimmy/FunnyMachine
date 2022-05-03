@@ -92,8 +92,7 @@
                        '"' [~\n]* '"'
                        "{" <constant> { ";" <constant> } "}"
 
-<comment>      =>      ^"#" .* "\n"
-                       "(*" .* "*)"
+<comment>      =>      "(*" .* "*)"
 
 
 Notes:

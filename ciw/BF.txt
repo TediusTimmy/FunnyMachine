@@ -1,0 +1,66 @@
+// Yay! No nasty array hack!
+dim prog [3000]; tape [3000]; input
+
+// Sadly, there is a nasty IO hack :(
+// Done with nasty IO hack
+
+function program ()
+   dim nest; pc; dp
+
+   nest <- 1
+   pc := 0
+   do while nest
+      call &read, &input
+      if (input == 43) || (input == 44) || (input == 45) || (input == 46) || \
+         (input == 60) || (input == 62) || (input == 91) || (input == 93) then
+         prog[pc] = input
+         pc = pc + 1
+      else if (input = 33) || (input = -1) then
+         prog[pc] = 33
+         nest = 0
+      fi
+   loop
+
+   pc <- 0
+   dp <- 0
+   do while prog[pc] != 33
+      if prog[pc] == 43 then
+         tape[dp] = (tape[dp] + 1) & 255
+      else if prog[pc] == 45 then
+         tape[dp] = (tape[dp] - 1) & 255
+      else if prog[pc] == 44 then
+         call &read, &tape + dp
+         tape[dp] = tape[dp] & 255
+      else if prog[pc] == 46 then
+         call &write, tape[dp]
+      else if prog[pc] == 60 then
+         dp = dp - 1
+         if dp = -1 then dp = 29999
+      else if prog[pc] == 62 then
+         dp = dp + 1
+         if dp = 30000 then dp = 0
+      else if prog[pc] == 91 then
+         if not tape[dp] then
+            nest = 1
+            do while nest
+               pc = pc + 1
+               if prog[pc] == 91 then nest = nest + 1
+               if prog[pc] == 93 then nest = nest - 1
+            loop
+         fi
+      else if prog[pc] == 93 then
+         if tape[dp] then
+            nest = 1
+            do while nest
+               pc = pc - 1
+               if prog[pc] == 91 then nest = nest - 1
+               if prog[pc] == 93 then nest = nest + 1
+            loop
+         fi
+      fi
+
+      pc = pc + 1
+   loop
+
+   return
+end function
