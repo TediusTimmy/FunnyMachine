@@ -21,33 +21,8 @@
 
 void DB_panic (const std::string &, const CallingContext &, size_t) __attribute__ ((__noreturn__));
 
-void VS_pushAddr (short addr)
+void beltVal(short val)
  {
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
-   if (location > 0xFFF)
-   {
-      std::cout << "        LDI " << ((location >> 4) & 0xFFF) << std::endl;
-      std::cout << "        LDI 4" << std::endl;
-      std::cout << "        SHL 1, 0" << std::endl;
-      std::cout << "        LDI " << (location & 0xF) << std::endl;
-      std::cout << "        OR 1, 0" << std::endl;
-   }
-   else
-   {
-      std::cout << "        LDI " << location << std::endl;
-   }
-   std::cout << "        ST  0, nsp" << std::endl;
- }
-
-void VS_pushVal (short val)
- {
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
    if (val > 0xFFF)
    {
       std::cout << "        LDI " << ((val >> 4) & 0xFFF) << std::endl;
@@ -60,11 +35,42 @@ void VS_pushVal (short val)
    {
       std::cout << "        LDI " << val << std::endl;
    }
+ }
+
+void VS_pushAddr (short addr)
+ {
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   beltVal(location);
    std::cout << "        ST  0, nsp" << std::endl;
+ }
+
+void VS_pushVal (short val)
+ {
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   beltVal(val);
+   std::cout << "        ST  0, nsp" << std::endl;
+ }
+
+void VS_LDR (short addr)
+ {
+   std::cout << " @four  LDI 4" << std::endl;
+   std::cout << " @bp    LD  0" << std::endl;
+   beltVal(addr);
+   std::cout << "        ADD  bp, 0" << std::endl;
  }
 
 void VS_popAddr (short addr) // pop value and store in addr
  {
+   VS_pop();
+   beltVal(addr);
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        ST  0, 1" << std::endl;
  }
 
 void VS_pop (void)

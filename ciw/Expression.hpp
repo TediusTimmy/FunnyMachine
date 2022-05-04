@@ -23,6 +23,7 @@
 
 void VS_pushAddr (short addr);
 void VS_pushVal (short val);
+void VS_LDR (short addr);
 void VS_popAddr (short addr);
 void VS_pop (void);
 
