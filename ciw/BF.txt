@@ -10,11 +10,13 @@ function read ()
       input <- readL[0]
    loop
    input := input >> 8
+   return 0
 end function
 function write (value) // This is broken as ...
    dim writeL
    writeL <- 40960
    writeL[0] := value | 7 << 8
+   return 0
 end function
 # Done with nasty IO hack
 

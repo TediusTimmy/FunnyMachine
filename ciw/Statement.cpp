@@ -23,40 +23,46 @@ void DB_panic (const std::string &) __attribute__ ((__noreturn__));
 
 void RecAssignState::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
 void Assignment::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
 void IfStatement::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
 void DoStatement::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
 void BreakStatement::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
-void ReturnStatement::emit(const CallingContext&) const
+void ReturnStatement::emit(const CallingContext& context) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   value->emit(context);
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @four  LDI 4" << std::endl;
+   std::cout << " @bp    LDI four" << std::endl;
+   std::cout << "        ST bp, two" << std::endl;
+   std::cout << "        SUB bp, two" << std::endl;
+   std::cout << "        ST  0, two" << std::endl;
  }
 
 void TailCallStatement::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
 void CallStatement::emit(const CallingContext&) const
  {
-   std::cout << "In " << __FUNCTION__ << std::endl;
+   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }

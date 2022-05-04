@@ -509,13 +509,33 @@ int Not::evaluate(const CallingContext& context) const
  }
 
 
+/*
+   Call Stack:
+      Arguments, left-to-right
+      Return Address
+      Previous Base Pointer
+      Locals
+*/
+
 void FunctionCall::emit(const CallingContext& context) const
  {
    for (auto arg : args)
     {
       arg->emit(context);
     }
-   std::cout << "Call function " << name << std::endl;
+   std::cout << " @sa    LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @ra    SUB  0, 1" << std::endl;
+   std::cout << " @bp    SUB  0, 2" << std::endl;
+   std::cout << " @nsp   SUB  0, 3" << std::endl;
+   std::cout << " @ba    LDI 4" << std::endl;
+   std::cout << " @obp   LD  0" << std::endl;
+   std::cout << "        ST  obp, ba" << std::endl;
+   std::cout << "        ST  nsp, sa" << std::endl;
+   std::cout << "        LRA return_TODO" << std::endl;
+   std::cout << "        ST  0, ra" << std::endl;
+   std::cout << "        LRA function_" << name << std::endl;
+   std::cout << "        RET 0" << std::endl;
  }
 
 int FunctionCall::evaluate(const CallingContext& context) const

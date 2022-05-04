@@ -1033,6 +1033,12 @@ std::shared_ptr<Statement> Parser::statement (CallingContext& context)
              {
                op->value = expression(context);
              }
+            else
+             {
+               std::shared_ptr<Constant> val = std::make_shared<Constant>();
+               val->value = 0;
+               op->value = val;
+             }
           }
          break;
 

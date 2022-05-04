@@ -75,6 +75,12 @@ int main (int argc, char ** argv)
       DB_panic("Too many arguments for function \"program\".");
 
    programCall.emit(TheContext);
+   std::cout << "        LDI $BFF" << std::endl;
+   std::cout << "        LDI 4" << std::endl;
+   std::cout << "        SHL 1, 0" << std::endl;
+   std::cout << "        LDI $F" << std::endl;
+   std::cout << "        OR 1, 0" << std::endl;
+   std::cout << "        ST 0, 0" << std::endl;
 
    for (auto function : funDefs)
     {
