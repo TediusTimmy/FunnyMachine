@@ -21,31 +21,8 @@
 
 void DB_panic (const std::string &, const CallingContext &, size_t) __attribute__ ((__noreturn__));
 
-void Constant::emit(const CallingContext&) const
+void VS_pushAddr (short addr)
  {
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
-   if (value > 0xFFF)
-   {
-      std::cout << "        LDI " << ((value >> 4) & 0xFFF) << std::endl;
-      std::cout << "        LDI 4" << std::endl;
-      std::cout << "        SHL 1, 0" << std::endl;
-      std::cout << "        LDI " << (value & 0xF) << std::endl;
-      std::cout << "        OR 1, 0" << std::endl;
-   }
-   else
-   {
-      std::cout << "        LDI " << value << std::endl;
-   }
-   std::cout << "        ST  0, nsp" << std::endl;
- }
-
-
-void Variable::emit(const CallingContext& context) const
- {
-   int location = context.getValue(referent, lineNo);
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << " @nsp   SUB sp, two" << std::endl;
@@ -65,6 +42,51 @@ void Variable::emit(const CallingContext& context) const
    std::cout << "        ST  0, nsp" << std::endl;
  }
 
+void VS_pushVal (short val)
+ {
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+   if (val > 0xFFF)
+   {
+      std::cout << "        LDI " << ((val >> 4) & 0xFFF) << std::endl;
+      std::cout << "        LDI 4" << std::endl;
+      std::cout << "        SHL 1, 0" << std::endl;
+      std::cout << "        LDI " << (val & 0xF) << std::endl;
+      std::cout << "        OR 1, 0" << std::endl;
+   }
+   else
+   {
+      std::cout << "        LDI " << val << std::endl;
+   }
+   std::cout << "        ST  0, nsp" << std::endl;
+ }
+
+void VS_popAddr (short addr) // pop value and store in addr
+ {
+ }
+
+void VS_pop (void)
+ {
+   std::cout << " @two   LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << "        ST  nsp, two" << std::endl;
+ }
+
+void Constant::emit(const CallingContext&) const
+ {
+   VS_pushVal(value);
+ }
+
+
+void Variable::emit(const CallingContext& context) const
+ {
+   int location = context.getValue(referent, lineNo);
+   VS_pushAddr(location);
+ }
+
 int Variable::evaluate(const CallingContext& context) const
  {
    return context.getValue(referent, lineNo);
@@ -75,10 +97,7 @@ void OrOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        OR  0, 1" << std::endl;
@@ -95,10 +114,7 @@ void AndOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        AND 0, 1" << std::endl;
@@ -115,10 +131,7 @@ void XorOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        XOR 0, 1" << std::endl;
@@ -243,10 +256,7 @@ void ShiftLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SHL 0, 1" << std::endl;
@@ -263,10 +273,7 @@ void ShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ASR 0, 1" << std::endl;
@@ -283,10 +290,7 @@ void UnsignedShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SHR 0, 1" << std::endl;
@@ -303,10 +307,7 @@ void RotateLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ROL 0, 1" << std::endl;
@@ -325,10 +326,7 @@ void RotateRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ROR 0, 1" << std::endl;
@@ -347,10 +345,7 @@ void Plus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ADD 0, 1" << std::endl;
@@ -367,10 +362,7 @@ void Minus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SUB 0, 1" << std::endl;
@@ -387,10 +379,7 @@ void Multiply::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        MUL 0, 1" << std::endl;
@@ -407,10 +396,7 @@ void Divide::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        DIV 0, 1" << std::endl;
@@ -427,10 +413,7 @@ void Remainder::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        DIV 0, 1" << std::endl;
@@ -447,10 +430,7 @@ void DerefVar::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   ADD sp, two" << std::endl;
-   std::cout << "        ST  nsp, two" << std::endl;
+   VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ADD 0, 1" << std::endl;
