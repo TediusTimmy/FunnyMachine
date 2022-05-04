@@ -76,5 +76,11 @@ int main (int argc, char ** argv)
 
    programCall.emit(TheContext);
 
+   for (auto function : funDefs)
+    {
+      std::cout << "function_" << function.first << ":" << std::endl;
+      function.second->emit(TheContext);
+    }
+
    return 0;
  }

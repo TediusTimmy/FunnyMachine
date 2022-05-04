@@ -42,7 +42,19 @@ Lexer::Lexer (const std::string & input) : input(input), inputPosition(0), lineN
    keyWords.insert(std::make_pair("xor", XOR_OP));
    keyWords.insert(std::make_pair("not", NOT));
 
+   AfterNewline();
    Get_NextToken();
+ }
+
+void Lexer::AfterNewline (void)
+ {
+   char c = GetNextChar();
+   while ('#' == c)
+    {
+      while (('\n' != c) && ('\0' != c)) c = GetNextChar();
+      c = GetNextChar();
+    }
+   UnGetNextChar();
  }
 
 char Lexer::GetNextNonWhite (void)
@@ -163,6 +175,7 @@ void Lexer::Get_NextToken (void)
             case '/':
                n = GetNextChar();
                while ((n != '\n') && (n != '\0')) n = GetNextChar();
+               AfterNewline();
                nextToken.text = "__NEWLINE__";
                nextToken.lexeme = NEW_LINE;
                break;
@@ -380,6 +393,7 @@ void Lexer::Get_NextToken (void)
             break;
 
          case '\n':
+            AfterNewline();
             nextToken.text = "__NEWLINE__";
             nextToken.lexeme = NEW_LINE;
             break;

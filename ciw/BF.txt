@@ -1,8 +1,22 @@
-// Yay! No nasty array hack!
+# Yay! No nasty array hack!
 dim prog [3000]; tape [3000]; input
 
-// Sadly, there is a nasty IO hack :(
-// Done with nasty IO hack
+# Sadly, there is a nasty IO hack :(
+function read ()
+   dim readL
+   readL <- 49149 // Until I put in the logic to "home" the variable "@ 49149", do it the hard way.
+   input <- readL[0] // Force readL to be a pointer by context
+   do while (0 == (readL & 255))
+      input <- readL[0]
+   loop
+   input := input >> 8
+end function
+function write (value) // This is broken as ...
+   dim writeL
+   writeL <- 40960
+   writeL[0] := value | 7 << 8
+end function
+# Done with nasty IO hack
 
 function program ()
    dim nest; pc; dp
@@ -10,7 +24,7 @@ function program ()
    nest <- 1
    pc := 0
    do while nest
-      call &read, &input
+      call read ()
       if (input == 43) || (input == 44) || (input == 45) || (input == 46) || \
          (input == 60) || (input == 62) || (input == 91) || (input == 93) then
          prog[pc] = input
@@ -29,10 +43,10 @@ function program ()
       else if prog[pc] == 45 then
          tape[dp] = (tape[dp] - 1) & 255
       else if prog[pc] == 44 then
-         call &read, &tape + dp
-         tape[dp] = tape[dp] & 255
+         call read ()
+         tape[dp] = input & 255
       else if prog[pc] == 46 then
-         call &write, tape[dp]
+         call write(tape[dp])
       else if prog[pc] == 60 then
          dp = dp - 1
          if dp = -1 then dp = 29999

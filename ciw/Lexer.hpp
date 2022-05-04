@@ -36,6 +36,7 @@ class Lexer /* Lex Me Up, Scotty */
        /*
          Internal functions for operating on buffered input.
        */
+      void AfterNewline (void);
       char GetNextNonWhite (void);
       char GetNextChar (void);
       void UnGetNextChar (void);
