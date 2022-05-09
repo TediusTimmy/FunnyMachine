@@ -50,6 +50,7 @@ class Variable : public Expression
  {
 public:
    std::string referent;
+   int location;
    void emit(const CallingContext&) const override;
    int evaluate(const CallingContext&) const override;
  };

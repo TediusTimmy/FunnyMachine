@@ -46,7 +46,7 @@ int main (int argc, char ** argv)
    std::map<std::string, std::map<std::string, int> > allGlobals;
    std::map<std::string, int> constants;
    std::map<std::string, std::vector<std::string> > functions;
-   std::map<std::string, std::map<std::string, std::vector<size_t> > > funLocals;
+   std::map<std::string, std::map<std::string, int> > funLocals;
    std::map<std::string, std::shared_ptr<StatementSeq> > funDefs;
 
    CallingContext TheContext (allGlobals, constants, functions, funLocals, funDefs);
@@ -84,6 +84,8 @@ int main (int argc, char ** argv)
 
    for (auto function : funDefs)
     {
+      // Caller establishes the stack.
+      // Callee clears the stack on return.
       std::cout << "function_" << function.first << ":" << std::endl;
       function.second->emit(TheContext);
     }

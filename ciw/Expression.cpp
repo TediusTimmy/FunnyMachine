@@ -43,7 +43,7 @@ void VS_pushAddr (short addr)
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << " @nsp   SUB sp, two" << std::endl;
    std::cout << "        ST  nsp, two" << std::endl;
-   beltVal(location);
+   beltVal(addr);
    std::cout << "        ST  0, nsp" << std::endl;
  }
 
@@ -87,9 +87,8 @@ void Constant::emit(const CallingContext&) const
  }
 
 
-void Variable::emit(const CallingContext& context) const
+void Variable::emit(const CallingContext&) const
  {
-   int location = context.getValue(referent, lineNo);
    VS_pushAddr(location);
  }
 
@@ -518,6 +517,7 @@ void FunctionCall::emit(const CallingContext& context) const
    std::cout << " @obp   LD  0" << std::endl;
    std::cout << "        ST  obp, ba" << std::endl;
    std::cout << "        ST  nsp, sa" << std::endl;
+   // TODO : allocate function's locals
    std::cout << "        LRA return_TODO" << std::endl;
    std::cout << "        ST  0, ra" << std::endl;
    std::cout << "        LRA function_" << name << std::endl;

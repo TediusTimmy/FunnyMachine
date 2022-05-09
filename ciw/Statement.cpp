@@ -26,8 +26,9 @@ void RecAssignState::emit(const CallingContext&) const
    std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
-void Assignment::emit(const CallingContext&) const
+void Assignment::emit(const CallingContext& context) const
  {
+   rhs->emit(context);
    std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 

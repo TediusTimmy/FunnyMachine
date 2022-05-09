@@ -297,6 +297,7 @@ std::shared_ptr<Expression> Parser::primary (const CallingContext& context)
                   ret = op;
 
                   op->referent = nextToken.text;
+                  op->location = context.getValue(op->referent, op->lineNo);
 
                   ret->lineNo = nextToken.lineNumber;
                   GNT();
@@ -650,18 +651,26 @@ void Parser::functions (CallingContext & context)
             // Build a new calling context, inserting dummy locals.
             CallingContext newFunction (context, name, nextToken.lineNumber);
 
+            int locloc = -static_cast<int>(args.size()) * 2 - 2;
             for (std::vector<std::string>::iterator iter = args.begin();
                args.end() != iter; ++iter)
              {
-               newFunction.Locals().insert(std::make_pair(*iter, 0));
+               newFunction.Locals().insert(std::make_pair(*iter, locloc));
+               locloc += 2;
              }
 
             variables(newFunction);
 
-            for (std::map<std::string, std::vector<size_t> >::iterator iter = newFunction.FunLocals()[name].begin();
+            locloc = 2;
+            for (std::map<std::string, int>::iterator iter = newFunction.FunLocals()[name].begin();
                iter != newFunction.FunLocals()[name].end(); ++iter)
              {
-               newFunction.Locals().insert(std::make_pair(iter->first, 0));
+               newFunction.Locals().insert(std::make_pair(iter->first, locloc));
+               locloc += 2;
+               if (iter->second > 1)
+                {
+                  locloc += 2 * (iter->second - 1);
+                }
              }
 
             std::shared_ptr<StatementSeq> seq = std::make_shared<StatementSeq>();

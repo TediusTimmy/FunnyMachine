@@ -35,7 +35,7 @@ class CallingContext
       std::map<std::string, int> & m_globals;
       std::map<std::string, int> & m_constants;
       std::map<std::string, std::vector<std::string> > & m_functions;
-      std::map<std::string, std::map<std::string, std::vector<size_t> > > & m_funLocals;
+      std::map<std::string, std::map<std::string, int> > & m_funLocals;
       std::map<std::string, std::shared_ptr<StatementSeq> > & m_funDefs;
 
    public:
@@ -46,7 +46,7 @@ class CallingContext
       std::map<std::string, int> & Constants() { return m_constants; }
       std::map<std::string, std::vector<std::string> > & Functions() { return m_functions; }
       const std::map<std::string, std::vector<std::string> > & Functions() const { return m_functions; }
-      std::map<std::string, std::map<std::string, std::vector<size_t> > > & FunLocals() { return m_funLocals; }
+      std::map<std::string, std::map<std::string, int> > & FunLocals() { return m_funLocals; }
       std::map<std::string, std::shared_ptr<StatementSeq> > & FunDefs() { return m_funDefs; }
       const CallingContext * Parent;
       size_t ParentLine;
@@ -69,7 +69,7 @@ class CallingContext
          std::map<std::string, std::map<std::string, int> > & allGlobals,
          std::map<std::string, int> & constants,
          std::map<std::string, std::vector<std::string> > & functions,
-         std::map<std::string, std::map<std::string, std::vector<size_t> > > & funLocals,
+         std::map<std::string, std::map<std::string, int> > & funLocals,
          std::map<std::string, std::shared_ptr<StatementSeq> > & funDefs) :
 
          m_allGlobals(allGlobals),
