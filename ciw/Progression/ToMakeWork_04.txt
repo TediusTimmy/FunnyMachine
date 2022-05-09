@@ -1,0 +1,9 @@
+function doNothing ( arg )
+   arg <- 2
+   return
+end function
+
+function program ()
+   call doNothing(0)
+   return
+end function

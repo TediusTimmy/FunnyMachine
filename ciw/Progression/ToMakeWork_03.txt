@@ -1,0 +1,8 @@
+function doNothing ()
+   return
+end function
+
+function program ()
+   call doNothing()
+   return
+end function

@@ -1,0 +1,10 @@
+function doNothing ()
+   dim thing
+   thing := 5
+   return
+end function
+
+function program ()
+   call doNothing()
+   return
+end function
