@@ -28,8 +28,25 @@ void RecAssignState::emit(const CallingContext&) const
 
 void Assignment::emit(const CallingContext& context) const
  {
-   rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   if (nullptr == index)
+    {
+      rhs->emit(context);
+      if (location < 256)
+       {
+         VS_LDR(location);
+         VS_pop();
+         std::cout << "        LD  sp" << std::endl;
+         std::cout << "        ST  ldr, 0" << std::endl;
+       }
+      else
+       {
+         VS_popAddr(location);
+       }
+    }
+   else
+    {
+      std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+    }
  }
 
 void IfStatement::emit(const CallingContext&) const

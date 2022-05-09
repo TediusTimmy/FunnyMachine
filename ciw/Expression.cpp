@@ -62,7 +62,7 @@ void VS_LDR (short addr)
    std::cout << " @four  LDI 4" << std::endl;
    std::cout << " @bp    LD  0" << std::endl;
    beltVal(addr);
-   std::cout << "        ADD  bp, 0" << std::endl;
+   std::cout << " @ldr   ADD  bp, 0" << std::endl;
  }
 
 void VS_popAddr (short addr) // pop value and store in addr
@@ -89,7 +89,20 @@ void Constant::emit(const CallingContext&) const
 
 void Variable::emit(const CallingContext&) const
  {
-   VS_pushAddr(location);
+   if (location < 256)
+   {
+      VS_pushAddr(4);
+      VS_pushVal(location);
+      VS_pop();
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        LD  nsp" << std::endl;
+      std::cout << "        ADD 0, 1" << std::endl;
+      std::cout << "        ST  nsp, 0" << std::endl;
+   }
+   else
+    {
+      VS_pushAddr(location);
+    }
  }
 
 int Variable::evaluate(const CallingContext& context) const

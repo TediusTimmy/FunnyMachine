@@ -732,6 +732,7 @@ std::shared_ptr<Statement> Parser::statement (CallingContext& context)
                DB_panic("L-value \"" + nextToken.text + "\" not a variable on " + LN() + ".");
 
             op->lhs = nextToken.text;
+            op->location = context.getValue(op->lhs, op->lineNo);
             ret->lineNo = nextToken.lineNumber;
             GNT();
 

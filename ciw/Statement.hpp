@@ -47,6 +47,7 @@ class Assignment : public Statement
  {
 public:
    std::string lhs;
+   int location;
    std::shared_ptr<RecAssignState> index;
    std::shared_ptr<Expression> rhs;
 
