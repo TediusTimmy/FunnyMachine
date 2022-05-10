@@ -67,3 +67,10 @@ int CallingContext::createArray (int length)
    // TODO : The createArray function is used to allocate memory in the Global Variable memory area.
    return length; // Needs to return the memory location allocated.
  }
+
+int CallingContext::nextLabel = 0;
+
+std::string CallingContext::getNextLabel()
+ {
+   return "auto_" + std::to_string(++nextLabel);
+ }

@@ -69,8 +69,8 @@ void ReturnStatement::emit(const CallingContext& context) const
    value->emit(context);
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @four  LDI 4" << std::endl;
-   std::cout << " @bp    LDI four" << std::endl;
-   std::cout << "        ST bp, two" << std::endl;
+   std::cout << " @bp    LD  four" << std::endl;
+   std::cout << "        ST  bp, two" << std::endl;
    std::cout << "        SUB bp, two" << std::endl;
    std::cout << "        ST  0, two" << std::endl;
  }

@@ -531,10 +531,12 @@ void FunctionCall::emit(const CallingContext& context) const
    std::cout << "        ST  obp, ba" << std::endl;
    std::cout << "        ST  nsp, sa" << std::endl;
    // TODO : allocate function's locals
-   std::cout << "        LRA return_TODO" << std::endl;
+   std::string dest = CallingContext::getNextLabel();
+   std::cout << "        LRA " << dest << std::endl;
    std::cout << "        ST  0, ra" << std::endl;
    std::cout << "        LRA function_" << name << std::endl;
    std::cout << "        RET 0" << std::endl;
+   std::cout << dest << ":" << std::endl;
  }
 
 int FunctionCall::evaluate(const CallingContext& context) const

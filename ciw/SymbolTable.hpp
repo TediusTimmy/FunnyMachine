@@ -38,6 +38,8 @@ class CallingContext
       std::map<std::string, std::map<std::string, int> > & m_funLocals;
       std::map<std::string, std::shared_ptr<StatementSeq> > & m_funDefs;
 
+      static int nextLabel;
+
    public:
       const std::string Name;
       std::map<std::string, int> & Locals() { return m_locals; }
@@ -118,6 +120,8 @@ class CallingContext
       void setValue (const std::string &, int, size_t);
 
       int createArray (int length);
+
+      static std::string getNextLabel();
  };
 
 #endif /* SYMBOLTABLE_HPP */
