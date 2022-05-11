@@ -535,6 +535,8 @@ int Not::evaluate(const CallingContext& context) const
 
 void FunctionCall::emit(const CallingContext& context) const
  {
+   std::cout << "    ; Function call " << name << " : return value " << lineNo << std::endl;
+   VS_pushVal(0);
    std::cout << "    ; Function call " << name << " : arguments " << lineNo << std::endl;
    for (auto arg : args)
     {
@@ -548,9 +550,10 @@ void FunctionCall::emit(const CallingContext& context) const
    std::cout << " @ba    LDI 4" << std::endl;
    std::cout << " @obp   LD  0" << std::endl;
    std::cout << "        ST  obp, bp" << std::endl;
-   std::cout << "        ST  bp, sa" << std::endl;
    std::cout << "        ST  bp, ba" << std::endl;
-   // TODO : allocate function's locals
+   beltVal(0); // TODO : allocate function's locals
+   std::cout << " @sp    SUB bp, 0" << std::endl;
+   std::cout << "        ST  sp, sa" << std::endl;
    std::string dest = CallingContext::getNextLabel();
    std::cout << "        LRA " << dest << std::endl;
    std::cout << "        ST  0, ra" << std::endl;

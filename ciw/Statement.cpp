@@ -69,13 +69,18 @@ void ReturnStatement::emit(const CallingContext& context) const
  {
    value->emit(context);
    std::cout << "    ; Return " << lineNo << std::endl;
+   // TODO : move return value to allocated place : need to know current function name
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @bpa   LDI 4" << std::endl;
    std::cout << " @pbp   LD  bpa" << std::endl;
-   std::cout << " @bp    SUB pbp, two" << std::endl;
+   std::cout << " @bp    ADD pbp, two" << std::endl;
    std::cout << "        ST  bp, two" << std::endl;
    std::cout << " @nbp   LD  pbp" << std::endl;
    std::cout << "        ST  nbp, bpa" << std::endl;
+   std::cout << " @ra    ADD pbp, two" << std::endl;
+   std::cout << "        ST  ra, two" << std::endl;
+   std::cout << "        LD  ra" << std::endl;
+   std::cout << "        RET 0" << std::endl;
  }
 
 void TailCallStatement::emit(const CallingContext&) const
@@ -83,7 +88,9 @@ void TailCallStatement::emit(const CallingContext&) const
    std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
-void CallStatement::emit(const CallingContext&) const
+void CallStatement::emit(const CallingContext& context) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; Call " << lineNo << std::endl;
+   fun->emit(context);
+   VS_pop();
  }
