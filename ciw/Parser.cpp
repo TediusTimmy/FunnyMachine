@@ -1048,6 +1048,7 @@ std::shared_ptr<Statement> Parser::statement (CallingContext& context)
                std::shared_ptr<Constant> val = std::make_shared<Constant>();
                val->value = 0;
                op->value = val;
+               val->lineNo = op->lineNo;
              }
           }
          break;

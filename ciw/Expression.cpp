@@ -29,7 +29,7 @@ void beltVal(short val)
       std::cout << "        LDI 4" << std::endl;
       std::cout << "        SHL 1, 0" << std::endl;
       std::cout << "        LDI " << (val & 0xF) << std::endl;
-      std::cout << "        OR 1, 0" << std::endl;
+      std::cout << "        OR  1, 0" << std::endl;
    }
    else
    {
@@ -62,7 +62,7 @@ void VS_LDR (short addr)
    std::cout << " @four  LDI 4" << std::endl;
    std::cout << " @bp    LD  0" << std::endl;
    beltVal(addr);
-   std::cout << " @ldr   ADD  bp, 0" << std::endl;
+   std::cout << " @ldr   ADD bp, 0" << std::endl;
  }
 
 void VS_popAddr (short addr) // pop value and store in addr
@@ -83,12 +83,14 @@ void VS_pop (void)
 
 void Constant::emit(const CallingContext&) const
  {
+   std::cout << "    ; Constant " << value << " : " << lineNo << std::endl;
    VS_pushVal(value);
  }
 
 
 void Variable::emit(const CallingContext&) const
  {
+   std::cout << "    ; Variable " << referent << " : " << lineNo << std::endl;
    if (location < 256)
    {
       VS_pushAddr(4);
@@ -115,6 +117,7 @@ void OrOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; \\/ " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -132,6 +135,7 @@ void AndOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; /\\ " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -149,6 +153,7 @@ void XorOp::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; ? " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -274,6 +279,7 @@ void ShiftLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; << " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -291,6 +297,7 @@ void ShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; >> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -308,6 +315,7 @@ void UnsignedShiftRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; >>> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -325,6 +333,7 @@ void RotateLeft::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; <<> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -344,6 +353,7 @@ void RotateRight::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; >>< " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -363,6 +373,7 @@ void Plus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; + " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -380,6 +391,7 @@ void Minus::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; - " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -397,6 +409,7 @@ void Multiply::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; * " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -414,6 +427,7 @@ void Divide::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; / " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -431,6 +445,7 @@ void Remainder::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; % " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -448,6 +463,7 @@ void DerefVar::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
+   std::cout << "    ; [] " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
@@ -478,6 +494,7 @@ int Abs::evaluate(const CallingContext& context) const
 void Negate::emit(const CallingContext& context) const
  {
    arg->emit(context);
+   std::cout << "    ; -u " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
@@ -494,6 +511,7 @@ int Negate::evaluate(const CallingContext& context) const
 void Not::emit(const CallingContext& context) const
  {
    arg->emit(context);
+   std::cout << "    ; ! " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
@@ -517,19 +535,21 @@ int Not::evaluate(const CallingContext& context) const
 
 void FunctionCall::emit(const CallingContext& context) const
  {
+   std::cout << "    ; Function call " << name << " : arguments " << lineNo << std::endl;
    for (auto arg : args)
     {
       arg->emit(context);
     }
+   std::cout << "    ; Function call " << name << " : call " << lineNo << std::endl;
    std::cout << " @sa    LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @ra    SUB  0, 1" << std::endl;
-   std::cout << " @bp    SUB  0, 2" << std::endl;
-   std::cout << " @nsp   SUB  0, 3" << std::endl;
+   std::cout << " @ra    SUB 0, 1" << std::endl;
+   std::cout << " @bp    SUB 0, 2" << std::endl;
    std::cout << " @ba    LDI 4" << std::endl;
    std::cout << " @obp   LD  0" << std::endl;
-   std::cout << "        ST  obp, ba" << std::endl;
-   std::cout << "        ST  nsp, sa" << std::endl;
+   std::cout << "        ST  obp, bp" << std::endl;
+   std::cout << "        ST  bp, sa" << std::endl;
+   std::cout << "        ST  bp, ba" << std::endl;
    // TODO : allocate function's locals
    std::string dest = CallingContext::getNextLabel();
    std::cout << "        LRA " << dest << std::endl;

@@ -90,14 +90,43 @@ int main (int argc, char ** argv)
    if (0 < functions["program"].size())
       DB_panic("Too many arguments for function \"program\".");
 
-   // Perform initialization!
+   std::cout << "    ; Program initialization : set SP and BP to 9FFE " << std::endl;
+   std::cout << "        LDI $9FF" << std::endl;
+   std::cout << " @bpa   LDI 4" << std::endl;
+   std::cout << "        SHL 1, 0" << std::endl;
+   std::cout << "        LDI $E" << std::endl;
+   std::cout << " @isp   OR  1, 0" << std::endl;
+   std::cout << " @spa   LDI 2" << std::endl;
+   std::cout << "        ST  isp, bpa" << std::endl;
+   std::cout << "        ST  isp, spa" << std::endl;
+   std::cout << "    ; Program initialization : identity map RAM and ROM banks " << std::endl;
+   std::cout << "        LDI $B00" << std::endl;
+   std::cout << "        LDI 4" << std::endl;
+   std::cout << "        SHL 1, 0" << std::endl;
+   std::cout << "        LDI $8" << std::endl;
+   std::cout << "        OR  1, 0" << std::endl;
+   std::cout << "        INC 15" << std::endl;
+   std::cout << "        STB 0, 1 ; B008 <- 1" << std::endl;
+   std::cout << "        SUB 1, 2" << std::endl;
+   std::cout << "        INC 0" << std::endl;
+   std::cout << "        STB 2, 0 ; B001 <- 1" << std::endl;
+   std::cout << "        INC 0" << std::endl;
+   std::cout << "        INC 3" << std::endl;
+   std::cout << "        STB 0, 1 ; B002 <- 2" << std::endl;
+   std::cout << "        INC 1" << std::endl;
+   std::cout << "        INC 1" << std::endl;
+   std::cout << "        STB 0, 1 ; B003 <- 3" << std::endl;
+   std::cout << "        INC 1" << std::endl;
+   std::cout << "        INC 1" << std::endl;
+   std::cout << "        STB 0, 1 ; B004 <- 4" << std::endl;
    programCall.emit(TheContext);
+   std::cout << "    ; Program exit : halt machine " << std::endl;
    std::cout << "        LDI $BFF" << std::endl;
    std::cout << "        LDI 4" << std::endl;
    std::cout << "        SHL 1, 0" << std::endl;
    std::cout << "        LDI $F" << std::endl;
-   std::cout << "        OR 1, 0" << std::endl;
-   std::cout << "        ST 0, 0" << std::endl;
+   std::cout << "        OR  1, 0" << std::endl;
+   std::cout << "        ST  0, 0" << std::endl;
 
    for (auto function : funDefs)
     {
