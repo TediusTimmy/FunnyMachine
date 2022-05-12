@@ -44,6 +44,7 @@ void VS_pushAddr (short addr)
    std::cout << " @nsp   SUB sp, two" << std::endl;
    std::cout << "        ST  nsp, two" << std::endl;
    beltVal(addr);
+   std::cout << "        LD  0" << std::endl;
    std::cout << "        ST  0, nsp" << std::endl;
  }
 
@@ -77,7 +78,7 @@ void VS_pop (void)
  {
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
    std::cout << "        ST  nsp, two" << std::endl;
  }
 
@@ -94,12 +95,14 @@ void Variable::emit(const CallingContext&) const
    if (location < 256)
    {
       VS_pushAddr(4);
-      VS_pushVal(location);
+      VS_pushVal(-location);
       VS_pop();
       std::cout << "        LD  sp" << std::endl;
       std::cout << "        LD  nsp" << std::endl;
       std::cout << "        ADD 0, 1" << std::endl;
-      std::cout << "        ST  nsp, 0" << std::endl;
+// TODO : If variable resolves to its address, don't emit this line.
+      std::cout << "        LD  0" << std::endl;
+      std::cout << "        ST  0, nsp" << std::endl;
    }
    else
     {
