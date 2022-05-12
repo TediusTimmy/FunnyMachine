@@ -4,6 +4,6 @@ function doNothing ( arg )
 end function
 
 function program ()
-   call doNothing(0)
+   call doNothing(5)
    return
 end function

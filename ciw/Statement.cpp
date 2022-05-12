@@ -34,10 +34,10 @@ void Assignment::emit(const CallingContext& context) const
       std::cout << "    ; Assignment to " << lhs << " " << lineNo << std::endl;
       if (location < 256)
        {
-         VS_LDR(location);
+         VS_LDR(-location);
          VS_pop();
          std::cout << "        LD  sp" << std::endl;
-         std::cout << "        ST  ldr, 0" << std::endl;
+         std::cout << "        ST  0, ldr" << std::endl;
        }
       else
        {
