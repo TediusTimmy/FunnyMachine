@@ -103,9 +103,11 @@ I made a change to the logic: all of the synthetic instructions are now zero-bas
 ### LD
 Word reads on unaligned addresses are incorrect: the least-significant bit is dropped, and it becomes a word read on the forcibly aligned address.
 ### ST
-Word writes on unaligned addresses are incorrect: the least-significant bit is dropped, and it becomes a word write on the forcibly aligned address.
+Word writes on unaligned addresses are incorrect: the least-significant bit is dropped, and it becomes a word write on the forcibly aligned address.  
+The first argument is the value to store. The second argument is the address to store it at. (Write it down before I get it wrong AGAIN.)
 ### LRA
-The address that this is relative to is the next instruction. The program counter has already been incremented when the offset is computed. This was one of the last instructions I added, while I was thinking about what would be needed to implement a stack. At first, I thought that an indirect jump would be enough (what is now RET). Given that ROM is banked, however, one cannot assume the return address. You can't just put the return address on the stack without assuming the bank the code is executing in. So, I made an instruction to compute the return address from a call. At that point, all of the branches became superfluous: LRA could be used with a conditional RET to do all of that, with a better offset range. I didn't want to pollute the belt with a bunch of jump addresses, though, so the branches made a comeback.
+The address that this is relative to is the next instruction. The program counter has already been incremented when the offset is computed. This was one of the last instructions I added, while I was thinking about what would be needed to implement a stack. At first, I thought that an indirect jump would be enough (what is now RET). Given that ROM is banked, however, one cannot assume the return address. You can't just put the return address on the stack without assuming the bank the code is executing in. So, I made an instruction to compute the return address from a call. At that point, all of the branches became superfluous: LRA could be used with a conditional RET to do all of that, with a better offset range. I didn't want to pollute the belt with a bunch of jump addresses, though, so the branches made a comeback.  
+Later note : So far, I have call and return working in CallIfWhile. At this point, I think I made the right opcodes. It's just frustrating to synthesize a stack.
 ### ADC and SBB
 There isn't a flags register. So, instead, these instructions hard-code the carry/borrow in flag. Just use branches and logic to determine if a carry out occurred.
 ### SHL, SHR, ASR
