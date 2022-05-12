@@ -54,6 +54,7 @@ int main (void)
    tests.push_back(std::make_pair("return", RETURN));
    tests.push_back(std::make_pair("tailcall", TAILCALL));
    tests.push_back(std::make_pair("call", CALL));
+   tests.push_back(std::make_pair("asm", ASM));
    tests.push_back(std::make_pair("=", EQUAL_SIGN));
    tests.push_back(std::make_pair(":=", ASSIGNMENT));
    tests.push_back(std::make_pair("<-", ASSIGNMENT));

@@ -94,3 +94,9 @@ void CallStatement::emit(const CallingContext& context) const
    fun->emit(context);
    VS_pop();
  }
+
+void AsmStatement::emit(const CallingContext&) const
+ {
+   std::cout << "    ; asm " << lineNo << std::endl;
+   std::cout << line << std::endl;
+ }

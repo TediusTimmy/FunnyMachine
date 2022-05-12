@@ -41,6 +41,7 @@ Lexer::Lexer (const std::string & input) : input(input), inputPosition(0), lineN
    keyWords.insert(std::make_pair("or", OR));
    keyWords.insert(std::make_pair("xor", XOR_OP));
    keyWords.insert(std::make_pair("not", NOT));
+   keyWords.insert(std::make_pair("asm", ASM));
 
    AfterNewline();
    Get_NextToken();

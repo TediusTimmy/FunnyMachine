@@ -1,0 +1,4 @@
+function program ()
+   asm "   ADD 0, 0"
+   return
+end function

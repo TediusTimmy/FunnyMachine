@@ -60,6 +60,7 @@ enum Lexeme
    RETURN,
    TAILCALL,
    CALL,
+   ASM,
 
    AT,         // @
 

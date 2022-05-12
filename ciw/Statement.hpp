@@ -125,4 +125,12 @@ public:
    void emit(const CallingContext&) const override;
  };
 
+class AsmStatement : public Statement
+ {
+public:
+   std::string line;
+
+   void emit(const CallingContext&) const override;
+ };
+
 #endif /* STATEMENT_HPP */

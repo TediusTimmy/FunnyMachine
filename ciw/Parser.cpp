@@ -1099,6 +1099,19 @@ std::shared_ptr<Statement> Parser::statement (CallingContext& context)
           }
          break;
 
+      case ASM:
+          {
+            std::shared_ptr<AsmStatement> op = std::make_shared<AsmStatement>();
+            ret = op;
+
+            ret->lineNo = nextToken.lineNumber;
+            GNT();
+
+            op->line = nextToken.text;
+            expect(STRING);
+          }
+         break;
+
       default: break;
     }
 

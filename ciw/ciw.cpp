@@ -70,12 +70,12 @@ int main (int argc, char ** argv)
    std::ifstream file (argv[1]);
    std::string input;
 
-   if (true == file.good())
+   if (false == file.fail())
     {
       input.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     }
 
-   if (true == file.bad())
+   if (true == file.fail())
       DB_panic(std::string("Error opening file \"") + argv[1] + "\".");
 
    Lexer lex (input);
