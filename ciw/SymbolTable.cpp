@@ -31,7 +31,7 @@ int CallingContext::getValue (const std::string & name, size_t lineNo) const
    test = m_globals.find(name);
    if (m_globals.end() != test) return test->second;
 
-   DB_panic("COMPILER ERROR!!! : getValue to non-existant variable", *this, lineNo);
+   DB_panic("COMPILER ERROR!!! : getValue to non-existent variable", *this, lineNo);
  }
 
 void CallingContext::setValue (const std::string & name, int value, size_t lineNo)
@@ -59,13 +59,20 @@ void CallingContext::setValue (const std::string & name, int value, size_t lineN
       return;
     }
 
-   DB_panic("COMPILER ERROR!!! : setValue to non-existant variable", *this, lineNo);
+   DB_panic("COMPILER ERROR!!! : setValue to non-existent variable", *this, lineNo);
  }
+
+int CallingContext::nextGlobal = 128;
 
 int CallingContext::createArray (int length)
  {
-   // TODO : The createArray function is used to allocate memory in the Global Variable memory area.
-   return length; // Needs to return the memory location allocated.
+   int next = nextGlobal;
+   nextGlobal += 2;
+   if (length > 1)
+    {
+      nextGlobal += (length - 1) * 2;
+    }
+   return next;
  }
 
 int CallingContext::nextLabel = 0;
@@ -73,4 +80,17 @@ int CallingContext::nextLabel = 0;
 std::string CallingContext::getNextLabel()
  {
    return "auto_" + std::to_string(++nextLabel);
+ }
+
+int CallingContext::getNumLocals(const std::string& name, size_t lineNo) const
+ {
+   std::map<std::string, int>::const_iterator test;
+
+   test = m_allLocals.find(name);
+   if (m_allLocals.end() != test)
+    {
+      return test->second;
+    }
+
+   DB_panic("COMPILER ERROR!!! : getNumLocals to non-existent function", *this, lineNo);
  }

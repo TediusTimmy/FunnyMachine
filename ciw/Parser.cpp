@@ -20,6 +20,8 @@
 #include "Expression.hpp"
 #include "Statement.hpp"
 
+#include <iostream>
+
 void DB_panic (const std::string &) __attribute__ ((__noreturn__));
 
 void Parser::GNT (void)
@@ -426,7 +428,7 @@ std::shared_ptr<Expression> Parser::primary (const CallingContext& context)
 
 
 
-void Parser::program (CallingContext & context)
+void Parser::program (CallingContext& context)
  {
    constants(context);
    globals(context);
@@ -434,7 +436,7 @@ void Parser::program (CallingContext & context)
    expect(END_OF_FILE);
  }
 
-void Parser::constants (CallingContext & context)
+void Parser::constants (CallingContext& context)
  {
    while ((CONST == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -468,7 +470,7 @@ void Parser::constants (CallingContext & context)
     }
  }
 
-void Parser::globals (CallingContext & context)
+void Parser::globals (CallingContext& context)
  {
    while ((DIM == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -484,7 +486,7 @@ void Parser::globals (CallingContext & context)
             if (CallingContext::UNDEFINED != context.lookup(name))
                DB_panic("Reuse of identifier \"" + name + "\" on " + LN() + ".");
 
-            int val = 1;
+            int length = -1;
 
             if (LEFT_BRACKET == nextToken.lexeme)
              {
@@ -492,14 +494,12 @@ void Parser::globals (CallingContext & context)
 
                std::shared_ptr<Expression> temp = expression(context);
 
-               int length = temp->evaluate(context);
+               length = temp->evaluate(context);
 
                expect(RIGHT_BRACKET);
-
-               val = context.createArray(length);
              }
 
-            context.Globals().insert(std::make_pair(name, val));
+            context.Globals().insert(std::make_pair(name, CallingContext::createArray(length)));
           }
          while (SEMICOLON == nextToken.lexeme);
 
@@ -512,7 +512,7 @@ void Parser::globals (CallingContext & context)
     }
  }
 
-void Parser::variables (CallingContext & context)
+void Parser::variables (CallingContext& context)
  {
    while ((DIM == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -535,7 +535,7 @@ void Parser::variables (CallingContext & context)
             if (CallingContext::UNDEFINED != context.lookup(name))
                DB_panic("Reuse of identifier \"" + name + "\" on " + LN() + ".");
 
-            int length = 0;
+            int length = -1;
             if (LEFT_BRACKET == nextToken.lexeme)
              {
                   GNT();
@@ -549,7 +549,7 @@ void Parser::variables (CallingContext & context)
 
             if (true == isStatic)
              {
-               int val = context.createArray(length);
+               int val = CallingContext::createArray(length);
                context.Statics().insert(std::make_pair(name, val));
              }
             else
@@ -568,7 +568,7 @@ void Parser::variables (CallingContext & context)
     }
  }
 
-void Parser::functions (CallingContext & context)
+void Parser::functions (CallingContext& context)
  {
    while ((FUNCTION == nextToken.lexeme) || (DECLARE == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -651,27 +651,33 @@ void Parser::functions (CallingContext & context)
             // Build a new calling context, inserting dummy locals.
             CallingContext newFunction (context, name, nextToken.lineNumber);
 
-            int locloc = -static_cast<int>(args.size()) * 2 - 2;
+            int locloc = static_cast<int>(args.size()) * 2 + 2;
+            if (locloc > 128)
+             {
+               std::cerr << "Too many arguments to function \"" << name <<
+                  "\" : code generation will be incorrect (max 64 arguments).";
+             }
             for (std::vector<std::string>::iterator iter = args.begin();
                args.end() != iter; ++iter)
              {
                newFunction.Locals().insert(std::make_pair(*iter, locloc));
-               locloc += 2;
+               locloc -= 2;
              }
 
             variables(newFunction);
 
-            locloc = 2;
+            locloc = -2;
             for (std::map<std::string, int>::iterator iter = newFunction.FunLocals()[name].begin();
                iter != newFunction.FunLocals()[name].end(); ++iter)
              {
                newFunction.Locals().insert(std::make_pair(iter->first, locloc));
-               locloc += 2;
+               locloc -= 2;
                if (iter->second > 1)
                 {
-                  locloc += 2 * (iter->second - 1);
+                  locloc -= 2 * (iter->second - 1);
                 }
              }
+            context.AllLocals()[name] = -locloc - 2;
 
             std::shared_ptr<StatementSeq> seq = std::make_shared<StatementSeq>();
 

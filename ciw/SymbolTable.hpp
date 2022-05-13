@@ -34,11 +34,13 @@ class CallingContext
       std::map<std::string, int> & m_statics;
       std::map<std::string, int> & m_globals;
       std::map<std::string, int> & m_constants;
+      std::map<std::string, int> & m_allLocals;
       std::map<std::string, std::vector<std::string> > & m_functions;
       std::map<std::string, std::map<std::string, int> > & m_funLocals;
       std::map<std::string, std::shared_ptr<StatementSeq> > & m_funDefs;
 
       static int nextLabel;
+      static int nextGlobal;
 
    public:
       const std::string Name;
@@ -46,6 +48,7 @@ class CallingContext
       std::map<std::string, int> & Statics() { return m_statics; }
       std::map<std::string, int> & Globals() { return m_globals; }
       std::map<std::string, int> & Constants() { return m_constants; }
+      std::map<std::string, int> & AllLocals() { return m_allLocals; }
       std::map<std::string, std::vector<std::string> > & Functions() { return m_functions; }
       const std::map<std::string, std::vector<std::string> > & Functions() const { return m_functions; }
       std::map<std::string, std::map<std::string, int> > & FunLocals() { return m_funLocals; }
@@ -58,6 +61,7 @@ class CallingContext
          m_statics(src.m_allGlobals[name]),
          m_globals(src.m_globals),
          m_constants(src.m_constants),
+         m_allLocals(src.m_allLocals),
          m_functions(src.m_functions),
          m_funLocals(src.m_funLocals),
          m_funDefs(src.m_funDefs),
@@ -70,6 +74,7 @@ class CallingContext
       CallingContext(
          std::map<std::string, std::map<std::string, int> > & allGlobals,
          std::map<std::string, int> & constants,
+         std::map<std::string, int> & allLocals,
          std::map<std::string, std::vector<std::string> > & functions,
          std::map<std::string, std::map<std::string, int> > & funLocals,
          std::map<std::string, std::shared_ptr<StatementSeq> > & funDefs) :
@@ -78,6 +83,7 @@ class CallingContext
          m_statics(allGlobals[""]),
          m_globals(allGlobals[""]),
          m_constants(constants),
+         m_allLocals(allLocals),
          m_functions(functions),
          m_funLocals(funLocals),
          m_funDefs(funDefs),
@@ -91,6 +97,7 @@ class CallingContext
 
       // Should be a stack, but I need random-access.
       std::vector<std::string> m_labels;
+      std::string m_currentFunction;
 
       enum IdentifierType
        {
@@ -119,9 +126,10 @@ class CallingContext
       int getValue (const std::string &, size_t) const;
       void setValue (const std::string &, int, size_t);
 
-      int createArray (int length);
+      int getNumLocals(const std::string&, size_t) const;
 
       static std::string getNextLabel();
+      static int createArray (int length);
  };
 
 #endif /* SYMBOLTABLE_HPP */

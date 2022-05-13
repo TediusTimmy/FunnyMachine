@@ -92,10 +92,10 @@ void Constant::emit(const CallingContext&) const
 void Variable::emit(const CallingContext&) const
  {
    std::cout << "    ; Variable " << referent << " : " << lineNo << std::endl;
-   if (location < 256)
+   if (location < 128)
    {
       VS_pushAddr(4);
-      VS_pushVal(-location);
+      VS_pushVal(location);
       VS_pop();
       std::cout << "        LD  sp" << std::endl;
       std::cout << "        LD  nsp" << std::endl;
@@ -554,7 +554,7 @@ void FunctionCall::emit(const CallingContext& context) const
    std::cout << " @obp   LD  0" << std::endl;
    std::cout << "        ST  obp, bp" << std::endl;
    std::cout << "        ST  bp, ba" << std::endl;
-   beltVal(0); // TODO : allocate function's locals
+   beltVal(context.getNumLocals(name, lineNo));
    std::cout << " @sp    SUB bp, 0" << std::endl;
    std::cout << "        ST  sp, sa" << std::endl;
    std::string dest = CallingContext::getNextLabel();

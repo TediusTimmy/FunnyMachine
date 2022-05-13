@@ -1,0 +1,7 @@
+function program ()
+   dim writeL
+   writeL <- 40960
+   writeL[0] <- 72 | (7 << 8)
+   writeL[1] <- 72 | (7 << 8)
+   tailcall // Yes, this IS expected to get into an infinite loop.
+end function

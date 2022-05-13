@@ -16,6 +16,7 @@
  */
 #include "Statement.hpp"
 #include "Expression.hpp"
+#include "SymbolTable.hpp"
 
 #include <iostream>
 
@@ -32,9 +33,9 @@ void Assignment::emit(const CallingContext& context) const
     {
       rhs->emit(context);
       std::cout << "    ; Assignment to " << lhs << " " << lineNo << std::endl;
-      if (location < 256)
+      if (location < 128)
        {
-         VS_LDR(-location);
+         VS_LDR(location);
          VS_pop();
          std::cout << "        LD  sp" << std::endl;
          std::cout << "        ST  0, ldr" << std::endl;
@@ -69,16 +70,22 @@ void ReturnStatement::emit(const CallingContext& context) const
  {
    value->emit(context);
    std::cout << "    ; Return " << lineNo << std::endl;
-   // TODO : move return value to allocated place : need to know current function name
    std::cout << " @two   LDI 2" << std::endl;
+   std::cout << "        LD  0" << std::endl;
+   std::cout << " @rv    LD  0" << std::endl;
+   std::cout << " @rvl   LDI " << (context.Functions().find(context.m_currentFunction)->second.size() * 2 + 4) << std::endl;
    std::cout << " @bpa   LDI 4" << std::endl;
    std::cout << " @pbp   LD  bpa" << std::endl;
+   std::cout << "        ADD pbp, rvl" << std::endl;
+   std::cout << "        ST  rv, 0" << std::endl;
    std::cout << " @bp    ADD pbp, two" << std::endl;
    std::cout << "        ST  bp, two" << std::endl;
    std::cout << " @nbp   LD  pbp" << std::endl;
    std::cout << "        ST  nbp, bpa" << std::endl;
    std::cout << " @ra    ADD pbp, two" << std::endl;
-   std::cout << "        ST  ra, two" << std::endl;
+   std::cout << "        LDI " << (context.Functions().find(context.m_currentFunction)->second.size() * 2) << std::endl;
+   std::cout << "        ADD ra, 0" << std::endl;
+   std::cout << "        ST  0, two" << std::endl;
    std::cout << "        LD  ra" << std::endl;
    std::cout << "        RET 0" << std::endl;
  }

@@ -61,11 +61,12 @@ int main (int argc, char ** argv)
 
    std::map<std::string, std::map<std::string, int> > allGlobals;
    std::map<std::string, int> constants;
+   std::map<std::string, int> allLocals;
    std::map<std::string, std::vector<std::string> > functions;
    std::map<std::string, std::map<std::string, int> > funLocals;
    std::map<std::string, std::shared_ptr<StatementSeq> > funDefs;
 
-   CallingContext TheContext (allGlobals, constants, functions, funLocals, funDefs);
+   CallingContext TheContext (allGlobals, constants, allLocals, functions, funLocals, funDefs);
 
    std::ifstream file (argv[1]);
    std::string input;
@@ -130,6 +131,7 @@ int main (int argc, char ** argv)
 
    for (auto function : funDefs)
     {
+      TheContext.m_currentFunction = function.first;
       // Caller establishes the stack.
       // Callee clears the stack on return.
       std::cout << "function_" << function.first << ":" << std::endl;
