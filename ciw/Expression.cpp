@@ -23,13 +23,16 @@ void DB_panic (const std::string &, const CallingContext &, size_t) __attribute_
 
 void beltVal(short val)
  {
-   if (val > 0xFFF)
+   if ((val > 0x7FF) || (val < -0x7FF))
    {
       std::cout << "        LDI " << ((val >> 4) & 0xFFF) << std::endl;
       std::cout << "        LDI 4" << std::endl;
       std::cout << "        SHL 1, 0" << std::endl;
-      std::cout << "        LDI " << (val & 0xF) << std::endl;
-      std::cout << "        OR  1, 0" << std::endl;
+      if (0 != (val & 0xF))
+       {
+         std::cout << "        LDI " << (val & 0xF) << std::endl;
+         std::cout << "        OR  1, 0" << std::endl;
+       }
    }
    else
    {
@@ -125,7 +128,7 @@ void OrOp::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        OR  0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int OrOp::evaluate(const CallingContext& context) const
@@ -143,7 +146,7 @@ void AndOp::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        AND 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int AndOp::evaluate(const CallingContext& context) const
@@ -161,7 +164,7 @@ void XorOp::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        XOR 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int XorOp::evaluate(const CallingContext& context) const
@@ -287,7 +290,7 @@ void ShiftLeft::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SHL 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int ShiftLeft::evaluate(const CallingContext& context) const
@@ -305,7 +308,7 @@ void ShiftRight::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ASR 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int ShiftRight::evaluate(const CallingContext& context) const
@@ -323,7 +326,7 @@ void UnsignedShiftRight::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SHR 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int UnsignedShiftRight::evaluate(const CallingContext& context) const
@@ -341,7 +344,7 @@ void RotateLeft::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ROL 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int RotateLeft::evaluate(const CallingContext& context) const
@@ -361,7 +364,7 @@ void RotateRight::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ROR 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int RotateRight::evaluate(const CallingContext& context) const
@@ -381,7 +384,7 @@ void Plus::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ADD 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int Plus::evaluate(const CallingContext& context) const
@@ -399,7 +402,7 @@ void Minus::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        SUB 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int Minus::evaluate(const CallingContext& context) const
@@ -417,7 +420,7 @@ void Multiply::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        MUL 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int Multiply::evaluate(const CallingContext& context) const
@@ -453,7 +456,7 @@ void Remainder::emit(const CallingContext& context) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        DIV 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int Remainder::evaluate(const CallingContext& context) const
@@ -469,10 +472,12 @@ void DerefVar::emit(const CallingContext& context) const
    std::cout << "    ; [] " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LDI 1" << std::endl;
+   std::cout << "        SHL 1, 0" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        ADD 0, 1" << std::endl;
    std::cout << "        LD  0" << std::endl;
-   std::cout << "        ST  nsp, 0" << std::endl;
+   std::cout << "        ST  0, nsp" << std::endl;
  }
 
 int DerefVar::evaluate(const CallingContext& context) const

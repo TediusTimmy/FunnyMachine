@@ -1,7 +1,7 @@
 function program ()
    dim writeL
    writeL <- 40960
-   writeL[0] <- 72 | (7 << 8)
-   writeL[1] <- 72 | (7 << 8)
+   writeL[0] <- 72 | (7 << 8) // Because writeL is not declared as an array,
+   writeL[1] <- 73 | (7 << 8) // we should get it's value and not its address.
    tailcall // Yes, this IS expected to get into an infinite loop.
 end function

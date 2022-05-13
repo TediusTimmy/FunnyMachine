@@ -72,6 +72,10 @@ int CallingContext::createArray (int length)
     {
       nextGlobal += (length - 1) * 2;
     }
+   if (length > 0) // Nasty hack to mark arrays as arrays. Arrays have ODD addresses.
+    {
+      next |= 1;
+    }
    return next;
  }
 

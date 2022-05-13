@@ -22,9 +22,10 @@
 
 void DB_panic (const std::string &) __attribute__ ((__noreturn__));
 
-void RecAssignState::emit(const CallingContext&) const
+void RecAssignState::emit(const CallingContext& context) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; Assignment [] " << std::endl;
+   index->emit(context); // Thankfully, I'm not supporting a full "Recursive Assignment Statement".
  }
 
 void Assignment::emit(const CallingContext& context) const
@@ -35,19 +36,53 @@ void Assignment::emit(const CallingContext& context) const
       std::cout << "    ; Assignment to " << lhs << " " << lineNo << std::endl;
       if (location < 128)
        {
-         VS_LDR(location);
+         VS_LDR(location & ~1);
          VS_pop();
          std::cout << "        LD  sp" << std::endl;
          std::cout << "        ST  0, ldr" << std::endl;
        }
       else
        {
-         VS_popAddr(location);
+         VS_popAddr(location & ~1);
        }
     }
    else
     {
-      std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+      rhs->emit(context);
+      index->emit(context);
+      std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
+      if (location < 128)
+       {
+         VS_LDR(location & ~1);
+         std::cout << " @two   LDI 2" << std::endl;
+         std::cout << " @sp    LD  0" << std::endl;
+         std::cout << " @nsp   SUB sp, two" << std::endl;
+         std::cout << "        ST  nsp, two" << std::endl;
+         if (location & 1) // If an array, the name is the address.
+          {
+            std::cout << "        ST  ldr, nsp" << std::endl;
+          }
+         else
+          {
+            std::cout << "        LD  ldr" << std::endl;
+            std::cout << "        ST  0, nsp" << std::endl;
+          }
+       }
+      else
+       {
+         VS_pushAddr(location & ~1);
+       }
+      VS_pop();
+      std::cout << "        LD  nsp" << std::endl;
+      std::cout << "        LDI 1" << std::endl;
+      std::cout << "        SHL 1, 0" << std::endl;
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        ADD 0, 1" << std::endl;
+      std::cout << "        ST  0, nsp" << std::endl;
+      VS_pop();
+      std::cout << "        LD  nsp" << std::endl;
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        ST  1, 0" << std::endl;
     }
  }
 
@@ -90,9 +125,25 @@ void ReturnStatement::emit(const CallingContext& context) const
    std::cout << "        RET 0" << std::endl;
  }
 
-void TailCallStatement::emit(const CallingContext&) const
+void TailCallStatement::emit(const CallingContext& context) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; TailCall Arguments " << lineNo << std::endl;
+   int loc = context.Functions().find(context.m_currentFunction)->second.size() * 2 + 2;
+   for (const auto& arg : args)
+    {
+      arg->emit(context);
+      std::cout << " @rvl   LDI " << loc << std::endl;
+      std::cout << " @bpa   LDI 4" << std::endl;
+      std::cout << " @pbp   LD  bpa" << std::endl;
+      std::cout << " @ldr   ADD pbp, rvl" << std::endl;
+      VS_pop();
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        ST  0, ldr" << std::endl;
+      loc += 2;
+    }
+   std::cout << "    ; TailCall " << lineNo << std::endl;
+   std::cout << "        LRA function_" << context.m_currentFunction << std::endl;
+   std::cout << "        RET 0" << std::endl;
  }
 
 void CallStatement::emit(const CallingContext& context) const
