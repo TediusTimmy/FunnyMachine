@@ -17,6 +17,7 @@ No operation is performed by this opcode.
 * 1 - Load
 
 Group B is used to control operation, with each bit being a flag to specify some behavior.
+
 ** 0001 - This is a word load (the behavior of an unaligned word load is not defined; in the example implementation, the least-significant bit is ignored)
 ** 0010 - Reserved
 ** 0100 - Reserved
@@ -28,6 +29,7 @@ This operation pushes the loaded value onto the belt.
 * 2 - Store
 
 Group B is used to control operation, with each bit being a flag to specify some behavior.
+
 ** 0001 - This is a word store (the behavior of an unaligned word store is not defined; in the example implementation, the least-significant bit is ignored)
 ** 0010 - Reserved
 ** 0100 - Reserved
@@ -53,6 +55,7 @@ The computed value is pushed onto the belt.
 
 Groups C and D are the arguments to the operation.  
 Group B is the operation to perform:
+
 ** 0 - Add
 ** 1 - Add with Carry In
 ** 2 - Subtract with Borrow
@@ -79,6 +82,7 @@ The actual implementation of this operation is left up to the implementer.
 The example implementation: Perform Extended ALU Operation  
 Groups C and D are the arguments to the operation.  
 Group B is the operation to perform, with the most-significant bit reserved:
+
 ** 0 - BCD Add
 ** 1 - BCD Add with Carry In
 ** 2 - BCD Subtract with Borrow
@@ -93,6 +97,7 @@ For the example, either one or two values are pushed onto the belt: for BCD oper
 * 7 - Conditional Branch
 
 Group B is used to control operation. The most significant bit is reserved. The other three bits constitute a condition number, which indicates what condition is to be evaluated (note that the most significant bit logically negates the condition, so there are actually only four conditions that are tested):
+
 ** 0 - Zero
 ** 1 - Negative
 ** 2 - Odd
