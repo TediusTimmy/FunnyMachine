@@ -31,7 +31,10 @@ int CallingContext::getValue (const std::string & name, size_t lineNo) const
    test = m_globals.find(name);
    if (m_globals.end() != test) return test->second;
 
-   DB_panic("COMPILER ERROR!!! : getValue to non-existent variable", *this, lineNo);
+   test = m_constants.find(name);
+   if (m_constants.end() != test) return test->second;
+
+   DB_panic("COMPILER ERROR!!! : getValue to non-existent variable : " + name, *this, lineNo);
  }
 
 void CallingContext::setValue (const std::string & name, int value, size_t lineNo)

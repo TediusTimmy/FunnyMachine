@@ -1,0 +1,7 @@
+const number := 15
+
+function program ()
+   dim variable
+   variable <- number
+   return variable
+end function

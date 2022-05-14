@@ -1,0 +1,6 @@
+dim variable
+
+function program ()
+   variable <- 9
+   return variable
+end function

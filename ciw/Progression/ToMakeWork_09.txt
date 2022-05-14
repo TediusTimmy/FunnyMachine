@@ -1,0 +1,6 @@
+dim variable [1]
+
+function program ()
+   variable[0] <- 11
+   return variable[0]
+end function

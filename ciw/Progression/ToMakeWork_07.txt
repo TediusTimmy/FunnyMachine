@@ -1,0 +1,6 @@
+function program ()
+   dim writeL [2]
+   writeL[0] <- 72
+   writeL[1] <- 73
+   return
+end function

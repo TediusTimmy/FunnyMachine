@@ -1,0 +1,5 @@
+function program ()
+   dim static variable
+   variable <- 13
+   return variable
+end function
