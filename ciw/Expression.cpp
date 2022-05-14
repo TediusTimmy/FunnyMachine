@@ -96,20 +96,29 @@ void Variable::emit(const CallingContext&) const
  {
    std::cout << "    ; Variable " << referent << " : " << lineNo << std::endl;
    if (location < 128)
-   {
+    {
       VS_pushAddr(4);
-      VS_pushVal(location);
+      VS_pushVal(location & ~1);
       VS_pop();
       std::cout << "        LD  sp" << std::endl;
       std::cout << "        LD  nsp" << std::endl;
       std::cout << "        ADD 0, 1" << std::endl;
-// TODO : If variable resolves to its address, don't emit this line.
-      std::cout << "        LD  0" << std::endl;
+      if (0 == (location & 1))
+       {
+         std::cout << "        LD  0" << std::endl;
+       }
       std::cout << "        ST  0, nsp" << std::endl;
-   }
+    }
    else
     {
-      VS_pushAddr(location);
+      if (0 == (location & 1))
+       {
+         VS_pushAddr(location & ~1);
+       }
+      else
+       {
+         VS_pushVal(location & ~1);
+       }
     }
  }
 

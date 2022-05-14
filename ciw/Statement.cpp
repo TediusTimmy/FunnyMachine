@@ -70,7 +70,14 @@ void Assignment::emit(const CallingContext& context) const
        }
       else
        {
-         VS_pushAddr(location & ~1);
+         if (0 == (location & 1))
+          {
+            VS_pushAddr(location & ~1);
+          }
+         else
+          {
+            VS_pushVal(location & ~1);
+          }
        }
       VS_pop();
       std::cout << "        LD  nsp" << std::endl;

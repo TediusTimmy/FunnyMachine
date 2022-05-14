@@ -670,6 +670,10 @@ void Parser::functions (CallingContext& context)
             for (std::map<std::string, int>::iterator iter = newFunction.FunLocals()[name].begin();
                iter != newFunction.FunLocals()[name].end(); ++iter)
              {
+               if (iter->second > 1) // Allocate the rest of the array before anything else.
+                {
+                  locloc -= 2 * (iter->second - 1);
+                }
                int temp = locloc;
                if (iter->second > 0) // Nasty hack to mark arrays as arrays. Arrays have ODD addresses.
                 {
@@ -677,10 +681,6 @@ void Parser::functions (CallingContext& context)
                 }
                newFunction.Locals().insert(std::make_pair(iter->first, temp));
                locloc -= 2;
-               if (iter->second > 1)
-                {
-                  locloc -= 2 * (iter->second - 1);
-                }
              }
             context.AllLocals()[name] = -locloc - 2;
 

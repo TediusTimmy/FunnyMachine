@@ -2,5 +2,5 @@ function program ()
    dim writeL [2]
    writeL[0] <- 72
    writeL[1] <- 73
-   return
+   return writeL[0]
 end function
