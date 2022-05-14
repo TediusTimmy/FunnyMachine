@@ -3,18 +3,16 @@ dim prog [3000]; tape [3000]; input
 
 # Sadly, there is a nasty IO hack :(
 function read ()
-   dim readL
-   readL <- 49149 // Until I put in the logic to "home" the variable "@ 49149", do it the hard way.
-   input <- readL[0] // Force readL to be a pointer by context
-   do while (0 == (readL & 255))
-      input <- readL[0]
+   dim static @ 49149 readL
+   input <- readL
+   do while (0 == (input & 255))
+      input <- readL
    loop
    input := input >> 8
    return 0
 end function
 function write (value) // This is broken as ...
-   dim writeL
-   writeL <- 40960
+   dim static @ 40960 writeL [0]
    writeL[0] := value | 7 << 8
    return 0
 end function

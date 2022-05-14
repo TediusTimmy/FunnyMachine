@@ -480,6 +480,19 @@ void Parser::globals (CallingContext& context)
           {
             GNT();
 
+            int home = -1;
+            if (AT == nextToken.lexeme)
+             {
+               GNT();
+
+               std::shared_ptr<Expression> temp = expression(context);
+
+               home = temp->evaluate(context);
+
+               if ((home < 0) || (home > 0xFFFF))
+                  DB_panic("Set a variable's address outside of memory on " + LN() + ".");
+             }
+
             std::string name = nextToken.text;
             expect(IDENTIFIER);
 
@@ -496,10 +509,22 @@ void Parser::globals (CallingContext& context)
 
                length = temp->evaluate(context);
 
+               if (length < 0)
+                  DB_panic("Invalid array size on " + LN() + ".");
+
                expect(RIGHT_BRACKET);
              }
 
-            context.Globals().insert(std::make_pair(name, CallingContext::createArray(length)));
+            if (-1 == home)
+             {
+               context.Globals().insert(std::make_pair(name, CallingContext::createArray(length)));
+             }
+            else
+             {
+               if (-1 != length) // Nasty hack to mark arrays as arrays. Arrays have ODD addresses.
+                  home |= 1;
+               context.Globals().insert(std::make_pair(name, home));
+             }
           }
          while (SEMICOLON == nextToken.lexeme);
 
@@ -523,10 +548,23 @@ void Parser::variables (CallingContext& context)
             GNT();
 
             bool isStatic = false;
+            int home = -1;
             if (STATIC == nextToken.lexeme)
              {
                GNT();
                isStatic = true;
+
+               if (AT == nextToken.lexeme)
+                {
+                  GNT();
+
+                  std::shared_ptr<Expression> temp = expression(context);
+
+                  home = temp->evaluate(context);
+
+                  if ((home < 0) || (home > 0xFFFF))
+                     DB_panic("Set a variable's address outside of memory on " + LN() + ".");
+                }
              }
 
             std::string name = nextToken.text;
@@ -549,8 +587,17 @@ void Parser::variables (CallingContext& context)
 
             if (true == isStatic)
              {
-               int val = CallingContext::createArray(length);
-               context.Statics().insert(std::make_pair(name, val));
+               if (-1 == home)
+                {
+                  int val = CallingContext::createArray(length);
+                  context.Statics().insert(std::make_pair(name, val));
+                }
+               else
+                {
+                  if (-1 != length) // Nasty hack to mark arrays as arrays. Arrays have ODD addresses.
+                     home |= 1;
+                  context.Statics().insert(std::make_pair(name, home));
+                }
              }
             else
              {
