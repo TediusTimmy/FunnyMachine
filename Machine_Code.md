@@ -10,10 +10,10 @@ The instruction is broken into four groups of four bits. Let us label those grou
 Breakdown by Opcode
 -------------------
 
-* 0 - NOP  
+* 0 - NOP
 No operation is performed by this opcode.
 
-* 1 - Load  
+* 1 - Load
 Group B is used to control operation, with each bit being a flag to specify some behavior.
 ** 0001 - This is a word load (the behavior of an unaligned word load is not defined; in the example implementation, the least-significant bit is ignored)
 ** 0010 - Reserved
@@ -23,7 +23,7 @@ Group C is the belt location in which is the address that will be loaded.
 
 This operation pushes the loaded value onto the belt.
 
-* 2 - Store  
+* 2 - Store
 Group B is used to control operation, with each bit being a flag to specify some behavior.
 ** 0001 - This is a word store (the behavior of an unaligned word store is not defined; in the example implementation, the least-significant bit is ignored)
 ** 0010 - Reserved
@@ -34,17 +34,17 @@ Group D is the belt location in which is the address that will be stored to.
 
 This operation does not modify the belt.
 
-* 3 - Load Immediate  
+* 3 - Load Immediate
 Groups B, C, and D are a signed immediate value.
 
 The immediate value is pushed onto the belt.
 
-* 4 - Load Return (PC-Relative) Address  
+* 4 - Load Return (PC-Relative) Address
 Groups B, C, and D are a signed immediate value that will be multiplied by two then added to the program counter (at the next instruction).
 
 The computed value is pushed onto the belt.
 
-* 5 - Perform an ALU Operation  
+* 5 - Perform an ALU Operation
 Groups C and D are the arguments to the operation.  
 Group B is the operation to perform:
 ** 0 - Add
@@ -66,7 +66,7 @@ Group B is the operation to perform:
 
 The computed value is pushed onto the belt.
 
-* 6 - Implementation Defined  
+* 6 - Implementation Defined
 The actual implementation of this operation is left up to the implementer.
 
 The example implementation: Perform Extended ALU Operation  
@@ -83,7 +83,7 @@ Group B is the operation to perform, with the most-significant bit reserved:
 
 For the example, either one or two values are pushed onto the belt: for BCD operations, the result; for multiplication, the high word followed by the low word; for division, the quotient followed by the remainder.
 
-* 7 - Conditional Branch  
+* 7 - Conditional Branch
 Group B is used to control operation. The most significant bit is reserved. The other three bits constitute a condition number, which indicates what condition is to be evaluated (note that the most significant bit logically negates the condition, so there are actually only four conditions that are tested):
 ** 0 - Zero
 ** 1 - Negative
@@ -98,7 +98,7 @@ Group D is the belt location in which is the new program counter (if the conditi
 
 This operation does not modify the belt.
 
-* 8 to 15 - Conditional Relative Branch using Immediate  
+* 8 to 15 - Conditional Relative Branch using Immediate
 The three least-significant bits of the opcode are the condition number (see the table in Conditional Branch).  
 Group B is the belt location in which is the value to check the condition on.  
 Groups C and D are a signed immediate value that will be multiplied by two then added to the program counter (at the next instruction) to make the new program counter (if the condition is true).
