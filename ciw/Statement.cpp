@@ -100,13 +100,25 @@ void IfStatement::emit(const CallingContext& context) const
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
    std::string toElse = CallingContext::getNextLabel();
-   std::cout << "        BRZ 0, " << toElse << std::endl;
-   thenSeq->emit(context);
-   std::string toEnd = CallingContext::getNextLabel();
-   std::cout << "        BRA " << toEnd << std::endl;
-   std::cout << toElse << ":" << std::endl;
-   elseSeq->emit(context);
-   std::cout << toEnd << ":" << std::endl;
+   std::cout << "        LRA " << toElse << std::endl;
+   std::cout << "        RETZ 1, 0" << std::endl;
+   if (nullptr != thenSeq)
+    {
+      thenSeq->emit(context);
+    }
+   if (nullptr != elseSeq)
+    {
+      std::string toEnd = CallingContext::getNextLabel();
+      std::cout << "        LRA " << toEnd << std::endl;
+      std::cout << "        RET 0" << std::endl;
+      std::cout << toElse << ":" << std::endl;
+      elseSeq->emit(context);
+      std::cout << toEnd << ":" << std::endl;
+    }
+   else
+    {
+      std::cout << toElse << ":" << std::endl;
+    }
  }
 
 void DoStatement::emit(const CallingContext&) const

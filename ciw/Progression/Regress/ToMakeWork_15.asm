@@ -89,7 +89,8 @@ function_decider:
  @nsp   ADD sp, two
         ST  nsp, two
         LD  sp
-        BRZ 0, auto_2
+        LRA auto_2
+        RETZ 1, 0
     ; Constant 127 : 3
  @two   LDI 2
  @sp    LD  0
@@ -116,7 +117,8 @@ function_decider:
         ST  0, two
         LD  ra
         RET 0
-        BRA auto_3
+        LRA auto_3
+        RET 0
 auto_2:
     ; Constant 127 : 5
  @two   LDI 2
