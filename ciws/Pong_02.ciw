@@ -13,7 +13,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-dim timer; rand; lpad; rpad; xloc; yloc; xvel; yvel; lread; rread; @40960 screen [0]
+dim timer; rand; lpad; rpad; xloc; yloc; xvel; yvel; lread; rread; @40960 screen [2000]
 
 function cls ()
    asm "         LDI 4"
