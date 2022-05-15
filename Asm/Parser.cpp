@@ -612,7 +612,7 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
             int arg = ref.expr->evaluate(context);
             if ((arg > 4095) || (arg < -2048))
              {
-               std::cerr << "Immediate offset exceeds field on " << ref.expr->lineNo << std::endl;
+               std::cerr << "Immediate offset exceeds field on " << ref.expr->lineNo << " : " << arg << std::endl;
              }
             result[ref.codeLocation / 2 - 1] |= (arg & 0xfff) << 4;
           }
@@ -623,7 +623,7 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
             int arg = ref.expr->evaluate(context);
             if ((arg > 4094) || (arg < -4096))
              {
-               std::cerr << "Relative offset exceeds field on " << ref.expr->lineNo << std::endl;
+               std::cerr << "Relative offset exceeds field on " << ref.expr->lineNo << " : " << arg << std::endl;
              }
             result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xfff) << 4;
           }
@@ -634,7 +634,7 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
             int arg = ref.expr->evaluate(context);
             if ((arg > 254) || (arg < -256))
              {
-               std::cerr << "BRANCH offset exceeds field on " << ref.expr->lineNo << std::endl;
+               std::cerr << "BRANCH offset exceeds field on " << ref.expr->lineNo << " : " << arg << std::endl;
              }
             result[ref.codeLocation / 2 - 1] |= ((arg >> 1) & 0xff) << 8;
           }
@@ -988,14 +988,14 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
                 {
                   if ((arg > 4095) || (arg < -2048))
                    {
-                     std::cerr << "Immediate offset exceeds field on " << expr->lineNo << std::endl;
+                     std::cerr << "Immediate offset exceeds field on " << expr->lineNo << " : " << arg << std::endl;
                    }
                 }
                else
                 {
                   if ((arg > 4094) || (arg < -4096))
                    {
-                     std::cerr << "Relative offset exceeds field on " << expr->lineNo << std::endl;
+                     std::cerr << "Relative offset exceeds field on " << expr->lineNo << " : " << arg << std::endl;
                    }
                 }
              }
@@ -1042,7 +1042,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
                rhs = expr->evaluate(context);
                if ((rhs > 254) || (rhs < -256))
                 {
-                  std::cerr << "BRANCH offset exceeds field on " << expr->lineNo << std::endl;
+                  std::cerr << "BRANCH offset exceeds field on " << expr->lineNo << " : " << rhs << std::endl;
                 }
              }
             else
