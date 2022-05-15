@@ -1,0 +1,265 @@
+//   Copyright (C) 2022 Thomas DiModica <ricinwich@yahoo.com>
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+const space := 32 | (7 << 8)
+const hash := 35 | (7 << 8)
+dim timer; rand; lpad; rpad; xloc; yloc; xvel; yvel; lread; rread; reset; @40960 screen [2000]; @45312 counter; @49148 input
+
+function cls ()
+   asm "         LDI 4"
+   asm "         LDI $A00"
+   asm "         SHL 0, 1"
+   asm "         LDI ' ' | (7 << 8)"
+   asm "         ADD 1, 15"
+   asm "@stloop: ST  1, 0"
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         LDI 4"
+   asm "         LDI $AFA"
+   asm "         SHL 0, 1"
+   asm "         SUB 0, 3"
+   asm "         LDI ' ' | (7 << 8)"
+   asm "         ADD 5, 15"
+   asm "         BR  2, stloop"
+   return
+end function
+
+function drawCourtInner(arg)
+   if arg < 2000 then
+      screen[arg] := hash
+      asm "         INC 0"
+      asm "         INC 0"
+      asm "         ST  3, 0"
+      tailcall arg + 160
+   fi
+   return
+end function
+
+function drawCourt()
+   return drawCourtInner(39)
+end function
+
+function clearInner(arg)
+   if arg < 2000 then
+      screen[arg] := space
+      asm "         INC 0"
+      asm "         INC 0"
+      asm "         ST  3, 0"
+      tailcall arg + 80
+   fi
+   return
+end function
+
+function clearLeft()
+   return clearInner(0)
+end function
+
+function clearRight()
+   return clearInner(78)
+end function
+
+function multiply(sum; lhs; rhs)
+   if rhs then
+      if rhs & 1 then
+         sum := sum + lhs
+      fi
+      tailcall sum; lhs << 1; rhs >>> 1
+   fi
+   return sum
+end function
+
+function drawInner(arg; count)
+   if count then
+      screen[arg] := hash
+      asm "         INC 0"
+      asm "         INC 0"
+      asm "         ST  3, 0"
+      tailcall arg + 80; count - 1
+   fi
+   return
+end function
+
+function drawLeft()
+   return drawInner(multiply(0; 80; lpad); 5)
+end function
+
+function drawRight()
+   // Save some cycles by passing the offset in as the initial sum
+   return drawInner(multiply(78; 80; rpad); 5)
+end function
+
+function updateLeft()
+   if lread then
+      lpad := lpad + lread
+      if lpad < 0 then
+         lpad := 0
+      fi
+      if lpad > 20 then
+         lpad := 20
+      fi
+      lread := 0
+   fi
+   return
+end function
+
+function updateRight()
+   if rread then
+      rpad := rpad + rread
+      if rpad < 0 then
+         rpad := 0
+      fi
+      if rpad > 20 then
+         rpad := 20
+      fi
+      rread := 0
+   fi
+   return
+end function
+
+function clearBall()
+   dim temp
+   temp <- multiply(xloc; 80; yloc)
+   screen[temp] := space
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         ST  3, 0"
+   screen[temp + 80] := space
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         ST  3, 0"
+   return
+end function
+
+function drawBall()
+   dim temp
+   temp <- multiply(xloc; 80; yloc)
+   screen[temp] := hash
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         ST  3, 0"
+   screen[temp + 80] := hash
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         ST  3, 0"
+   return
+end function
+
+function z_updateBall() // Compile this last.
+   timer := timer - 1
+   if 0 = timer then
+      timer := 4
+
+      if (xloc = 2) && (yloc >= lpad - 2) && (yloc <= lpad + 6) then
+         xvel := -xvel
+      fi
+      if (xloc = 76) && (yloc >= rpad - 2) && (yloc <= rpad + 6) then
+         xvel := -xvel
+      fi
+
+      xloc := xloc + xvel
+      if (xloc = 0) || (xloc = 78) then
+         reset = 1
+      fi
+      yloc := yloc + yvel
+      if (yloc = 0) || (yloc = 23) then
+         yvel := -yvel
+      fi
+   fi
+   return
+end function
+
+// The compiler orders functions by name, so add a prefix so this gets compiled AFTER program
+function z_checkInput()
+   dim temp
+   temp := input
+   if temp & 255 then
+      temp := (temp >>> 8) | 32
+      if temp = 119 then
+         lread := -1
+      fi
+      if temp = 115 then
+         lread := 1
+      fi
+      if temp = 112 then
+         rread := -1
+      fi
+      if temp = 108 then
+         rread := 1
+      fi
+      if temp = 54 then
+         reset := 1
+      fi
+   fi
+   return
+end function
+
+function z_busyWaitLoop(target)
+   if target # (counter & 255) then
+      return
+   fi
+   call z_checkInput()
+   tailcall target
+end function
+
+function l_busyWait()
+   return z_busyWaitLoop(counter & 255)
+end function
+
+function mainLoop()
+   call l_busyWait()
+
+   call clearLeft()
+   call clearRight()
+   call clearBall()
+
+   call updateLeft()
+   call updateRight()
+   call z_updateBall()
+
+   call drawLeft()
+   call drawRight()
+   call drawCourt()
+   call drawBall()
+
+   if reset then
+      return
+   fi
+   tailcall
+end function
+
+function program ()
+   call cls()
+   call drawCourt()
+   timer := 4
+   rand := rand + 151
+   lpad := 10
+   rpad := 10
+   xloc := 39
+   yloc := ((rand >> 4) & 15) + 4
+   if rand & 16 then
+      xvel := 1
+   else
+      xvel := -1
+   fi
+   if rand & 32 then
+      yvel := 1
+   else
+      yvel := -1
+   fi
+   reset := 0
+
+   call mainLoop()
+   tailcall
+end function

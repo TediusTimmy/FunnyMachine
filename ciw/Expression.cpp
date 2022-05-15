@@ -190,7 +190,7 @@ void ShortOr::emit(const CallingContext& context) const
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
    std::string dest = CallingContext::getNextLabel();
-   std::cout << "        BRNZ 0, " << dest << std::endl;
+   std::cout << "        BR  0, " << dest << std::endl;
    VS_pop();
    rhs->emit(context);
    std::cout << dest << ":" << std::endl;
