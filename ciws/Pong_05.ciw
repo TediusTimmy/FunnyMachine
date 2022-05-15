@@ -179,7 +179,7 @@ function z_updateBall()
       if yloc = 0 then
          yvel := -yvel
       fi
-      if yloc = 22 then
+      if yloc = 23 then
          yvel := -yvel
       fi
    fi
@@ -209,7 +209,7 @@ function z_checkInput()
 end function
 
 function z_busyWaitLoop(target)
-   if target = (counter & 255) then
+   if target # (counter & 255) then
       return
    fi
    call z_checkInput()
@@ -217,8 +217,7 @@ function z_busyWaitLoop(target)
 end function
 
 function z_busyWait()
-   call z_busyWaitLoop(counter & 255)
-   return 
+   return z_busyWaitLoop(counter & 255)
 end function
 
 function mainLoop()
