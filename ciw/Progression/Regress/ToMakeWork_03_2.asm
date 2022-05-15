@@ -44,7 +44,7 @@
  @obp   LD  0
         ST  obp, bp
         ST  bp, ba
-        LDI 4
+        LDI 0
  @sp    SUB bp, 0
         ST  sp, sa
         LRA auto_1
@@ -59,133 +59,76 @@ auto_1:
         LDI $F
         OR  1, 0
         ST  0, 0
+function_doNothing:
+    ; Constant 0 : 2
+ @two   LDI 2
+ @sp    LD  0
+ @nsp   SUB sp, two
+        ST  nsp, two
+        LDI 0
+        ST  0, nsp
+    ; Return 2
+ @two   LDI 2
+        LD  0
+ @rv    LD  0
+ @rvl   LDI 4
+ @bpa   LDI 4
+ @pbp   LD  bpa
+        ADD pbp, rvl
+        ST  rv, 0
+ @bp    ADD pbp, two
+        ST  bp, two
+ @nbp   LD  pbp
+        ST  nbp, bpa
+ @ra    ADD pbp, two
+        LDI 2
+        ADD ra, 0
+        ST  0, two
+        LD  ra
+        RET 0
 function_program:
-    ; Constant 72 : 3
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 72
-        ST  0, nsp
-    ; Assignment [] 
-    ; Constant 0 : 3
+    ; asm 6
+NOP
+    ; Call 7
+    ; Function call doNothing : return value 7
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
         LDI 0
         ST  0, nsp
-    ; Assignment [] to writeL 3
- @four  LDI 4
- @bp    LD  0
-        LDI -4
- @ldr   ADD bp, 0
- @two   LDI 2
+    ; Function call doNothing : arguments 7
+    ; Function call doNothing : call 7
+ @sa    LDI 2
  @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        ST  ldr, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  nsp
-        LDI 1
-        SHL 1, 0
-        LD  sp
-        ADD 0, 1
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  nsp
-        LD  sp
-        ST  1, 0
-    ; Constant 73 : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 73
-        ST  0, nsp
-    ; Assignment [] 
-    ; Constant 1 : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 1
-        ST  0, nsp
-    ; Assignment [] to writeL 4
- @four  LDI 4
- @bp    LD  0
-        LDI -4
- @ldr   ADD bp, 0
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        ST  ldr, nsp
+ @ra    SUB 0, 1
+ @bp    SUB 0, 2
+ @ba    LDI 4
+ @obp   LD  0
+        ST  obp, bp
+        ST  bp, ba
+        LDI 0
+ @sp    SUB bp, 0
+        ST  sp, sa
+        LRA auto_2
+        ST  0, ra
+        LRA function_doNothing
+        RET 0
+auto_2:
  @two   LDI 2
  @sp    LD  0
  @nsp   ADD sp, two
         ST  nsp, two
-        LD  nsp
-        LDI 1
-        SHL 1, 0
-        LD  sp
-        ADD 0, 1
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  nsp
-        LD  sp
-        ST  1, 0
-    ; Variable writeL : 5
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 4
-        LD  0
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI -4
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        ADD 0, 1
-        ST  0, nsp
-    ; Constant 0 : 5
+    ; asm 8
+NOP
+    ; Constant 0 : 9
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
         LDI 0
         ST  0, nsp
-    ; [] 5
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Return 5
+    ; Return 9
  @two   LDI 2
         LD  0
  @rv    LD  0

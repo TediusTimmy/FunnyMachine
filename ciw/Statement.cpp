@@ -148,7 +148,7 @@ void ReturnStatement::emit(const CallingContext& context) const
    std::cout << " @nbp   LD  pbp" << std::endl;
    std::cout << "        ST  nbp, bpa" << std::endl;
    std::cout << " @ra    ADD pbp, two" << std::endl;
-   std::cout << "        LDI " << (context.Functions().find(context.m_currentFunction)->second.size() * 2) << std::endl;
+   std::cout << "        LDI " << (context.Functions().find(context.m_currentFunction)->second.size() * 2 + 2) << std::endl;
    std::cout << "        ADD ra, 0" << std::endl;
    std::cout << "        ST  0, two" << std::endl;
    std::cout << "        LD  ra" << std::endl;

@@ -1,0 +1,10 @@
+function doNothing ()
+   return
+end function
+
+function program ()
+   asm "NOP"
+   call doNothing()
+   asm "NOP"
+   return
+end function

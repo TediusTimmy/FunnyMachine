@@ -132,7 +132,7 @@ function_decider:
  @nbp   LD  pbp
         ST  nbp, bpa
  @ra    ADD pbp, two
-        LDI 2
+        LDI 4
         ADD ra, 0
         ST  0, two
         LD  ra
@@ -218,7 +218,7 @@ auto_2:
  @nbp   LD  pbp
         ST  nbp, bpa
  @ra    ADD pbp, two
-        LDI 2
+        LDI 4
         ADD ra, 0
         ST  0, two
         LD  ra
@@ -247,7 +247,7 @@ auto_4:
  @nbp   LD  pbp
         ST  nbp, bpa
  @ra    ADD pbp, two
-        LDI 2
+        LDI 4
         ADD ra, 0
         ST  0, two
         LD  ra
@@ -393,7 +393,7 @@ auto_8:
  @nbp   LD  pbp
         ST  nbp, bpa
  @ra    ADD pbp, two
-        LDI 0
+        LDI 2
         ADD ra, 0
         ST  0, two
         LD  ra
