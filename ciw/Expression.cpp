@@ -185,9 +185,15 @@ int XorOp::evaluate(const CallingContext& context) const
 void ShortOr::emit(const CallingContext& context) const
  {
    lhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__  << " lhs" << std::endl;
+   std::cout << "    ; || first arg " << lineNo << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::string dest = CallingContext::getNextLabel();
+   std::cout << "        BRNZ 0, " << dest << std::endl;
+   VS_pop();
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__  << " rhs" << std::endl;
+   std::cout << dest << ":" << std::endl;
  }
 
 int ShortOr::evaluate(const CallingContext& context) const
@@ -200,9 +206,15 @@ int ShortOr::evaluate(const CallingContext& context) const
 void ShortAnd::emit(const CallingContext& context) const
  {
    lhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__  << " lhs" << std::endl;
+   std::cout << "    ; && first arg " << lineNo << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::string dest = CallingContext::getNextLabel();
+   std::cout << "        BRZ 0, " << dest << std::endl;
+   VS_pop();
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__  << " rhs" << std::endl;
+   std::cout << dest << ":" << std::endl;
  }
 
 int ShortAnd::evaluate(const CallingContext& context) const
@@ -216,7 +228,16 @@ void Equals::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; = " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRZ 0, 4" << std::endl;
+   std::cout << "        ADD 15, 15" << std::endl;
+   std::cout << "        BRA 2" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        ST  0, nsp - 1" << std::endl;
  }
 
 int Equals::evaluate(const CallingContext& context) const
@@ -229,7 +250,16 @@ void NotEquals::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; # " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRZ 0, 2 ; Invalidates belt references" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        ST  2, sp" << std::endl;
  }
 
 int NotEquals::evaluate(const CallingContext& context) const
@@ -242,7 +272,16 @@ void Greater::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; > " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRP 0, 4" << std::endl;
+   std::cout << "        ADD 15, 15" << std::endl;
+   std::cout << "        BRA 2" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        ST  0, nsp - 1" << std::endl;
  }
 
 int Greater::evaluate(const CallingContext& context) const
@@ -255,7 +294,16 @@ void Less::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; < " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRN 0, 4" << std::endl;
+   std::cout << "        ADD 15, 15" << std::endl;
+   std::cout << "        BRA 2" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        ST  0, nsp - 1" << std::endl;
  }
 
 int Less::evaluate(const CallingContext& context) const
@@ -268,7 +316,16 @@ void GEQ::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; >= " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRZP 0, 4" << std::endl;
+   std::cout << "        ADD 15, 15" << std::endl;
+   std::cout << "        BRA 2" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        ST  0, nsp - 1" << std::endl;
  }
 
 int GEQ::evaluate(const CallingContext& context) const
@@ -281,7 +338,16 @@ void LEQ::emit(const CallingContext& context) const
  {
    lhs->emit(context);
    rhs->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; <= " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        LD  nsp" << std::endl;
+   std::cout << "        SUB 0, 1" << std::endl;
+   std::cout << "        BRZN 0, 4" << std::endl;
+   std::cout << "        ADD 15, 15" << std::endl;
+   std::cout << "        BRA 2" << std::endl;
+   std::cout << "        NOT 15" << std::endl;
+   std::cout << "        ST  0, nsp - 1" << std::endl;
  }
 
 int LEQ::evaluate(const CallingContext& context) const
@@ -498,7 +564,15 @@ int DerefVar::evaluate(const CallingContext& context) const
 void Abs::emit(const CallingContext& context) const
  {
    arg->emit(context);
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; +u " << lineNo << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        LD  sp" << std::endl;
+   std::cout << "        BRZP 0, 2 ; Invalidates result references" << std::endl;
+   std::cout << " @res   NEG 0" << std::endl;
+   std::cout << "        LDI 2" << std::endl;
+   std::cout << " @sp    LD  0" << std::endl;
+   std::cout << "        ST  res, sp" << std::endl;
  }
 
 int Abs::evaluate(const CallingContext& context) const
@@ -516,7 +590,7 @@ void Negate::emit(const CallingContext& context) const
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        NEG 0" << std::endl;
-   std::cout << "        ST  sp, 0" << std::endl;
+   std::cout << "        ST  0, sp" << std::endl;
  }
 
 int Negate::evaluate(const CallingContext& context) const
@@ -533,7 +607,7 @@ void Not::emit(const CallingContext& context) const
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        NOT 0" << std::endl;
-   std::cout << "        ST  sp, 0" << std::endl;
+   std::cout << "        ST  0, sp" << std::endl;
  }
 
 int Not::evaluate(const CallingContext& context) const

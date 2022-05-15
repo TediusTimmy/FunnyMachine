@@ -662,6 +662,16 @@ std::vector<unsigned short> Parser::assembly()
          GNT();
        }
 
+      if ((AT != nextToken.lexeme) && (IDENTIFIER != nextToken.lexeme) && (PERIOD != nextToken.lexeme) &&
+          (POUND != nextToken.lexeme) && (MOD != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+       {
+         std::cerr << "Expected assembly statement, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+         while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+          {
+            GNT();
+          }
+       }
+
          // In general, a line of assembly has one of these two formats:
          //    [label]  [result] opcode
          //    assembler directive
@@ -673,8 +683,8 @@ std::vector<unsigned short> Parser::assembly()
          GNT();
          if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
           {
-            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << ".";
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -747,7 +757,7 @@ std::vector<unsigned short> Parser::assembly()
                catch (const ParserException& ex)
                 {
                   std::cerr << ex.what() << std::endl;
-                  while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+                  while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
                    {
                      GNT();
                    }
@@ -756,7 +766,7 @@ std::vector<unsigned short> Parser::assembly()
             else
              {
                std::cerr << "Expected a label declaration ':' or symbol declaration '=' but found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
-               while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+               while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
                 {
                   GNT();
                 }
@@ -765,7 +775,7 @@ std::vector<unsigned short> Parser::assembly()
          break;
       case PERIOD: // Assembler directive (TODO: Assembler Directives)
          std::cerr << "No assembler directives currently defined." << std::endl;
-         while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+         while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
           {
             GNT();
           }
@@ -780,7 +790,7 @@ std::vector<unsigned short> Parser::assembly()
          if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
           {
             std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -798,7 +808,7 @@ std::vector<unsigned short> Parser::assembly()
          if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
           {
             std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -816,7 +826,7 @@ std::vector<unsigned short> Parser::assembly()
          if (IDENTIFIER != nextToken.lexeme) // If this isn't an identifier, then error.
           {
             std::cerr << "Expected identifier, found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -929,7 +939,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
          catch (const ParserException& ex)
           {
             std::cerr << ex.what() << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -958,7 +968,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
          catch (const ParserException& ex)
           {
             std::cerr << ex.what() << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -1002,7 +1012,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
          catch (const ParserException& ex)
           {
             std::cerr << ex.what() << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }
@@ -1045,7 +1055,7 @@ unsigned short Parser::instruction (const SymbolTable& context, std::list<RefCon
          catch (const ParserException& ex)
           {
             std::cerr << ex.what() << std::endl;
-            while ((END_OF_LINE != nextToken.lexeme) || (END_OF_FILE != nextToken.lexeme))
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
              {
                GNT();
              }

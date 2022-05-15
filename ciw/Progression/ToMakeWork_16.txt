@@ -1,0 +1,16 @@
+function decider (arg)
+   if arg < 0 then
+      return 127
+   else if arg > 0 then
+      return -127
+   else
+      return 0
+   fi
+end function
+
+function program ()
+   call decider(0)
+   call decider(12)
+   call decider(-12)
+   return
+end function

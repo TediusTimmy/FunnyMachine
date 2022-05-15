@@ -93,9 +93,20 @@ void Assignment::emit(const CallingContext& context) const
     }
  }
 
-void IfStatement::emit(const CallingContext&) const
+void IfStatement::emit(const CallingContext& context) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   condition->emit(context);
+   std::cout << "    ; If " << lineNo << std::endl;
+   VS_pop();
+   std::cout << "        LD  sp" << std::endl;
+   std::string toElse = CallingContext::getNextLabel();
+   std::cout << "        BRZ 0, " << toElse << std::endl;
+   thenSeq->emit(context);
+   std::string toEnd = CallingContext::getNextLabel();
+   std::cout << "        BRA " << toEnd << std::endl;
+   std::cout << toElse << ":" << std::endl;
+   elseSeq->emit(context);
+   std::cout << toEnd << ":" << std::endl;
  }
 
 void DoStatement::emit(const CallingContext&) const

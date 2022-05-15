@@ -13,3 +13,5 @@ Later in 2014, I bought my first house, and there's a gap there in programming p
 Needless to say, "the demonstrator" went nowhere. But, the code to "the demonstrator" and the original DB 14 were what I cannibalized to make the assembler and my new "callifwhile", which is closer to the old "ifwhile" then it is to the old "callifwhile".
 
 I'm going to leave the 2014 copyright date on everything. Under the laws of the United States, I won't live to see the copyright expire anyway.
+
+After digging up some of the old code, I've found that I was pretty much done with DB14 by March of 2014. I worked on a version of the interpreter that compiled to byte-code (the one that fixed the constant problem), but I dropped that. It was for the best, as the byte-code version does all of the code generation in the parser.
