@@ -169,7 +169,7 @@ void TailCallStatement::emit(const CallingContext& context) const
       VS_pop();
       std::cout << "        LD  sp" << std::endl;
       std::cout << "        ST  0, ldr" << std::endl;
-      loc += 2;
+      loc -= 2;
     }
    std::cout << "    ; TailCall " << lineNo << std::endl;
    std::cout << "        LRA function_" << context.m_currentFunction << std::endl;

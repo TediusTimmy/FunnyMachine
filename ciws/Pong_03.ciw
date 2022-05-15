@@ -1,0 +1,113 @@
+//   Copyright (C) 2022 Thomas DiModica <ricinwich@yahoo.com>
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+const space := 37 | (7 << 8)
+const hash := 35 | (7 << 8)
+dim timer; rand; lpad; rpad; xloc; yloc; xvel; yvel; lread; rread; @40960 screen [2000]
+
+function cls ()
+   asm "         LDI 4"
+   asm "         LDI $A00"
+   asm "         SHL 0, 1"
+   asm "         LDI ' ' | (7 << 8)"
+   asm "         ADD 1, 15"
+   asm "@stloop: ST  1, 0"
+   asm "         INC 0"
+   asm "         INC 0"
+   asm "         LDI 4"
+   asm "         LDI $AFA"
+   asm "         SHL 0, 1"
+   asm "         SUB 0, 3"
+   asm "         LDI ' ' | (7 << 8)"
+   asm "         ADD 5, 15"
+   asm "         BR  2, stloop"
+   return
+end function
+
+function drawCourtInner(arg)
+   if arg < 2000 then
+      screen[arg] := hash
+      screen[arg + 1] := hash
+      tailcall arg + 160
+   fi
+   return
+end function
+
+function drawCourt()
+   return drawCourtInner(39)
+end function
+
+function clearInner(arg)
+   if arg < 2000 then
+      screen[arg] := space
+      screen[arg + 1] := space
+      tailcall arg + 80
+   fi
+   return
+end function
+
+function clearLeft()
+   return clearInner(0)
+end function
+
+function clearRight()
+   return clearInner(78)
+end function
+
+function multiply(sum; lhs; rhs)
+   if rhs then
+      if rhs & 1 then
+         sum := sum + lhs
+      fi
+      tailcall sum; lhs << 1; rhs >>> 1
+   fi
+   return sum
+end function
+
+function drawInner(arg; count)
+   if count then
+      screen[arg] := hash
+      screen[arg + 1] := hash
+      tailcall arg + 80; count - 1
+   fi
+   return
+end function
+
+function drawLeft()
+   return drawInner(multiply(0; 80; lpad); 5)
+end function
+
+function drawRight()
+   return drawInner(multiply(0; 80; rpad) + 78; 5)
+end function
+
+function mainLoop()
+   call clearLeft()
+   call clearRight()
+   call drawLeft()
+   call drawRight()
+   tailcall // TODO
+end function
+
+function program ()
+   call cls()
+   call drawCourt()
+   timer := 4
+   lpad := 10
+   rpad := 10
+
+   call mainLoop()
+   return
+end function
