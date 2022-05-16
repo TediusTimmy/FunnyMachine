@@ -47,11 +47,11 @@
         LDI 0
  @sp    SUB bp, 0
         ST  sp, sa
-        LRA auto_1
+        LRA auto_1_ret
         ST  0, ra
         LRA function_program
         RET 0
-auto_1:
+auto_1_ret:
     ; Program exit : halt machine 
         LDI $BFF
         LDI 4
@@ -126,11 +126,11 @@ function_program:
         LDI 2
  @sp    SUB bp, 0
         ST  sp, sa
-        LRA auto_2
+        LRA auto_2_ret
         ST  0, ra
         LRA function_doNothing
         RET 0
-auto_2:
+auto_2_ret:
  @two   LDI 2
  @sp    LD  0
  @nsp   ADD sp, two

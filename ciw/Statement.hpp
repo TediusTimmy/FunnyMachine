@@ -25,13 +25,14 @@
 class Expression;
 class FunctionCall;
 class CallingContext;
+class GlobalData;
 
 class Statement
  {
 public:
    size_t lineNo;
 
-   virtual void emit(const CallingContext&) const = 0;
+   virtual void emit(const CallingContext&, GlobalData&) const = 0;
    virtual ~Statement() { }
  };
 
@@ -40,7 +41,7 @@ class RecAssignState
 public:
    std::shared_ptr<Expression> index;
 
-   void emit(const CallingContext&) const;
+   void emit(const CallingContext&, GlobalData&) const;
  };
 
 class Assignment : public Statement
@@ -51,7 +52,7 @@ public:
    std::shared_ptr<RecAssignState> index;
    std::shared_ptr<Expression> rhs;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class StatementSeq : public Statement
@@ -59,12 +60,12 @@ class StatementSeq : public Statement
 public:
    std::vector<std::shared_ptr<Statement> > statements;
 
-   void emit(const CallingContext& context) const override
+   void emit(const CallingContext& context, GlobalData& data) const override
     {
       for (std::vector<std::shared_ptr<Statement> >::const_iterator iter = statements.begin();
          iter != statements.end(); ++iter)
        {
-         (*iter)->emit(context);
+         (*iter)->emit(context, data);
        }
     }
  };
@@ -76,7 +77,7 @@ public:
    std::shared_ptr<Statement> thenSeq;
    std::shared_ptr<Statement> elseSeq;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class DoStatement : public Statement
@@ -88,7 +89,7 @@ public:
    std::shared_ptr<Expression> postCondition;
    std::shared_ptr<StatementSeq> seq;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class BreakStatement : public Statement
@@ -98,7 +99,7 @@ public:
    std::string label;
    bool toContinue;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class ReturnStatement : public Statement
@@ -106,7 +107,7 @@ class ReturnStatement : public Statement
 public:
    std::shared_ptr<Expression> value;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class TailCallStatement : public Statement
@@ -114,7 +115,7 @@ class TailCallStatement : public Statement
 public:
    std::vector<std::shared_ptr<Expression> > args;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class CallStatement : public Statement
@@ -122,7 +123,7 @@ class CallStatement : public Statement
 public:
    std::shared_ptr<Expression> fun;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 class AsmStatement : public Statement
@@ -130,7 +131,7 @@ class AsmStatement : public Statement
 public:
    std::string line;
 
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
  };
 
 #endif /* STATEMENT_HPP */

@@ -85,14 +85,14 @@ void VS_pop (void)
    std::cout << "        ST  nsp, two" << std::endl;
  }
 
-void Constant::emit(const CallingContext&) const
+void Constant::emit(const CallingContext&, GlobalData&) const
  {
    std::cout << "    ; Constant " << value << " : " << lineNo << std::endl;
    VS_pushVal(value);
  }
 
 
-void Variable::emit(const CallingContext&) const
+void Variable::emit(const CallingContext&, GlobalData&) const
  {
    std::cout << "    ; Variable " << referent << " : " << lineNo << std::endl;
    if (location < 128)
@@ -128,10 +128,10 @@ int Variable::evaluate(const CallingContext& context) const
  }
 
 
-void OrOp::emit(const CallingContext& context) const
+void OrOp::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; \\/ " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -146,10 +146,10 @@ int OrOp::evaluate(const CallingContext& context) const
  }
 
 
-void AndOp::emit(const CallingContext& context) const
+void AndOp::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; /\\ " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -164,10 +164,10 @@ int AndOp::evaluate(const CallingContext& context) const
  }
 
 
-void XorOp::emit(const CallingContext& context) const
+void XorOp::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; ? " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -182,17 +182,17 @@ int XorOp::evaluate(const CallingContext& context) const
  }
 
 
-void ShortOr::emit(const CallingContext& context) const
+void ShortOr::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
+   lhs->emit(context, data);
    std::cout << "    ; || first arg " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
-   std::string dest = CallingContext::getNextLabel();
+   std::string dest = data.getNextLabel() + "_or_else";
    std::cout << "        BR  0, " << dest << std::endl;
    VS_pop();
-   rhs->emit(context);
+   rhs->emit(context, data);
    std::cout << dest << ":" << std::endl;
  }
 
@@ -203,17 +203,17 @@ int ShortOr::evaluate(const CallingContext& context) const
  }
 
 
-void ShortAnd::emit(const CallingContext& context) const
+void ShortAnd::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
+   lhs->emit(context, data);
    std::cout << "    ; && first arg " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
    std::cout << "        LD  sp" << std::endl;
-   std::string dest = CallingContext::getNextLabel();
+   std::string dest = data.getNextLabel() + "_and_then";
    std::cout << "        BRZ 0, " << dest << std::endl;
    VS_pop();
-   rhs->emit(context);
+   rhs->emit(context, data);
    std::cout << dest << ":" << std::endl;
  }
 
@@ -224,10 +224,10 @@ int ShortAnd::evaluate(const CallingContext& context) const
  }
 
 
-void Equals::emit(const CallingContext& context) const
+void Equals::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; = " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -246,10 +246,10 @@ int Equals::evaluate(const CallingContext& context) const
  }
 
 
-void NotEquals::emit(const CallingContext& context) const
+void NotEquals::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; # " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -268,10 +268,10 @@ int NotEquals::evaluate(const CallingContext& context) const
  }
 
 
-void Greater::emit(const CallingContext& context) const
+void Greater::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; > " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -290,10 +290,10 @@ int Greater::evaluate(const CallingContext& context) const
  }
 
 
-void Less::emit(const CallingContext& context) const
+void Less::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; < " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -312,10 +312,10 @@ int Less::evaluate(const CallingContext& context) const
  }
 
 
-void GEQ::emit(const CallingContext& context) const
+void GEQ::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; >= " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -334,10 +334,10 @@ int GEQ::evaluate(const CallingContext& context) const
  }
 
 
-void LEQ::emit(const CallingContext& context) const
+void LEQ::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; <= " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -356,10 +356,10 @@ int LEQ::evaluate(const CallingContext& context) const
  }
 
 
-void ShiftLeft::emit(const CallingContext& context) const
+void ShiftLeft::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; << " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -374,10 +374,10 @@ int ShiftLeft::evaluate(const CallingContext& context) const
  }
 
 
-void ShiftRight::emit(const CallingContext& context) const
+void ShiftRight::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; >> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -392,10 +392,10 @@ int ShiftRight::evaluate(const CallingContext& context) const
  }
 
 
-void UnsignedShiftRight::emit(const CallingContext& context) const
+void UnsignedShiftRight::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; >>> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -410,10 +410,10 @@ int UnsignedShiftRight::evaluate(const CallingContext& context) const
  }
 
 
-void RotateLeft::emit(const CallingContext& context) const
+void RotateLeft::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; <<> " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -430,10 +430,10 @@ int RotateLeft::evaluate(const CallingContext& context) const
  }
 
 
-void RotateRight::emit(const CallingContext& context) const
+void RotateRight::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; >>< " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -450,10 +450,10 @@ int RotateRight::evaluate(const CallingContext& context) const
  }
 
 
-void Plus::emit(const CallingContext& context) const
+void Plus::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; + " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -468,10 +468,10 @@ int Plus::evaluate(const CallingContext& context) const
  }
 
 
-void Minus::emit(const CallingContext& context) const
+void Minus::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; - " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -486,10 +486,10 @@ int Minus::evaluate(const CallingContext& context) const
  }
 
 
-void Multiply::emit(const CallingContext& context) const
+void Multiply::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; * " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -504,10 +504,10 @@ int Multiply::evaluate(const CallingContext& context) const
  }
 
 
-void Divide::emit(const CallingContext& context) const
+void Divide::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; / " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -522,10 +522,10 @@ int Divide::evaluate(const CallingContext& context) const
  }
 
 
-void Remainder::emit(const CallingContext& context) const
+void Remainder::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; % " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -540,10 +540,10 @@ int Remainder::evaluate(const CallingContext& context) const
  }
 
 
-void DerefVar::emit(const CallingContext& context) const
+void DerefVar::emit(const CallingContext& context, GlobalData& data) const
  {
-   lhs->emit(context);
-   rhs->emit(context);
+   lhs->emit(context, data);
+   rhs->emit(context, data);
    std::cout << "    ; [] " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
@@ -561,9 +561,9 @@ int DerefVar::evaluate(const CallingContext& context) const
  }
 
 
-void Abs::emit(const CallingContext& context) const
+void Abs::emit(const CallingContext& context, GlobalData& data) const
  {
-   arg->emit(context);
+   arg->emit(context, data);
    std::cout << "    ; +u " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
@@ -582,9 +582,9 @@ int Abs::evaluate(const CallingContext& context) const
  }
 
 
-void Negate::emit(const CallingContext& context) const
+void Negate::emit(const CallingContext& context, GlobalData& data) const
  {
-   arg->emit(context);
+   arg->emit(context, data);
    std::cout << "    ; -u " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
@@ -599,9 +599,9 @@ int Negate::evaluate(const CallingContext& context) const
  }
 
 
-void Not::emit(const CallingContext& context) const
+void Not::emit(const CallingContext& context, GlobalData& data) const
  {
-   arg->emit(context);
+   arg->emit(context, data);
    std::cout << "    ; ! " << lineNo << std::endl;
    std::cout << "        LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
@@ -624,14 +624,14 @@ int Not::evaluate(const CallingContext& context) const
       Locals
 */
 
-void FunctionCall::emit(const CallingContext& context) const
+void FunctionCall::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; Function call " << name << " : return value " << lineNo << std::endl;
    VS_pushVal(0);
    std::cout << "    ; Function call " << name << " : arguments " << lineNo << std::endl;
    for (auto arg : args)
     {
-      arg->emit(context);
+      arg->emit(context, data);
     }
    std::cout << "    ; Function call " << name << " : call " << lineNo << std::endl;
    std::cout << " @sa    LDI 2" << std::endl;
@@ -645,7 +645,7 @@ void FunctionCall::emit(const CallingContext& context) const
    beltVal(context.getNumLocals(name, lineNo));
    std::cout << " @sp    SUB bp, 0" << std::endl;
    std::cout << "        ST  sp, sa" << std::endl;
-   std::string dest = CallingContext::getNextLabel();
+   std::string dest = data.getNextLabel() + "_ret";
    std::cout << "        LRA " << dest << std::endl;
    std::cout << "        ST  0, ra" << std::endl;
    std::cout << "        LRA function_" << name << std::endl;

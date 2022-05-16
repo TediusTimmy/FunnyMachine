@@ -28,12 +28,13 @@ void VS_popAddr (short addr);
 void VS_pop (void);
 
 class CallingContext;
+class GlobalData;
 
 class Expression
  {
 public:
    size_t lineNo;
-   virtual void emit(const CallingContext&) const = 0;
+   virtual void emit(const CallingContext&, GlobalData&) const = 0;
    virtual int evaluate(const CallingContext&) const = 0;
    virtual ~Expression() { }
  };
@@ -42,7 +43,7 @@ class Constant : public Expression
  {
 public:
    int value;
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override { return value; }
  };
 
@@ -51,7 +52,7 @@ class Variable : public Expression
 public:
    std::string referent;
    int location;
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
@@ -66,154 +67,154 @@ public:
 class OrOp : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class AndOp : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class XorOp : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class ShortOr : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class ShortAnd : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Equals : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class NotEquals : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Greater : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Less : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class GEQ : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class LEQ : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class ShiftLeft : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class ShiftRight : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class UnsignedShiftRight : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class RotateLeft : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class RotateRight : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Plus : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Minus : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Multiply : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Divide : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Remainder : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class DerefVar : public BinaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
@@ -228,21 +229,21 @@ public:
 class Abs : public UnaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Negate : public UnaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
 class Not : public UnaryOperation
  {
 public:
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 
@@ -253,7 +254,7 @@ class FunctionCall : public Expression
 public:
    std::vector<std::shared_ptr<Expression> > args;
    std::string name;
-   void emit(const CallingContext&) const override;
+   void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
  };
 

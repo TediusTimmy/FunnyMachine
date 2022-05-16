@@ -428,15 +428,15 @@ std::shared_ptr<Expression> Parser::primary (const CallingContext& context)
 
 
 
-void Parser::program (CallingContext& context)
+void Parser::program (CallingContext& context, GlobalData& data)
  {
-   constants(context);
-   globals(context);
-   functions(context);
+   constants(context, data);
+   globals(context, data);
+   functions(context, data);
    expect(END_OF_FILE);
  }
 
-void Parser::constants (CallingContext& context)
+void Parser::constants (CallingContext& context, GlobalData&)
  {
    while ((CONST == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -470,7 +470,7 @@ void Parser::constants (CallingContext& context)
     }
  }
 
-void Parser::globals (CallingContext& context)
+void Parser::globals (CallingContext& context, GlobalData& data)
  {
    while ((DIM == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -517,7 +517,7 @@ void Parser::globals (CallingContext& context)
 
             if (-1 == home)
              {
-               context.Globals().insert(std::make_pair(name, CallingContext::createArray(length)));
+               context.Globals().insert(std::make_pair(name, data.createArray(length)));
              }
             else
              {
@@ -537,7 +537,7 @@ void Parser::globals (CallingContext& context)
     }
  }
 
-void Parser::variables (CallingContext& context)
+void Parser::variables (CallingContext& context, GlobalData& data)
  {
    while ((DIM == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -589,7 +589,7 @@ void Parser::variables (CallingContext& context)
              {
                if (-1 == home)
                 {
-                  int val = CallingContext::createArray(length);
+                  int val = data.createArray(length);
                   context.Statics().insert(std::make_pair(name, val));
                 }
                else
@@ -615,7 +615,7 @@ void Parser::variables (CallingContext& context)
     }
  }
 
-void Parser::functions (CallingContext& context)
+void Parser::functions (CallingContext& context, GlobalData& data)
  {
    while ((FUNCTION == nextToken.lexeme) || (DECLARE == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -711,7 +711,7 @@ void Parser::functions (CallingContext& context)
                locloc -= 2;
              }
 
-            variables(newFunction);
+            variables(newFunction, data);
 
             locloc = -2;
             for (std::map<std::string, int>::iterator iter = newFunction.FunLocals()[name].begin();

@@ -22,17 +22,17 @@
 
 void DB_panic (const std::string &) __attribute__ ((__noreturn__));
 
-void RecAssignState::emit(const CallingContext& context) const
+void RecAssignState::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; Assignment [] " << std::endl;
-   index->emit(context); // Thankfully, I'm not supporting a full "Recursive Assignment Statement".
+   index->emit(context, data); // Thankfully, I'm not supporting a full "Recursive Assignment Statement".
  }
 
-void Assignment::emit(const CallingContext& context) const
+void Assignment::emit(const CallingContext& context, GlobalData& data) const
  {
    if (nullptr == index)
     {
-      rhs->emit(context);
+      rhs->emit(context, data);
       std::cout << "    ; Assignment to " << lhs << " " << lineNo << std::endl;
       if (location < 128)
        {
@@ -48,8 +48,8 @@ void Assignment::emit(const CallingContext& context) const
     }
    else
     {
-      rhs->emit(context);
-      index->emit(context);
+      rhs->emit(context, data);
+      index->emit(context, data);
       std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
       if (location < 128)
        {
@@ -93,26 +93,26 @@ void Assignment::emit(const CallingContext& context) const
     }
  }
 
-void IfStatement::emit(const CallingContext& context) const
+void IfStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   condition->emit(context);
+   condition->emit(context, data);
    std::cout << "    ; If " << lineNo << std::endl;
    VS_pop();
    std::cout << "        LD  sp" << std::endl;
-   std::string toElse = CallingContext::getNextLabel();
+   std::string toElse = data.getNextLabel() + "_else";
    std::cout << "        LRA " << toElse << std::endl;
    std::cout << "        RETZ 1, 0" << std::endl;
    if (nullptr != thenSeq)
     {
-      thenSeq->emit(context);
+      thenSeq->emit(context, data);
     }
    if (nullptr != elseSeq)
     {
-      std::string toEnd = CallingContext::getNextLabel();
+      std::string toEnd = data.getNextLabel() + "_fi";
       std::cout << "        LRA " << toEnd << std::endl;
       std::cout << "        RET 0" << std::endl;
       std::cout << toElse << ":" << std::endl;
-      elseSeq->emit(context);
+      elseSeq->emit(context, data);
       std::cout << toEnd << ":" << std::endl;
     }
    else
@@ -121,19 +121,19 @@ void IfStatement::emit(const CallingContext& context) const
     }
  }
 
-void DoStatement::emit(const CallingContext&) const
+void DoStatement::emit(const CallingContext&, GlobalData&) const
  {
    std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
-void BreakStatement::emit(const CallingContext&) const
+void BreakStatement::emit(const CallingContext&, GlobalData&) const
  {
    std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
  }
 
-void ReturnStatement::emit(const CallingContext& context) const
+void ReturnStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   value->emit(context);
+   value->emit(context, data);
    std::cout << "    ; Return " << lineNo << std::endl;
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << "        LD  0" << std::endl;
@@ -155,13 +155,13 @@ void ReturnStatement::emit(const CallingContext& context) const
    std::cout << "        RET 0" << std::endl;
  }
 
-void TailCallStatement::emit(const CallingContext& context) const
+void TailCallStatement::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; TailCall Arguments " << lineNo << std::endl;
    int loc = context.Functions().find(context.m_currentFunction)->second.size() * 2 + 2;
    for (const auto& arg : args)
     {
-      arg->emit(context);
+      arg->emit(context, data);
       std::cout << " @rvl   LDI " << loc << std::endl;
       std::cout << " @bpa   LDI 4" << std::endl;
       std::cout << " @pbp   LD  bpa" << std::endl;
@@ -176,14 +176,14 @@ void TailCallStatement::emit(const CallingContext& context) const
    std::cout << "        RET 0" << std::endl;
  }
 
-void CallStatement::emit(const CallingContext& context) const
+void CallStatement::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; Call " << lineNo << std::endl;
-   fun->emit(context);
+   fun->emit(context, data);
    VS_pop();
  }
 
-void AsmStatement::emit(const CallingContext&) const
+void AsmStatement::emit(const CallingContext&, GlobalData&) const
  {
    std::cout << "    ; asm " << lineNo << std::endl;
    std::cout << line << std::endl;

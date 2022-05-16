@@ -47,11 +47,11 @@
         LDI 0
  @sp    SUB bp, 0
         ST  sp, sa
-        LRA auto_1
+        LRA auto_1_ret
         ST  0, ra
         LRA function_program
         RET 0
-auto_1:
+auto_1_ret:
     ; Program exit : halt machine 
         LDI $BFF
         LDI 4
@@ -89,7 +89,7 @@ function_decider:
  @nsp   ADD sp, two
         ST  nsp, two
         LD  sp
-        LRA auto_2
+        LRA auto_2_else
         RETZ 1, 0
     ; Constant 127 : 3
  @two   LDI 2
@@ -117,9 +117,9 @@ function_decider:
         ST  0, two
         LD  ra
         RET 0
-        LRA auto_3
+        LRA auto_3_fi
         RET 0
-auto_2:
+auto_2_else:
     ; Constant 127 : 5
  @two   LDI 2
  @sp    LD  0
@@ -152,7 +152,7 @@ auto_2:
         ST  0, two
         LD  ra
         RET 0
-auto_3:
+auto_3_fi:
 function_program:
     ; Call 10
     ; Function call decider : return value 10
@@ -182,11 +182,11 @@ function_program:
         LDI 0
  @sp    SUB bp, 0
         ST  sp, sa
-        LRA auto_4
+        LRA auto_4_ret
         ST  0, ra
         LRA function_decider
         RET 0
-auto_4:
+auto_4_ret:
  @two   LDI 2
  @sp    LD  0
  @nsp   ADD sp, two
@@ -219,11 +219,11 @@ auto_4:
         LDI 0
  @sp    SUB bp, 0
         ST  sp, sa
-        LRA auto_5
+        LRA auto_5_ret
         ST  0, ra
         LRA function_decider
         RET 0
-auto_5:
+auto_5_ret:
  @two   LDI 2
  @sp    LD  0
  @nsp   ADD sp, two

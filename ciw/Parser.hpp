@@ -24,6 +24,7 @@
 class CallingContext;
 class Statement;
 class Expression;
+class GlobalData;
 
 class Parser /* Syntax Analyzer */
  {
@@ -31,11 +32,11 @@ class Parser /* Syntax Analyzer */
 
       void expect (const Lexeme&);
 
-      void program (CallingContext&);
-      void constants (CallingContext&);
-      void globals (CallingContext&);
-      void variables (CallingContext&);
-      void functions (CallingContext&);
+      void program (CallingContext&, GlobalData&);
+      void constants (CallingContext&, GlobalData&);
+      void globals (CallingContext&, GlobalData&);
+      void variables (CallingContext&, GlobalData&);
+      void functions (CallingContext&, GlobalData&);
 
       std::shared_ptr<Statement> statement (CallingContext&);
 
@@ -62,7 +63,7 @@ class Parser /* Syntax Analyzer */
       Parser (Lexer & input) : src(input), nextToken(0) { GNT(); }
       ~Parser() { }
 
-      void Parse (CallingContext& context) { program(context); }
+      void Parse (CallingContext& context, GlobalData& data) { program(context, data); }
       std::shared_ptr<Expression> ParseExpression (const CallingContext& context) { return expression(context); }
  };
 

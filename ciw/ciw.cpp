@@ -67,6 +67,7 @@ int main (int argc, char ** argv)
    std::map<std::string, std::shared_ptr<StatementSeq> > funDefs;
 
    CallingContext TheContext (allGlobals, constants, allLocals, functions, funLocals, funDefs);
+   GlobalData data;
 
    std::ifstream file (argv[1]);
    std::string input;
@@ -82,7 +83,7 @@ int main (int argc, char ** argv)
    Lexer lex (input);
    Parser parse (lex);
 
-   parse.Parse(TheContext);
+   parse.Parse(TheContext, data);
 
    FunctionCall programCall;
    programCall.name = "program";
@@ -120,7 +121,7 @@ int main (int argc, char ** argv)
    std::cout << "        INC 1" << std::endl;
    std::cout << "        INC 1" << std::endl;
    std::cout << "        STB 0, 1 ; B004 <- 4" << std::endl;
-   programCall.emit(TheContext);
+   programCall.emit(TheContext, data);
    std::cout << "    ; Program exit : halt machine " << std::endl;
    std::cout << "        LDI $BFF" << std::endl;
    std::cout << "        LDI 4" << std::endl;
@@ -135,7 +136,7 @@ int main (int argc, char ** argv)
       // Caller establishes the stack.
       // Callee clears the stack on return.
       std::cout << "function_" << function.first << ":" << std::endl;
-      function.second->emit(TheContext);
+      function.second->emit(TheContext, data);
     }
 
    return 0;
