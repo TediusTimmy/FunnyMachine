@@ -135,6 +135,8 @@ private:
 public:
    GlobalData();
 
+   std::vector<std::pair<std::string, std::pair<std::string, std::string> > > labels;
+
    std::string getNextLabel();
    int createArray (int length);
  };

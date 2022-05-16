@@ -121,14 +121,79 @@ void IfStatement::emit(const CallingContext& context, GlobalData& data) const
     }
  }
 
-void DoStatement::emit(const CallingContext&, GlobalData&) const
+void DoStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::string topLabel = data.getNextLabel() + label + "_top";
+   std::string bottomLabel = data.getNextLabel() + label + "_bottom";
+   std::string realTopLabel = data.getNextLabel() + label;
+   std::cout << "    ; While " << lineNo << std::endl;
+   std::cout << realTopLabel << ":" << std::endl;
+   if (nullptr == postCondition)
+    {
+      std::cout << topLabel << ":" << std::endl;
+    }
+   if (nullptr != preCondition)
+    {
+      preCondition->emit(context, data);
+      VS_pop();
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        LRA " << bottomLabel << std::endl;
+      std::cout << "        RETZ 1, 0" << std::endl;
+    }
+   data.labels.push_back(std::make_pair(label, std::make_pair(topLabel, bottomLabel)));
+   seq->emit(context, data); // For DO, this is not null.
+   data.labels.pop_back();
+   if (nullptr != postCondition)
+    {
+      std::cout << topLabel << ":" << std::endl;
+      preCondition->emit(context, data);
+      VS_pop();
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        LRA " << bottomLabel << std::endl;
+      std::cout << "        RETZ 1, 0" << std::endl;
+    }
+   std::cout << "        LRA " << realTopLabel << std::endl;
+   std::cout << "        RET 0" << std::endl;
+   std::cout << bottomLabel << ":" << std::endl;
  }
 
-void BreakStatement::emit(const CallingContext&, GlobalData&) const
+void BreakStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   std::cout << "In " << __PRETTY_FUNCTION__ << std::endl;
+   std::cout << "    ; Break/Continue/While/Until " << lineNo << std::endl;
+   std::string dest = data.getNextLabel() + "_cond";
+   if (nullptr != condition)
+    {
+      condition->emit(context, data);
+      VS_pop();
+      std::cout << "        LD  sp" << std::endl;
+      std::cout << "        BRZ 1, " << dest << std::endl;
+    }
+   size_t index = data.labels.size();
+   if ("" != label)
+    {
+      do
+       {
+         if (0 == index)
+          {
+            DB_panic("Can't find label " + label + " but we got here.");
+          }
+         --index;
+       }
+      while (label != data.labels[index].first);
+    }
+   if (true == toContinue)
+    {
+      std::cout << "        LRA " << data.labels[index].second.first << std::endl;
+    }
+   else
+    {
+      std::cout << "        LRA " << data.labels[index].second.second << std::endl;
+    }
+   std::cout << "        RET 0" << std::endl;
+   if (nullptr != condition)
+    {
+      std::cout << dest << ":" << std::endl;
+    }
  }
 
 void ReturnStatement::emit(const CallingContext& context, GlobalData& data) const
