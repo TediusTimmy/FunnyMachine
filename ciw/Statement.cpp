@@ -166,7 +166,7 @@ void BreakStatement::emit(const CallingContext& context, GlobalData& data) const
       condition->emit(context, data);
       VS_pop();
       std::cout << "        LD  sp" << std::endl;
-      std::cout << "        BRZ 1, " << dest << std::endl;
+      std::cout << "        BRZ 0, " << dest << std::endl;
     }
    size_t index = data.labels.size();
    if ("" != label)
