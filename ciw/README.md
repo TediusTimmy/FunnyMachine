@@ -7,7 +7,7 @@ It's not the most useful of things, but it is a lot easier than assembly. As it 
 
 This "compiler" outputs assembly to be assembled by the assembler. Assemble! Because it outputs assembly, there are some decisions that it doesn't make regarding branch distances that make 2048 instructions the longest branch it will correctly output. Messages from the assembler are probably an indication of bad code generation. Also note that, unlike the assembler, the compiler will die on the first error. Hopefully, the message is useful to you.
 
-The only data type of the compiler is the sixteen-bit word. It will not operate on bytes.
+The only data type of the compiler is the sixteen-bit word. It will not operate on bytes. Also, the only input number base is ten: there are no binary or hex constants.
 
 # Program
 A program consists of three sections, in this order:

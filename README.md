@@ -140,7 +140,8 @@ Load nybble. An instruction to compliment LDI that takes a belt location, shifts
 Given that the second argument slot is the 4 most-significant bits, it could replace those bits in the argument with those bits in the instruction. Hmm....
 ### PICK
 It will be very hard to incorporate PICK, because it is a three argument conditional operator. It is conditional, so there needs to be a belt location to query. If true, copy the first argument. If false, copy the second argument. This is a Mill conditional operation, and it needs operations like this because of how hard it is to keep the belt consistent. I'd have to drop the branch instructions for PICK. It's a tough call.  
-Maybe, move BRCC family into RET, and if the high bit of operation select is set, then argument 2 is sign extended into a 4-bit immediate.... The farthest that Pong branches is 12 instructions....
+Maybe, move BRCC family into RET, and if the high bit of operation select is set, then argument 2 is sign extended into a 4-bit immediate.... The farthest that Pong branches is 12 instructions....  
+Looking at the CallIfWhile compiler: I have three places where BR is used for a short jump and could be replaced, and seven places where pick would actually allow more space efficient code by removing the branches (and not doing weird things with the result count).
 ### MIN / MAX
 An instruction to do this would be nice. Writing conditional code is a pain, because testing for certain conditions changes the belt.
 ### CBW or CBTW or MOVSX or EXT or SEX

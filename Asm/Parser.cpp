@@ -394,6 +394,17 @@ std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool is
       ret = op;
     }
       break;
+   case MULTIPLY:
+    {
+      std::shared_ptr<Constant> op = std::make_shared<Constant>();
+      op->value = context.getUseLocation();
+
+      op->lineNo = nextToken.lineNumber;
+      GNT();
+
+      ret = op;
+    }
+      break;
    case OPEN_PARENS:
       GNT();
       ret = expression(context, isResult);
@@ -689,30 +700,33 @@ std::vector<unsigned short> Parser::assembly()
                GNT();
              }
           }
-         std::string name = nextToken.text;
-         GNT();
-         if (COLON == nextToken.lexeme) // This is a local label.
+         else
           {
-            if (true == context.hasLabel(name))
+            std::string name = nextToken.text;
+            GNT();
+            if (COLON == nextToken.lexeme) // This is a local label.
              {
-               std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
+               if (true == context.hasLabel(name))
+                {
+                  std::cerr << "Redefinition of label \"" << name << "\" on " << nextToken.lineNumber << "." << std::endl;
+                }
+               if (true == context.hasSymbol(name))
+                {
+                  std::cerr << "Definition of label \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+                }
+               context.setLabel(name, context.getCurrentLocation());
+               context.addLocalLabel(name);
+               expect(COLON);
+               processReferences(context, result, references);
              }
-            if (true == context.hasSymbol(name))
+            else // Maybe there is garbage, but assume this is a result.
              {
-               std::cerr << "Definition of label \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+               if (true == context.hasSymbol(name))
+                {
+                  std::cerr << "Definition of result \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+                }
+               resultsToUpdate.insert(std::make_pair(name, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
              }
-            context.setLabel(name, context.getCurrentLocation());
-            context.addLocalLabel(name);
-            expect(COLON);
-            processReferences(context, result, references);
-          }
-         else // Maybe there is garbage, but assume this is a result.
-          {
-            if (true == context.hasSymbol(name))
-             {
-               std::cerr << "Definition of result \"" << name << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
-             }
-            resultsToUpdate.insert(std::make_pair(name, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
           }
        }
          break;
@@ -773,7 +787,8 @@ std::vector<unsigned short> Parser::assembly()
              }
           }
          break;
-      case PERIOD: // Assembler directive (TODO: Assembler Directives)
+      case PERIOD: // Assembler directive
+         GNT();
          std::cerr << "No assembler directives currently defined." << std::endl;
          while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
           {
@@ -795,13 +810,16 @@ std::vector<unsigned short> Parser::assembly()
                GNT();
              }
           }
-         // Don't check for symbol existence in the next two cases, because both of them imply that a result by that name exists.
-         if (true == context.hasSymbol(nextToken.text))
+         else
           {
-            std::cerr << "Definition of result \"" << nextToken.text << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+            // Don't check for symbol existence in the next two cases, because both of them imply that a result by that name exists.
+            if (true == context.hasSymbol(nextToken.text))
+             {
+               std::cerr << "Definition of result \"" << nextToken.text << "\" on " << nextToken.lineNumber << " will mask symbol of the same name." << std::endl;
+             }
+            resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
+            GNT();
           }
-         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1)); // Assign this name to the next result, clobbering any prior use.
-         GNT();
          break;
       case POUND:
          GNT();
@@ -813,13 +831,16 @@ std::vector<unsigned short> Parser::assembly()
                GNT();
              }
           }
-         if ((false == context.hasResult(nextToken.text)) ||
-            (context.getCurrentResult() + 1 - context.getResult(nextToken.text) < 15))
+         else
           {
-            std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name is still on the belt." << std::endl;
+            if ((false == context.hasResult(nextToken.text)) ||
+               (context.getCurrentResult() + 1 - context.getResult(nextToken.text) < 15))
+             {
+               std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name is still on the belt." << std::endl;
+             }
+            resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
+            GNT();
           }
-         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
-         GNT();
          break;
       case MOD:
          GNT();
@@ -831,13 +852,16 @@ std::vector<unsigned short> Parser::assembly()
                GNT();
              }
           }
-         if ((false == context.hasResult(nextToken.text)) ||
-            (context.getCurrentResult() + 1 - context.getResult(nextToken.text) > 14))
+         else
           {
-            std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name has left the belt." << std::endl;
+            if ((false == context.hasResult(nextToken.text)) ||
+               (context.getCurrentResult() + 1 - context.getResult(nextToken.text) > 14))
+             {
+               std::cerr << "Use of result name \"" << nextToken.text << "\" on " << nextToken.lineNumber << " while previous result by that name has left the belt." << std::endl;
+             }
+            resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
+            GNT();
           }
-         resultsToUpdate.insert(std::make_pair(nextToken.text, context.getCurrentResult() + 1));
-         GNT();
          break;
       default: break;
        }
@@ -850,7 +874,11 @@ std::vector<unsigned short> Parser::assembly()
             int resultCount = results[TO_UPPER(nextToken.text)];
             context.addLocation();
             context.setUseLocation(context.getCurrentLocation());
-            result.push_back(instruction(context, references));
+            if (static_cast<int>(result.size()) < (context.getCurrentLocation() / 2))
+             {
+               result.resize(context.getCurrentLocation() / 2);
+             }
+            result[context.getCurrentLocation() / 2 - 1] = instruction(context, references);
             if (0 != resultCount)
              {
                context.addResult(resultCount - 1);
