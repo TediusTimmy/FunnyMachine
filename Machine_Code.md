@@ -90,7 +90,7 @@ Group B is the operation to perform, with the most-significant bit reserved:
 * 6 - Signed Division (if the divisor is zero, then the result is 0 with remainder dividend)
 * 7 - Unsigned Division
 
-For the example, either one or two values are pushed onto the belt: for BCD operations, the result; for multiplication, the high word followed by the low word; for division, the quotient followed by the remainder.
+For the example, either one or two values are pushed onto the belt: for BCD operations, the result; for multiplication, the low word followed by the high word; for division, the quotient followed by the remainder.
 
 ### 7 - Conditional Branch
 

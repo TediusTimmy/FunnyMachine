@@ -5,7 +5,7 @@ This is a high-level low-level language to target the architecture. It's like th
 
 It's not the most useful of things, but it is a lot easier than assembly. As it stands, between the inefficient code and 8K target, one can only write about a 150 lines in the program. The forty line main loop in the BF interpreter is a few operations shy of generating an error message because the loop is too large for how do-loop handles branches. It's almost 2048 instructions.
 
-This "compiler" outputs assembly to be assembled by the assembler. Assemble! Because it outputs assembly, there are some decisions that it doesn't make regarding branch distances that make 2048 instructions the longest branch it will correctly output. Messages from the assembler are probably an indication of bad code generation. Also not that, unlike the assembler, the compiler will die on the first error. Hopefully, the message is useful to you.
+This "compiler" outputs assembly to be assembled by the assembler. Assemble! Because it outputs assembly, there are some decisions that it doesn't make regarding branch distances that make 2048 instructions the longest branch it will correctly output. Messages from the assembler are probably an indication of bad code generation. Also note that, unlike the assembler, the compiler will die on the first error. Hopefully, the message is useful to you.
 
 The only data type of the compiler is the sixteen-bit word. It will not operate on bytes.
 

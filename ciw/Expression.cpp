@@ -495,7 +495,7 @@ void Multiply::emit(const CallingContext& context, GlobalData& data) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        MUL 0, 1" << std::endl;
-   std::cout << "        ST  0, nsp" << std::endl;
+   std::cout << "        ST  1, nsp" << std::endl;
  }
 
 int Multiply::evaluate(const CallingContext& context) const
@@ -513,7 +513,7 @@ void Divide::emit(const CallingContext& context, GlobalData& data) const
    std::cout << "        LD  sp" << std::endl;
    std::cout << "        LD  nsp" << std::endl;
    std::cout << "        DIV 0, 1" << std::endl;
-   std::cout << "        ST  nsp, 1" << std::endl;
+   std::cout << "        ST  1, nsp" << std::endl;
  }
 
 int Divide::evaluate(const CallingContext& context) const
