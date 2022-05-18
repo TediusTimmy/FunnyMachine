@@ -1,0 +1,15 @@
+const array := { 72; 101; 108; 111 }
+const array0 := array[0] | (7 << 8)
+const array1 := array[1] | (7 << 8)
+const array2 := array[2] | (7 << 8)
+const array3 := array[3] | (7 << 8)
+
+function program ()
+   dim static @ 40960 writeL [0]
+   writeL[0] <- array0
+   writeL[1] <- array1
+   writeL[2] <- array2
+   writeL[3] <- array2
+   writeL[4] <- array3
+   tailcall // Yes, this IS expected to get into an infinite loop.
+end function

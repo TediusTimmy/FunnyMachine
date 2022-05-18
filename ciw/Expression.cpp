@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-void DB_panic (const std::string &, const CallingContext &, size_t) __attribute__ ((__noreturn__));
+void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 
 void beltVal(short val)
  {
@@ -557,7 +557,25 @@ void DerefVar::emit(const CallingContext& context, GlobalData& data) const
 
 int DerefVar::evaluate(const CallingContext& context) const
  {
-   DB_panic("Array Dereference not implemented for constants.", context, lineNo);
+   if (nullptr != context.m_constantData)
+    {
+      int array = lhs->evaluate(context);
+      int index = rhs->evaluate(context);
+      if ((array < 0xE000) || (array > 0xFFFF))
+       {
+         DB_panic("Array Dereference not a constants.", lineNo);
+       }
+      int mem = (index * 2 + (array - 0xE000)) / 2;
+      if ((mem < 0) || (static_cast<size_t>(mem) > context.m_constantData->size()))
+       {
+         DB_panic("Array Dereference not in defined constants: " + std::to_string(array) + " " + std::to_string(index) + " " + std::to_string(mem), lineNo);
+       }
+      return (*context.m_constantData)[mem];
+    }
+   else
+    {
+      DB_panic("Array Dereference not implemented for constants.", lineNo);
+    }
  }
 
 
@@ -653,7 +671,7 @@ void FunctionCall::emit(const CallingContext& context, GlobalData& data) const
    std::cout << dest << ":" << std::endl;
  }
 
-int FunctionCall::evaluate(const CallingContext& context) const
+int FunctionCall::evaluate(const CallingContext&) const
  {
-   DB_panic("Function Calls not implemented for constants.", context, lineNo);
+   DB_panic("Function Calls not implemented for constants.", lineNo);
  }

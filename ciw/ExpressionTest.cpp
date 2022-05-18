@@ -31,19 +31,13 @@ void DB_panic (const std::string & msg)
    throw std::exception();
  }
 
-void DB_panic (const std::string & msg, const CallingContext& stack, size_t lineNo)
+void DB_panic (const std::string & msg, size_t lineNo) __attribute__ ((__noreturn__));
+
+void DB_panic (const std::string & msg, size_t lineNo)
  {
    std::cerr << msg << std::endl;
 
-   std::cerr << "At line " << lineNo << " in \"" << stack.Name << "\"" << std::endl;
-
-   const CallingContext * next = &stack;
-   while (nullptr != next && (nullptr != next->Parent) && ("BaseContext" != next->Parent->Name))
-    {
-      std::cerr << "\tfrom line " << next->ParentLine << " in \"";
-      next = next->Parent;
-      std::cerr << next->Name << "\"" << std::endl;
-    }
+   std::cerr << "    At line " << lineNo << std::endl;
 
    throw std::exception();
  }

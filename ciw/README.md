@@ -21,8 +21,11 @@ Constant declarations look like so:
    const number1 = 5
    const number2 := 7 << number1
    const number3 <- 1 + 8 * 5 + 1
+
+   const something := "string"
+   const other <- { 123 ; 456 ; 789 }
 ```
-Note that assignment can be achieved with either `=`, `:=`, or `<-`. It will compute the value of the expression before going further (division by zero will probably crash the compiler).
+Note that assignment can be achieved with either `=`, `:=`, or `<-`. It will compute the value of the expression before going further (division by zero will probably crash the compiler). String constants are byte strings, but will be padded to be word aligned, and always end with a zero word. Word constants are arrays. Both are arrays, and for both (due to a hack) it will not be a syntax error to assign to it, unlike a constant. But it will be constant, as it is stored in ROM.
 
 ## Globals
 Globals look like so:

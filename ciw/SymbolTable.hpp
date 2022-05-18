@@ -64,7 +64,8 @@ class CallingContext
          m_funDefs(src.m_funDefs),
          Name(name),
          Parent(&src),
-         ParentLine(lineNo)
+         ParentLine(lineNo),
+         m_constantData(src.m_constantData)
        {
        }
 
@@ -85,8 +86,9 @@ class CallingContext
          m_funLocals(funLocals),
          m_funDefs(funDefs),
          Name("BaseContext"),
-         Parent(NULL),
-         ParentLine(0U)
+         Parent(nullptr),
+         ParentLine(0U),
+         m_constantData(nullptr)
        {
        }
 
@@ -95,6 +97,7 @@ class CallingContext
       // Should be a stack, but I need random-access.
       std::vector<std::string> m_labels;
       std::string m_currentFunction;
+      const std::vector<unsigned short>* m_constantData;
 
       enum IdentifierType
        {

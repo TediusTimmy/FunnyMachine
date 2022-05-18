@@ -16,7 +16,7 @@
  */
 #include "SymbolTable.hpp"
 
-void DB_panic (const std::string &, const CallingContext &, size_t) __attribute__ ((__noreturn__));
+void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 
 int CallingContext::getValue (const std::string & name, size_t lineNo) const
  {
@@ -34,7 +34,7 @@ int CallingContext::getValue (const std::string & name, size_t lineNo) const
    test = m_constants.find(name);
    if (m_constants.end() != test) return test->second;
 
-   DB_panic("COMPILER ERROR!!! : getValue to non-existent variable : " + name, *this, lineNo);
+   DB_panic("COMPILER ERROR!!! : getValue to non-existent variable : " + name, lineNo);
  }
 
 void CallingContext::setValue (const std::string & name, int value, size_t lineNo)
@@ -62,7 +62,7 @@ void CallingContext::setValue (const std::string & name, int value, size_t lineN
       return;
     }
 
-   DB_panic("COMPILER ERROR!!! : setValue to non-existent variable", *this, lineNo);
+   DB_panic("COMPILER ERROR!!! : setValue to non-existent variable", lineNo);
  }
 
 int CallingContext::getNumLocals(const std::string& name, size_t lineNo) const
@@ -75,7 +75,7 @@ int CallingContext::getNumLocals(const std::string& name, size_t lineNo) const
       return test->second;
     }
 
-   DB_panic("COMPILER ERROR!!! : getNumLocals to non-existent function", *this, lineNo);
+   DB_panic("COMPILER ERROR!!! : getNumLocals to non-existent function", lineNo);
  }
 
 GlobalData::GlobalData() : nextLabel(0), nextGlobal(128), nextConstant(57344)
