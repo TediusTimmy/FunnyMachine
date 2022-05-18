@@ -436,7 +436,7 @@ void Parser::program (CallingContext& context, GlobalData& data)
    expect(END_OF_FILE);
  }
 
-void Parser::constants (CallingContext& context, GlobalData&)
+void Parser::constants (CallingContext& context, GlobalData& data)
  {
    while ((CONST == nextToken.lexeme) || (NEW_LINE == nextToken.lexeme))
     {
@@ -455,11 +455,49 @@ void Parser::constants (CallingContext& context, GlobalData&)
          else
             expect(ASSIGNMENT);
 
-         std::shared_ptr<Expression> temp = expression(context);
+         if (STRING == nextToken.lexeme)
+          {
+               // We declare constant arrays as globals for two reasons:
+               //    1) We don't have the nasty array hack for constants.
+               //    2) It's read-only memory anyway.
+            context.Globals().insert(std::make_pair(name, data.addString(nextToken.text) | 1));
+            data.constants.push_back("   .db \"" + nextToken.text + "\", 0, 0");
+            GNT();
+          }
+         else if (LEFT_BRACE == nextToken.lexeme)
+          {
+            GNT();
+            if (NUMBER == nextToken.lexeme)
+             {
+               std::string result = nextToken.text;
+               context.Globals().insert(std::make_pair(name, data.addWord(std::stod(nextToken.text)) | 1));
+               GNT();
+               while (SEMICOLON == nextToken.lexeme)
+                {
+                  GNT();
+                  if (NUMBER == nextToken.lexeme)
+                   {
+                     data.addWord(std::stod(nextToken.text));
+                     result += ", " + nextToken.text;
+                   }
+                  expect(NUMBER);
+                }
+               data.constants.push_back("   .dw " + result);
+             }
+            else
+             {
+               expect(NUMBER);
+             }
+            expect(RIGHT_BRACE);
+          }
+         else
+         {
+            std::shared_ptr<Expression> temp = expression(context);
 
-         int val = temp->evaluate(context);
+            int val = temp->evaluate(context);
 
-         context.Constants().insert(std::make_pair(name, val));
+            context.Constants().insert(std::make_pair(name, val));
+         }
 
          expect(NEW_LINE);
        }

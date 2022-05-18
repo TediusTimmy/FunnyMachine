@@ -60,72 +60,14 @@ auto_1_ret:
         OR  1, 0
         ST  0, 0
 function_program:
-    ; Constant 13 : 3
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 13
-        ST  0, nsp
-    ; Assignment [] 
-    ; Constant 0 : 3
+    ; Constant 0 : 5
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
         LDI 0
         ST  0, nsp
-    ; Assignment [] to variable 3
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 128
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  nsp
-        LDI 1
-        SHL 1, 0
-        LD  sp
-        ADD 0, 1
-        ST  0, nsp
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  nsp
-        LD  sp
-        ST  1, 0
-    ; Variable variable : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 128
-        ST  0, nsp
-    ; Constant 0 : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 0
-        ST  0, nsp
-    ; [] 4
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Return 4
+    ; Return 5
  @two   LDI 2
         LD  0
  @rv    LD  0
@@ -144,3 +86,8 @@ function_program:
         ST  0, two
         LD  ra
         RET 0
+.assert * <= $1FFE
+   .org $1FFE
+   .dw  $C000
+   .db "Hello", 0, 0
+   .dw 12, 13, 14, 15

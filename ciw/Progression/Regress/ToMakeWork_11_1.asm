@@ -11,10 +11,10 @@
         LDI $B00
         LDI 4
         SHL 1, 0
-        LDI $8
+        LDI $7
         OR  1, 0
         INC 15
-        STB 0, 1 ; B008 <- 1
+        STB 0, 1 ; B007 <- 1
         SUB 1, 2
         INC 0
         STB 2, 0 ; B001 <- 1

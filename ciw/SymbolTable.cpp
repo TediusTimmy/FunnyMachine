@@ -78,7 +78,7 @@ int CallingContext::getNumLocals(const std::string& name, size_t lineNo) const
    DB_panic("COMPILER ERROR!!! : getNumLocals to non-existent function", *this, lineNo);
  }
 
-GlobalData::GlobalData() : nextLabel(0), nextGlobal(128)
+GlobalData::GlobalData() : nextLabel(0), nextGlobal(128), nextConstant(57344)
  {
  }
 
@@ -100,4 +100,42 @@ int GlobalData::createArray (int length)
 std::string GlobalData::getNextLabel()
  {
    return "auto_" + std::to_string(++nextLabel);
+ }
+
+void addByte(int& temp, int& count, unsigned char add, std::vector<unsigned short>& result)
+ {
+   temp |= (add << (8 * count));
+   ++count;
+   if (2 == count)
+    {
+      result.push_back(temp);
+      temp = 0;
+      count = 0;
+    }
+ }
+
+int GlobalData::addString(const std::string& strang)
+ {
+   int next = nextConstant;
+   int temp = 0, count = 0;
+   for (size_t i = 0U; i < strang.length(); ++i)
+    {
+      addByte(temp, count, static_cast<unsigned char>(strang[i]), constantData);
+    }
+   addByte(temp, count, 0U, constantData);
+   addByte(temp, count, 0U, constantData);
+   if (0 != count)
+    {
+      addByte(temp, count, 0U, constantData);
+    }
+   nextConstant += (((strang.length() / 2) + (strang.length() & 1) + 1) * 2);
+   return next;
+ }
+
+int GlobalData::addWord(int val)
+ {
+   int next = nextConstant;
+   constantData.push_back(static_cast<unsigned short>(val));
+   nextConstant += 2;
+   return next;
  }

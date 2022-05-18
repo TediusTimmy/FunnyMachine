@@ -1,0 +1,12 @@
+const string := "Hello"
+const array := { 72; 101; 108; 111 }
+
+function program ()
+   dim static @ 40960 writeL [0]
+   writeL[0] <- array[0] | (7 << 8)
+   writeL[1] <- array[1] | (7 << 8)
+   writeL[2] <- array[2] | (7 << 8)
+   writeL[3] <- array[2] | (7 << 8)
+   writeL[4] <- array[3] | (7 << 8)
+   tailcall // Yes, this IS expected to get into an infinite loop.
+end function

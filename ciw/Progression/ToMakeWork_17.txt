@@ -1,0 +1,6 @@
+const string := "Hello"
+const array := { 12; 13; 14; 15 }
+
+function program ()
+   return
+end function

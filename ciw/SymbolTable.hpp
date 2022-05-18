@@ -131,6 +131,7 @@ class GlobalData
 private:
    int nextLabel;
    int nextGlobal;
+   int nextConstant;
 
 public:
    GlobalData();
@@ -139,6 +140,12 @@ public:
 
    std::string getNextLabel();
    int createArray (int length);
+
+   std::vector<std::string> constants;
+   std::vector<unsigned short> constantData;
+
+   int addString(const std::string&);
+   int addWord(int);
  };
 
 #endif /* SYMBOLTABLE_HPP */

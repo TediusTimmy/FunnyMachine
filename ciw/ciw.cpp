@@ -105,10 +105,10 @@ int main (int argc, char ** argv)
    std::cout << "        LDI $B00" << std::endl;
    std::cout << "        LDI 4" << std::endl;
    std::cout << "        SHL 1, 0" << std::endl;
-   std::cout << "        LDI $8" << std::endl;
+   std::cout << "        LDI $7" << std::endl;
    std::cout << "        OR  1, 0" << std::endl;
    std::cout << "        INC 15" << std::endl;
-   std::cout << "        STB 0, 1 ; B008 <- 1" << std::endl;
+   std::cout << "        STB 0, 1 ; B007 <- 1" << std::endl;
    std::cout << "        SUB 1, 2" << std::endl;
    std::cout << "        INC 0" << std::endl;
    std::cout << "        STB 2, 0 ; B001 <- 1" << std::endl;
@@ -137,6 +137,17 @@ int main (int argc, char ** argv)
       // Callee clears the stack on return.
       std::cout << "function_" << function.first << ":" << std::endl;
       function.second->emit(TheContext, data);
+    }
+
+   if (false == data.constants.empty())
+    {
+      std::cout << ".assert * <= $1FFE" << std::endl;
+      std::cout << "   .org $1FFE" << std::endl;
+      std::cout << "   .dw  $C000" << std::endl;
+      for (const auto& item : data.constants)
+       {
+         std::cout << item << std::endl;
+       }
     }
 
    return 0;
