@@ -23,7 +23,7 @@ void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 
 void beltVal(short val)
  {
-   if ((val > 0x7FF) || (val < -0x7FF))
+   if ((val > 0x7FF) || (val < -0x800))
    {
       std::cout << "        LDI " << ((val >> 4) & 0xFFF) << std::endl;
       std::cout << "        LDI 4" << std::endl;
@@ -125,6 +125,17 @@ void Variable::emit(const CallingContext&, GlobalData&) const
 int Variable::evaluate(const CallingContext& context) const
  {
    return context.getValue(referent, lineNo);
+ }
+
+bool Variable::canEvaluate (const CallingContext& context) const
+ {
+    // This SHOULDN'T kill the Parse.
+   int temp = context.getValue(referent, lineNo);
+   if ((temp >= 0xE000) && (temp <= 0xFFFF))
+    {
+      return true;
+    }
+   return false;
  }
 
 
@@ -576,6 +587,23 @@ int DerefVar::evaluate(const CallingContext& context) const
     {
       DB_panic("Array Dereference not implemented for constants.", lineNo);
     }
+ }
+
+bool DerefVar::canEvaluate (const CallingContext& context) const
+ {
+   if ((true == lhs->canEvaluate(context)) && (true == rhs->canEvaluate(context)))
+    {
+      int array = lhs->evaluate(context);
+      int index = rhs->evaluate(context);
+      int mem = (index * 2 + (array - 0xE000)) / 2;
+      // If this is an out-of-bound read, just say that it can't be done compile-time.
+      if ((mem < 0) || (static_cast<size_t>(mem) > context.m_constantData->size()))
+       {
+         return false;
+       }
+      return true;
+    }
+   return false;
  }
 
 

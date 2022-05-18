@@ -36,6 +36,7 @@ public:
    size_t lineNo;
    virtual void emit(const CallingContext&, GlobalData&) const = 0;
    virtual int evaluate(const CallingContext&) const = 0;
+   virtual bool canEvaluate (const CallingContext&) const = 0;
    virtual ~Expression() { }
  };
 
@@ -45,6 +46,7 @@ public:
    int value;
    void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override { return value; }
+   bool canEvaluate (const CallingContext&) const override { return true; }
  };
 
 class Variable : public Expression
@@ -54,6 +56,7 @@ public:
    int location;
    void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
+   bool canEvaluate (const CallingContext&) const override;
  };
 
 
@@ -62,6 +65,7 @@ class BinaryOperation : public Expression
  {
 public:
    std::shared_ptr<Expression> lhs, rhs;
+   bool canEvaluate (const CallingContext& context) const override { return lhs->canEvaluate(context) && rhs->canEvaluate(context); };
  };
 
 class OrOp : public BinaryOperation
@@ -216,6 +220,7 @@ class DerefVar : public BinaryOperation
 public:
    void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
+   bool canEvaluate (const CallingContext&) const override;
  };
 
 
@@ -224,6 +229,7 @@ class UnaryOperation : public Expression
  {
 public:
    std::shared_ptr<Expression> arg;
+   bool canEvaluate (const CallingContext& context) const { return arg->canEvaluate(context); };
  };
 
 class Abs : public UnaryOperation
@@ -256,6 +262,7 @@ public:
    std::string name;
    void emit(const CallingContext&, GlobalData&) const override;
    int evaluate(const CallingContext&) const override;
+   bool canEvaluate (const CallingContext&) const override { return false; }
  };
 
 #endif /* EXPRESSION_HPP */

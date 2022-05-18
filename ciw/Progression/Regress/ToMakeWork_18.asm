@@ -60,67 +60,12 @@ auto_1_ret:
         OR  1, 0
         ST  0, 0
 function_program:
-    ; Variable array : 6
+    ; Constant 1864 : 6
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 3584
-        LDI 4
-        SHL 1, 0
-        LDI 8
-        OR  1, 0
-        ST  0, nsp
-    ; Constant 0 : 6
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 0
-        ST  0, nsp
-    ; [] 6
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Constant 7 : 6
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 6
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 6
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 6
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1864
         ST  0, nsp
     ; Assignment [] 
     ; Constant 0 : 6
@@ -156,67 +101,12 @@ function_program:
         LD  nsp
         LD  sp
         ST  1, 0
-    ; Variable array : 7
+    ; Constant 1893 : 7
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 3584
-        LDI 4
-        SHL 1, 0
-        LDI 8
-        OR  1, 0
-        ST  0, nsp
-    ; Constant 1 : 7
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 1
-        ST  0, nsp
-    ; [] 7
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Constant 7 : 7
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 7
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 7
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 7
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1893
         ST  0, nsp
     ; Assignment [] 
     ; Constant 1 : 7
@@ -252,67 +142,12 @@ function_program:
         LD  nsp
         LD  sp
         ST  1, 0
-    ; Variable array : 8
+    ; Constant 1900 : 8
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 3584
-        LDI 4
-        SHL 1, 0
-        LDI 8
-        OR  1, 0
-        ST  0, nsp
-    ; Constant 2 : 8
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 2
-        ST  0, nsp
-    ; [] 8
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Constant 7 : 8
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 8
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 8
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 8
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1900
         ST  0, nsp
     ; Assignment [] 
     ; Constant 2 : 8
@@ -348,67 +183,12 @@ function_program:
         LD  nsp
         LD  sp
         ST  1, 0
-    ; Variable array : 9
+    ; Constant 1900 : 9
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 3584
-        LDI 4
-        SHL 1, 0
-        LDI 8
-        OR  1, 0
-        ST  0, nsp
-    ; Constant 2 : 9
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 2
-        ST  0, nsp
-    ; [] 9
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Constant 7 : 9
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 9
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 9
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 9
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1900
         ST  0, nsp
     ; Assignment [] 
     ; Constant 3 : 9
@@ -444,67 +224,12 @@ function_program:
         LD  nsp
         LD  sp
         ST  1, 0
-    ; Variable array : 10
+    ; Constant 1903 : 10
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 3584
-        LDI 4
-        SHL 1, 0
-        LDI 8
-        OR  1, 0
-        ST  0, nsp
-    ; Constant 3 : 10
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 3
-        ST  0, nsp
-    ; [] 10
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LDI 1
-        SHL 1, 0
-        LD  nsp
-        ADD 0, 1
-        LD  0
-        ST  0, nsp
-    ; Constant 7 : 10
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 10
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 10
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 10
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1903
         ST  0, nsp
     ; Assignment [] 
     ; Constant 4 : 10

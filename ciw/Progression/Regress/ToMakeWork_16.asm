@@ -191,19 +191,13 @@ auto_2_else:
         LD  sp
         LRA auto_4_else
         RETZ 1, 0
-    ; Constant 127 : 5
+    ; Constant -127 : 5
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 127
+        LDI -127
         ST  0, nsp
-    ; -u 5
-        LDI 2
- @sp    LD  0
-        LD  sp
-        NEG 0
-        ST  0, sp
     ; Return 5
  @two   LDI 2
         LD  0
@@ -338,19 +332,13 @@ auto_7_ret:
         LDI 0
         ST  0, nsp
     ; Function call decider : arguments 14
-    ; Constant 12 : 14
+    ; Constant -12 : 14
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 12
+        LDI -12
         ST  0, nsp
-    ; -u 14
-        LDI 2
- @sp    LD  0
-        LD  sp
-        NEG 0
-        ST  0, sp
     ; Function call decider : call 14
  @sa    LDI 2
  @sp    LD  0

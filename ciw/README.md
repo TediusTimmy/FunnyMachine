@@ -177,8 +177,6 @@ The `=` and `==` are both equality, and `!=`, `<>`, and `#` are not equals. Only
 The usage of `and then` and `or else` is stolen from Ada; and, yes, the operators are `and then` and `or else`.  
 The `?` is `xor`, and the names of each may be used. Also `/\` is `and` and `\/` is `or`: did you know that these bigraphs were how the meaningless-to-English backslash was introduced to ASCII?
 
-Note that it is generally more efficient to have a constant `const neg_one = -1` than to have a `-1` in your code.
-
 ### Extra
 #### Comments
 ```
@@ -205,6 +203,4 @@ Why do I do something no other language does and use semicolons to separate thin
 DB14's main data types included a floating-point data type. Most programming languages use the comma to separate arguments, and that poses a problem for case two: is it a call to "sin" with two arguments? Or, is it a call to "sin" that tries to use the European decimal symbol? DB14 used the semicolon to separate arguments so that numbers could use the European decimal symbol.
 
 ### Memory Map
-The initialization routine identity-maps the next four banks of RAM and second bank of ROM. The stack pointer is located at RAM address two. The base pointer is located at RAM address four. Globals start at RAM address 128 and grow up. The stack pointer is initialized to the end of bank five (40958), and grows down. The memory area between the base pointer and globals is not accessible by the language: all addresses in that range are interpreted by the compiler as function argument addresses (ie, relative to the base pointer). You need to write assembly to reach that memory.
-
-Currently, the second bank of ROM is unused, and it will probably be a BAD THING to write a program whose code exceeds that limit. A use is intended, but the assembler needs to be augmented to support it.
+The initialization routine identity-maps the next four banks of RAM and second bank of ROM. The stack pointer is located at RAM address two. The base pointer is located at RAM address four. Globals start at RAM address 128 and grow up. The stack pointer is initialized to the end of bank five (40958), and grows down. The memory area between the base pointer and globals is not accessible by the language: all addresses in that range are interpreted by the compiler as function argument addresses (ie, relative to the base pointer). You need to write assembly to reach that memory. Constant arrays are stored in the second bank of ROM, and the assembler will fail an assertion if the code wrote into that bank.

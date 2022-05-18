@@ -120,19 +120,13 @@ function_decider:
         LRA auto_3_fi
         RET 0
 auto_2_else:
-    ; Constant 127 : 5
+    ; Constant -127 : 5
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 127
+        LDI -127
         ST  0, nsp
-    ; -u 5
-        LDI 2
- @sp    LD  0
-        LD  sp
-        NEG 0
-        ST  0, sp
     ; Return 5
  @two   LDI 2
         LD  0

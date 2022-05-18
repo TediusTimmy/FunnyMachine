@@ -80,44 +80,12 @@ function_program:
         ST  nsp, two
         LD  sp
         ST  0, ldr
-    ; Constant 72 : 4
+    ; Constant 1864 : 4
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 72
-        ST  0, nsp
-    ; Constant 7 : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 4
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 4
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 4
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1864
         ST  0, nsp
     ; Assignment [] 
     ; Constant 0 : 4
@@ -155,44 +123,12 @@ function_program:
         LD  nsp
         LD  sp
         ST  1, 0
-    ; Constant 73 : 5
+    ; Constant 1865 : 5
  @two   LDI 2
  @sp    LD  0
  @nsp   SUB sp, two
         ST  nsp, two
-        LDI 73
-        ST  0, nsp
-    ; Constant 7 : 5
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 7
-        ST  0, nsp
-    ; Constant 8 : 5
- @two   LDI 2
- @sp    LD  0
- @nsp   SUB sp, two
-        ST  nsp, two
-        LDI 8
-        ST  0, nsp
-    ; << 5
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        SHL 0, 1
-        ST  0, nsp
-    ; \/ 5
- @two   LDI 2
- @sp    LD  0
- @nsp   ADD sp, two
-        ST  nsp, two
-        LD  sp
-        LD  nsp
-        OR  0, 1
+        LDI 1865
         ST  0, nsp
     ; Assignment [] 
     ; Constant 1 : 5

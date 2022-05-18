@@ -47,6 +47,18 @@ void Parser::expect (const Lexeme & tok)
 
 
 
+static std::shared_ptr<Expression> reduce (std::shared_ptr<Expression> me, const CallingContext& context)
+ {
+   if ((true == me->canEvaluate(context)) && (typeid(*me.get()) != typeid(Constant)))
+    {
+      std::shared_ptr<Constant> replace = std::make_shared<Constant>();
+      replace->value = me->evaluate(context);
+      replace->lineNo = me->lineNo;
+      return replace;
+    }
+   return me;
+ }
+
 std::shared_ptr<Expression> Parser::expression (const CallingContext& context)
  {
    std::shared_ptr<Expression> lhs = boolean(context);
@@ -73,7 +85,7 @@ std::shared_ptr<Expression> Parser::expression (const CallingContext& context)
       GNT();
 
       rhs->rhs = boolean(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -92,7 +104,7 @@ std::shared_ptr<Expression> Parser::boolean (const CallingContext& context)
       GNT();
 
       rhs->rhs = clause(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -111,7 +123,7 @@ std::shared_ptr<Expression> Parser::clause (const CallingContext& context)
       GNT();
 
       rhs->rhs = predicate(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -141,7 +153,7 @@ std::shared_ptr<Expression> Parser::predicate (const CallingContext& context)
       GNT();
 
       rhs->rhs = relation(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -177,7 +189,7 @@ std::shared_ptr<Expression> Parser::relation (const CallingContext& context)
       GNT();
 
       rhs->rhs = shift(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -217,7 +229,7 @@ std::shared_ptr<Expression> Parser::shift (const CallingContext& context)
       GNT();
 
       rhs->rhs = simple(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -246,7 +258,7 @@ std::shared_ptr<Expression> Parser::simple (const CallingContext& context)
       GNT();
 
       rhs->rhs = term(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -278,7 +290,7 @@ std::shared_ptr<Expression> Parser::term (const CallingContext& context)
       GNT();
 
       rhs->rhs = primary(context);
-      lhs = rhs;
+      lhs = reduce(rhs, context);
     }
 
    return lhs;
@@ -421,7 +433,7 @@ std::shared_ptr<Expression> Parser::primary (const CallingContext& context)
       expect(RIGHT_BRACKET);
     }
 
-   return ret;
+   return reduce(ret, context);
  }
 
 
