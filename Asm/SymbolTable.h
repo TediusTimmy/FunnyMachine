@@ -54,6 +54,7 @@ class SymbolTable
 
       int getCurrentResult() const { return currentResult; }
       int getCurrentLocation() const { return currentLocation; }
+      void setCurrentLocation(int newLocation) { currentLocation = newLocation; }
       int getUseLocation() const { return useLocation; }
       void setUseLocation(int newLocation) { useLocation = newLocation; }
 

@@ -397,7 +397,7 @@ std::shared_ptr<Expression> Parser::primary (const SymbolTable& context, bool is
    case MULTIPLY:
     {
       std::shared_ptr<Constant> op = std::make_shared<Constant>();
-      op->value = context.getUseLocation();
+      op->value = context.getUseLocation() - 2;
 
       op->lineNo = nextToken.lineNumber;
       GNT();
@@ -657,6 +657,23 @@ static void processReferences(SymbolTable& context, std::vector<unsigned short>&
    references.remove_if([](const RefContainer& a){ return a.done; });
  }
 
+void addByte(int& temp, int& count, unsigned char add, std::vector<unsigned short>& result, SymbolTable& context)
+ {
+   temp |= (add << (8 * count));
+   ++count;
+   if (2 == count)
+    {
+      context.addLocation();
+      if (static_cast<int>(result.size()) < (context.getCurrentLocation() / 2))
+       {
+         result.resize(context.getCurrentLocation() / 2);
+       }
+      result[context.getCurrentLocation() / 2 - 1] = temp;
+      temp = 0;
+      count = 0;
+    }
+ }
+
 std::vector<unsigned short> Parser::assembly()
  {
    SymbolTable context;
@@ -789,10 +806,132 @@ std::vector<unsigned short> Parser::assembly()
          break;
       case PERIOD: // Assembler directive
          GNT();
-         std::cerr << "No assembler directives currently defined." << std::endl;
-         while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+         if ("dw" == nextToken.text)
+          {
+            do
+             {
+               GNT();
+               try
+                {
+                  context.addLocation();
+                  context.setUseLocation(context.getCurrentLocation());
+                  int value = expression(context, false)->evaluate(context);
+                  if (static_cast<int>(result.size()) < (context.getCurrentLocation() / 2))
+                   {
+                     result.resize(context.getCurrentLocation() / 2);
+                   }
+                  result[context.getCurrentLocation() / 2 - 1] = value;
+                  if ((value > 65535) || (value < -32768))
+                   {
+                     std::cerr << "Word value out of range on " << nextToken.lineNumber << "." << std::endl;
+                   }
+                }
+               catch (const ParserException& ex)
+                {
+                  std::cerr << ex.what() << std::endl;
+                  while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+                   {
+                     GNT();
+                   }
+                }
+             }
+            while (COMMA == nextToken.lexeme);
+          }
+         else if ("assert" == nextToken.text)
           {
             GNT();
+            try
+             {
+               int assertion = expression(context, false)->evaluate(context);
+
+               if (0 == assertion)
+                {
+                  std::cerr << "Assertion failed on line " << nextToken.lineNumber << "." << std::endl;
+                }
+             }
+            catch (const ParserException& ex)
+             {
+               std::cerr << ex.what() << std::endl;
+               while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+                {
+                  GNT();
+                }
+             }
+          }
+         else if ("db" == nextToken.text)
+          {
+            int temp = 0, count = 0;
+            do
+             {
+               GNT();
+               if (STRING == nextToken.lexeme)
+                {
+                  for (size_t i = 0U; i < nextToken.text.length(); ++i)
+                   {
+                     addByte(temp, count, static_cast<unsigned char>(nextToken.text[i]), result, context);
+                   }
+                  GNT();
+                }
+               else if (NUMBER == nextToken.lexeme)
+                {
+                  int value = InterpretNumber(nextToken.text);
+                  GNT();
+                  if ((value > 255) || (value < -128))
+                   {
+                     std::cerr << "Word value out of range on " << nextToken.lineNumber << "." << std::endl;
+                   }
+                  addByte(temp, count, static_cast<unsigned char>(value), result, context);
+                }
+               else
+                {
+                  std::cerr << "Expected string or number on line " << nextToken.lineNumber << "." << std::endl;
+                  while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+                   {
+                     GNT();
+                   }
+                }
+             }
+            while (COMMA == nextToken.lexeme);
+            if (0 != count)
+             {
+               addByte(temp, count, 0U, result, context);
+             }
+          }
+         else if ("org" == nextToken.text)
+          {
+            GNT();
+            try
+             {
+               int location = expression(context, false)->evaluate(context);
+
+               if (location > 2097152)
+                {
+                  std::cerr << "Org directive creates a rom that is too large at " << nextToken.lineNumber << "." << std::endl;
+                }
+               if (location & 1)
+                {
+                  location &= ~1;
+                  std::cerr << "Org directive to odd address at " << nextToken.lineNumber << "." << std::endl;
+                }
+
+               context.setCurrentLocation(location);
+             }
+            catch (const ParserException& ex)
+             {
+               std::cerr << ex.what() << std::endl;
+               while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+                {
+                  GNT();
+                }
+             }
+          }
+         else
+          {
+            std::cerr << "Expected an assembler directive but found \"" << nextToken.text << "\" on " << nextToken.lineNumber << "." << std::endl;
+            while ((END_OF_LINE != nextToken.lexeme) && (END_OF_FILE != nextToken.lexeme))
+             {
+               GNT();
+             }
           }
          break;
       default: break;

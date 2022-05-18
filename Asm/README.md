@@ -52,12 +52,25 @@ Symbols can only reference other symbols in their creation. There isn't the
 infrastructure to allow them to depend on labels.
 
 ### Assembler directives
-There also aren't any assembler directives. I'm not sure what to add. There
-definitely needs to be a way to declare data, and possibly conditional
-assembly. Assembler directives will have the syntax `.directive and stuff`.
+`.dw 1234, $1234`
+Define word data. Values greater than a word will cause a warning.
+`.assert expression`
+Evaluate expression and generate an error message should it be zero/false.
+Assert expressions only work with labels that are already defined.
+`.db "string", 12, 12, "other"`
+Define byte data. This data will be word-aligned, and the end of the
+directive will be padded to a word. Strings are not zero terminated. Values
+greater than a byte will cause a warning.
+`.org value`
+Move the location of the next output to a specific absolute location.
+This location MUST be word aligned, or a warning will be output and the
+location rounded towards zero to a word address.  
+Org expressions only work with labels that are already defined.
 
 ### Expressions
 Any result, label, or symbol can be used in expressions that do math.
+Also, there is the special "variable" `*`, which represents the current
+write location: where the next word will be added to the image.
 
 Operator precedence:
 * `` + - ~ < > ` ``
