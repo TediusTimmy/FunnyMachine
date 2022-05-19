@@ -149,16 +149,32 @@ function z_updateBall() // Compile this last.
    if 0 = timer then
       timer := 4
 
-      if (xloc = 2) && (yloc >= lpad - 2) && (yloc <= lpad + 6) then
-         xvel := -xvel
-         if (yloc == lpad - 2) || (yloc == lpad + 6) then
-            yvel := -yvel
+      if xloc = 2 then
+         if (yvel > 0) && (yloc >= lpad - 2) && (yloc <= lpad + 5) then
+            xvel := -xvel
+            if yloc = lpad - 2 then
+               yvel := -yvel
+            fi
+         fi
+         if (yvel < 0) && (yloc >= lpad - 1) && (yloc <= lpad + 6) then
+            xvel := -xvel
+            if yloc = lpad + 6 then
+               yvel := -yvel
+            fi
          fi
       fi
-      if (xloc = 76) && (yloc >= rpad - 2) && (yloc <= rpad + 6) then
-         xvel := -xvel
-         if (yloc == rpad - 2) || (yloc == rpad + 6) then
-            yvel := -yvel
+      if xloc = 76 then
+         if (yvel > 0) && (yloc >= rpad - 2) && (yloc <= rpad + 5) then
+            xvel := -xvel
+            if yloc = rpad - 2 then
+               yvel := -yvel
+            fi
+         fi
+         if (yvel < 0) && (yloc >= rpad - 1) && (yloc <= rpad + 6) then
+            xvel := -xvel
+            if yloc = rpad + 6 then
+               yvel := -yvel
+            fi
          fi
       fi
 
