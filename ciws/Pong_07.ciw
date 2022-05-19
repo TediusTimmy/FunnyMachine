@@ -179,7 +179,7 @@ function z_updateBall() // Compile this last.
       fi
 
       xloc := xloc + xvel
-      if (xloc = 0) || (xloc = 78) then
+      if (xloc = -1) || (xloc = 79) then
          reset = 1
       fi
       yloc := yloc + yvel
