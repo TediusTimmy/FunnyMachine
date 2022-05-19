@@ -184,16 +184,14 @@ void BreakStatement::emit(const CallingContext& context, GlobalData& data) const
 
 void ReturnStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   value->emit(context, data);
+   std::string VAL = value->emit(context, data);
    std::cout << "    ; Return " << lineNo << std::endl;
-   std::cout << " @two   LDI 2" << std::endl;
-   std::cout << "        LD  0" << std::endl;
-   std::cout << " @rv    LD  0" << std::endl;
    std::cout << " @rvl   LDI " << (context.Functions().find(context.m_currentFunction)->second.size() * 2 + 4) << std::endl;
    std::cout << " @bpa   LDI 4" << std::endl;
    std::cout << " @pbp   LD  bpa" << std::endl;
    std::cout << "        ADD pbp, rvl" << std::endl;
-   std::cout << "        ST  rv, 0" << std::endl;
+   std::cout << "        ST  " << VAL << ", 0" << std::endl;
+   std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @bp    ADD pbp, two" << std::endl;
    std::cout << "        ST  bp, two" << std::endl;
    std::cout << " @nbp   LD  pbp" << std::endl;

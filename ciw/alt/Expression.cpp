@@ -647,7 +647,7 @@ std::string FunctionCall::emit(const CallingContext& context, GlobalData& data) 
    std::cout << dest << ":" << std::endl;
    std::cout << " @two   LDI 2" << std::endl;
    std::cout << " @sp    LD  0" << std::endl;
-   std::cout << " @nsp   SUB sp, two" << std::endl;
+   std::cout << " @nsp   ADD sp, two" << std::endl;
    std::cout << "        ST  nsp, two" << std::endl;
    std::string result = data.getNextResult();
    std::cout << " @" << result << " LD  sp" << std::endl;
