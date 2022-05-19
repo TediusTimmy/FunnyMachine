@@ -23,86 +23,77 @@
 void DB_panic (const std::string &) __attribute__ ((__noreturn__));
 void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 
-void RecAssignState::emit(const CallingContext& context, GlobalData& data) const
+std::string RecAssignState::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; Assignment [] " << std::endl;
-   index->emit(context, data); // Thankfully, I'm not supporting a full "Recursive Assignment Statement".
+   return index->emit(context, data); // Thankfully, I'm not supporting a full "Recursive Assignment Statement".
  }
 
 void Assignment::emit(const CallingContext& context, GlobalData& data) const
  {
    if (nullptr == index)
     {
-      rhs->emit(context, data);
+      std::string RHS = rhs->emit(context, data);
       std::cout << "    ; Assignment to " << lhs << " " << lineNo << std::endl;
       if (location < 128)
        {
-         VS_LDR(location & ~1);
-         VS_pop();
-         std::cout << "        LD  sp" << std::endl;
-         std::cout << "        ST  0, ldr" << std::endl;
+         std::cout << " @four  LDI 4" << std::endl;
+         std::cout << " @bp    LD  0" << std::endl;
+         beltVal(location & ~1);
+         std::cout << " @ldr   ADD bp, 0" << std::endl;
+         std::cout << "        ST  " << RHS << ", ldr" << std::endl;
        }
       else
        {
-         VS_popAddr(location & ~1);
+         beltVal(location & ~1);
+         std::cout << "        ST  " << RHS << ", 0" << std::endl;
        }
     }
    else
     {
-      rhs->emit(context, data);
-      index->emit(context, data);
+      std::string RHS = rhs->emit(context, data);
+      std::string INDEX = data.getNextResult();
+      if (true == index->index->canEvaluate(context))
+       {
+         beltVal(index->index->evaluate(context) * 2, INDEX);
+       }
+      else
+       {
+         std::string i = index->emit(context, data);
+         std::cout << " @" << INDEX << " ADD " << i << ", " << i << std::endl;
+       }
       std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
       if (location < 128)
        {
-         VS_LDR(location & ~1);
-         std::cout << " @two   LDI 2" << std::endl;
-         std::cout << " @sp    LD  0" << std::endl;
-         std::cout << " @nsp   SUB sp, two" << std::endl;
-         std::cout << "        ST  nsp, two" << std::endl;
-         if (location & 1) // If an array, the name is the address.
+         std::cout << "        LDI 4" << std::endl;
+         std::cout << " @bp    LD  0" << std::endl;
+         beltVal(location & ~1);
+         std::cout << "        ADD bp, 0" << std::endl;
+         if (0 == (location & 1)) // If not an array, load the address
           {
-            std::cout << "        ST  ldr, nsp" << std::endl;
-          }
-         else
-          {
-            std::cout << "        LD  ldr" << std::endl;
-            std::cout << "        ST  0, nsp" << std::endl;
+            std::cout << "        LD  0" << std::endl;
           }
        }
       else
        {
+         beltVal(location & ~1);
          if (0 == (location & 1))
           {
-            VS_pushAddr(location & ~1);
-          }
-         else
-          {
-            VS_pushVal(location & ~1);
+            std::cout << "        LD  0" << std::endl;
           }
        }
-      VS_pop();
-      std::cout << "        LD  nsp" << std::endl;
-      std::cout << "        LDI 1" << std::endl;
-      std::cout << "        SHL 1, 0" << std::endl;
-      std::cout << "        LD  sp" << std::endl;
-      std::cout << "        ADD 0, 1" << std::endl;
-      std::cout << "        ST  0, nsp" << std::endl;
-      VS_pop();
-      std::cout << "        LD  nsp" << std::endl;
-      std::cout << "        LD  sp" << std::endl;
-      std::cout << "        ST  1, 0" << std::endl;
+      std::cout << "        ADD 0, " << INDEX << std::endl;
+      std::cout << "        ST  " << RHS << ", 0" << std::endl;
     }
  }
 
 void IfStatement::emit(const CallingContext& context, GlobalData& data) const
  {
-   condition->emit(context, data);
+   std::string COND = condition->emit(context, data);
    std::cout << "    ; If " << lineNo << std::endl;
-   VS_pop();
-   std::cout << "        LD  sp" << std::endl;
    std::string toElse = data.getNextLabel() + "_else";
    std::cout << "        LRA " << toElse << std::endl;
-   std::cout << "        RETZ 1, 0" << std::endl;
+   std::cout << "        RETZ " << COND << ", 0" << std::endl;
    if (nullptr != thenSeq)
     {
       thenSeq->emit(context, data);
@@ -135,11 +126,9 @@ void DoStatement::emit(const CallingContext& context, GlobalData& data) const
     }
    if (nullptr != preCondition)
     {
-      preCondition->emit(context, data);
-      VS_pop();
-      std::cout << "        LD  sp" << std::endl;
+      std::string PRE = preCondition->emit(context, data);
       std::cout << "        LRA " << bottomLabel << std::endl;
-      std::cout << "        RETZ 1, 0" << std::endl;
+      std::cout << "        RETZ " << PRE << ", 0" << std::endl;
     }
    data.labels.push_back(std::make_pair(label, std::make_pair(topLabel, bottomLabel)));
    seq->emit(context, data); // For DO, this is not null.
@@ -147,11 +136,9 @@ void DoStatement::emit(const CallingContext& context, GlobalData& data) const
    if (nullptr != postCondition)
     {
       std::cout << topLabel << ":" << std::endl;
-      postCondition->emit(context, data);
-      VS_pop();
-      std::cout << "        LD  sp" << std::endl;
+      std::string POST = postCondition->emit(context, data);
       std::cout << "        LRA " << bottomLabel << std::endl;
-      std::cout << "        RETZ 1, 0" << std::endl;
+      std::cout << "        RETZ " << POST << ", 0" << std::endl;
     }
    std::cout << "        LRA " << realTopLabel << std::endl;
    std::cout << "        RET 0" << std::endl;
@@ -164,10 +151,8 @@ void BreakStatement::emit(const CallingContext& context, GlobalData& data) const
    std::string dest = data.getNextLabel() + "_cond";
    if (nullptr != condition)
     {
-      condition->emit(context, data);
-      VS_pop();
-      std::cout << "        LD  sp" << std::endl;
-      std::cout << "        BRZ 0, " << dest << std::endl;
+      std::string COND = condition->emit(context, data);
+      std::cout << "        BRZ " << COND << ", " << dest << std::endl;
     }
    size_t index = data.labels.size();
    if ("" != label)
@@ -227,14 +212,12 @@ void TailCallStatement::emit(const CallingContext& context, GlobalData& data) co
    int loc = context.Functions().find(context.m_currentFunction)->second.size() * 2 + 2;
    for (const auto& arg : args)
     {
-      arg->emit(context, data);
+      std::string ARG = arg->emit(context, data);
       std::cout << " @rvl   LDI " << loc << std::endl;
       std::cout << " @bpa   LDI 4" << std::endl;
       std::cout << " @pbp   LD  bpa" << std::endl;
       std::cout << " @ldr   ADD pbp, rvl" << std::endl;
-      VS_pop();
-      std::cout << "        LD  sp" << std::endl;
-      std::cout << "        ST  0, ldr" << std::endl;
+      std::cout << "        ST  " << ARG << ", ldr" << std::endl;
       loc -= 2;
     }
    std::cout << "    ; TailCall " << lineNo << std::endl;
@@ -246,7 +229,6 @@ void CallStatement::emit(const CallingContext& context, GlobalData& data) const
  {
    std::cout << "    ; Call " << lineNo << std::endl;
    fun->emit(context, data);
-   VS_pop();
  }
 
 void AsmStatement::emit(const CallingContext&, GlobalData&) const

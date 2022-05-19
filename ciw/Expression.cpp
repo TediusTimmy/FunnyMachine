@@ -127,11 +127,9 @@ int Variable::evaluate(const CallingContext& context) const
    return context.getValue(referent, lineNo);
  }
 
-bool Variable::canEvaluate (const CallingContext& context) const
+bool Variable::canEvaluate (const CallingContext&) const
  {
-    // This SHOULDN'T kill the Parse.
-   int temp = context.getValue(referent, lineNo);
-   if ((temp >= 0xE000) && (temp <= 0xFFFF))
+   if ((location >= 0xE000) && (location <= 0xFFFF))
     {
       return true;
     }
