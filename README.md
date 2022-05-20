@@ -186,7 +186,7 @@ BFFF - Writing to this memory location will stop the emulator.
 
 Currently, there is nothing in VRAM.  
 I have a design for the bottom 4KB of VRAM for Emu2 : See Emu2.  
-I have a design for the top 512KB of VRAM for Emu3.
+I have a design for the top 512KB of VRAM for Emu3 : See Emu3.
 
 # The emulator(s)
 
@@ -234,3 +234,39 @@ Changes from Emu2:
 
 BFFC - Key pressed request (write the key code of the key you are interested in to this address)  
 BFFD - Key pressed result (get result from this address: 1 currently pressed, 0 not pressed)
+
+### VRAM
+Bank 128 - 191 : Sprite memory
+Bank 192 - 223 : Background memory
+Bank 224 - 239 : Palette memory
+Bank 240 - 243 : Background 1
+Bank 244 - 247 : Background 2
+Bank 248 - 251 : Background 3
+Bank 252 - 255 : Object Memory (Actually only takes up the first half of Bank 252)
+
+Sprite memory is 4096 tiles, which are 8x8 pixels and 256 colors.  
+Background memory is 512 tiles, which are 16x16 and 256 colors.  
+Palette memory is 64 palettes of 256 RGBA colors. (Note that color 0 is always transparent, even though it has a palette entry, and the alpha channel is ignored: RGBA just looks better than RGB plus padding.)
+
+Backgrounds:
+* 80x60 tiles in two arrays (because I added the other capability last)
+* First array is 2 bytes per tile:
+  * Low 9 bits select tile
+  * High 6 bits select palette
+* Second array is at kilobyte boundary, 2 bits per tile (left shifts extract data):
+  * Vertical mirror
+  * Horizontal mirror
+
+Objects:
+* 256 objects of 8 bytes
+  * X Position (2 bytes, top-left is 0,0 right and down are positive)
+  * Y Position (2 bytes)
+  * Pattern (2 bytes)
+    * 12 bit tile selector
+    * 2 bit vertical size (00 - 1 tile, 01 - 2 tiles, 10 - 4 tiles, 11 - 8 tiles)
+    * 2 bit horizontal size
+  * Attributes (2 bytes, only 10 bits used)
+    * Vertical mirror
+    * Horizontal mirror
+    * Priority (2 bits : 11 - in front, 10 - between BG1 and BG2, 01 - between BG2 and BG3, 00 - behind BG3)
+    * Palette (6 bits)

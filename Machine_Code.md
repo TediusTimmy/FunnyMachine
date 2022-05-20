@@ -5,7 +5,7 @@ This is a technical description of an idealized version of the processor. It's i
 
 Every machine instruction is two bytes, or sixteen bits, or one word.
 
-The instruction is broken into four groups of four bits. Let us label those groups A, B, C, and D, from the least-significant four bits to most significant four bits. Group A is the opcode of the instruction. The interpretation of the other three groups depends on this opcode. Note that, unless otherwise stated, reserved bits should always be zero.
+The instruction is broken into four groups of four bits. Let us label those groups A, B, C, and D, from the least-significant four bits to most significant four bits. Group A is the opcode of the instruction. The interpretation of the other three groups depends on this opcode. Note that, unless otherwise stated, reserved bits should always be zero, and groups not mentioned to be used by an operation are reserved.
 
 Breakdown by Opcode
 -------------------
