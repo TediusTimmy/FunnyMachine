@@ -192,11 +192,11 @@ I have a design for the top 512KB of VRAM for Emu3.
 
 ## EMU1
 
-This emulator has memory-mapped IO to output characters to the screen. Outputting characters to BFFE will cause them to be printed to the screen. Also, writing to BFFF will stop the emulation. As of committing, it doesn't even handle the memory banks correctly, but when I implement that for the other emulators, this one will gain that ability.
+This emulator has memory-mapped IO to output characters to the screen. Outputting characters to BFFE will cause them to be printed to the screen. Also, writing to BFFF will stop the emulation. As of originally committing, it didn't even handle the memory banks correctly, but when I implemented that for the other emulators, this one gained that ability.
 
 ## EMU2
 
-This is in progress. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard.
+This is as finished as I want to make it. It has a more fully featured screen device (80x25 and 16 colors), and a keyboard.
 
 ### VRAM
 0000-0FA0 : Screen device. This is 80x25, 16 color foreground and background. It is redrawn unconditionally 30 times a second.
@@ -227,4 +227,10 @@ Each DMA controller has 4 control bytes:
 
 ## EMU3
 
-This is planned to have a sprite engine and sound engine. I'm currently thinking of using Javidx9's Pixel Game Engine (https://github.com/OneLoneCoder/olcPixelGameEngine), as I have experience with it.
+This is in progress. This is planned to have a sprite engine and sound engine. I'm currently thinking of using Javidx9's Pixel Game Engine (https://github.com/OneLoneCoder/olcPixelGameEngine), as I have experience with it.
+
+### System Area
+Changes from Emu2:
+
+BFFC - Key pressed request (write the key code of the key you are interested in to this address)  
+BFFD - Key pressed result (get result from this address: 1 currently pressed, 0 not pressed)
