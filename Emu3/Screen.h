@@ -29,6 +29,9 @@ private:
    void * sprite_engine;
 
 public:
+   Screen();
+   virtual ~Screen();
+
    void attach(MemoryController*); // DO THIS FIRST!
    void reset() override;
    void doOneOp() override;

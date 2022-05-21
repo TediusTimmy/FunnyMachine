@@ -17,10 +17,18 @@
 #include "Screen.h"
 #include "SpriteEngine.h"
 
+Screen::Screen() : sprite_engine(nullptr), pixel_engine(nullptr)
+ {
+ }
+
+Screen::~Screen()
+ {
+   delete reinterpret_cast<SpriteEngine*>(sprite_engine);
+ }
+
 void Screen::attach(MemoryController* mc)
  {
    M = mc;
-   sprite_engine = nullptr; // This is not the right place for this, but, hopefully, it won't be an issue.
  }
 
 void Screen::reset() // Thankfully, this is idempotent.
