@@ -109,7 +109,7 @@ int main (int argc, char** argv)
 
    Screen screen;
    screen.attach(bus.get());
-   screen.engine = reinterpret_cast<void*>(&engine);
+   screen.pixel_engine = reinterpret_cast<void*>(&engine);
    devs.attach(&screen);
    bus->attach(&screen);
 

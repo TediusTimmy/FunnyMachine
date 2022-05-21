@@ -25,5 +25,5 @@ Screen.o: Emu2/Screen.cpp
 Speed.o: Emu2/Speed.cpp
 	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/Speed.cpp
 
-main.o: Emu1/main.cpp
+main.o: Emu2/main.cpp
 	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -O2 -c Emu2/main.cpp

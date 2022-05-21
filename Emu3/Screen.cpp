@@ -15,10 +15,12 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Screen.h"
+#include "SpriteEngine.h"
 
 void Screen::attach(MemoryController* mc)
  {
    M = mc;
+   sprite_engine = nullptr; // This is not the right place for this, but, hopefully, it won't be an issue.
  }
 
 void Screen::reset() // Thankfully, this is idempotent.
@@ -52,21 +54,24 @@ void Screen::doOneOp()
       frame = 0;
    }
 
-   const byte* VRAM = M->vram();
+   if (nullptr == sprite_engine)
+    {
+      sprite_engine = new SpriteEngine(reinterpret_cast<olc::PixelGameEngine*>(pixel_engine), M->vram());
+    }
    // Redraw the screen.
-   // TODO
+   reinterpret_cast<SpriteEngine*>(sprite_engine)->updateScreen();
  }
 
-bool Screen::doRead(word addr, word& OUT)
+bool Screen::doRead(word addr, word& OUT_) // windows.h #defines OUT as ... something.
  {
    if (addr == 0x100)
     {
-      OUT = frame;
+      OUT_ = frame;
       return true;
     }
    else if (addr == 0x101)
     {
-      OUT = sec;
+      OUT_ = sec;
       return true;
     }
    return false;

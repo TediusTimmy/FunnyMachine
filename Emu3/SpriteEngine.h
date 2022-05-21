@@ -14,29 +14,23 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FM_SCREEN_H
-#define FM_SCREEN_H
+#ifndef FM_SPRITE_ENGINE_H
+#define FM_SPRITE_ENGINE_H
 
 #include "../Base/Base.h"
+#include "external/olcPixelGameEngine.h"
 
-class Screen : public ClockDevice, public IODevice
+class SpriteEngine
  {
 private:
-   int ticks;
-   byte frame;
-   byte sec;
-   MemoryController* M; // Our view into memory
-   void * sprite_engine;
+   olc::PixelGameEngine* engine;
+   const byte* VRAM;
+   std::vector<std::shared_ptr<olc::Decal> > decals;
 
 public:
-   void attach(MemoryController*); // DO THIS FIRST!
-   void reset() override;
-   void doOneOp() override;
+   SpriteEngine(olc::PixelGameEngine*, const byte*);
 
-   bool doRead(word addr, word& OUT) override;
-   bool doWrite(word addr, word val) override;
-
-   void * pixel_engine;
+   void updateScreen();
  };
 
-#endif /* FM_SCREEN_H */
+#endif /* FM_SPRITE_ENGINE_H */
