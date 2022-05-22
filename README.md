@@ -227,7 +227,7 @@ Each DMA controller has 4 control bytes:
 
 ## EMU3
 
-This is in progress. This is planned to have a sprite engine and sound engine. I'm currently thinking of using Javidx9's Pixel Game Engine (https://github.com/OneLoneCoder/olcPixelGameEngine), as I have experience with it.
+This is in progress. This is planned to have a sprite engine and sound engine. I'm using Javidx9's Pixel Game Engine (https://github.com/OneLoneCoder/olcPixelGameEngine), as I have experience with it.
 
 ### System Area
 Changes from Emu2:

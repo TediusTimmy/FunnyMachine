@@ -69,6 +69,7 @@ void SpriteEngine::updateScreen()
     }
    // Step 1: Convert all backgrounds and sprites to decals.
    // Do all of them, all of the time, so that we don't have magical slowdowns in complex programs.
+   // Actually, the optimizations we use here are totally going to create magical slowdowns in complex programs.
    bg_sprites.clear();
    bg_decals.clear();
    bg_tiles.clear();

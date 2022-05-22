@@ -27,8 +27,8 @@
 
 const int SCREEN_X = 640;
 const int SCREEN_Y = 480;
-const int SCALE_X = 1;
-const int SCALE_Y = 1;
+const int SCALE_X = 2;
+const int SCALE_Y = 2;
 
 bool doRun = true;
 
