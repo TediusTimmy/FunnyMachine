@@ -25,7 +25,13 @@ class SpriteEngine
 private:
    olc::PixelGameEngine* engine;
    const byte* VRAM;
-   std::vector<std::shared_ptr<olc::Decal> > decals;
+   olc::Pixel palettes [64][256];
+   std::vector<std::unique_ptr<olc::Sprite> > bg_sprites;
+   std::vector<std::unique_ptr<olc::Decal> > bg_decals;
+   std::map<word, size_t> bg_tiles;
+
+   void pullBGSpritesFrom(int address);
+   void drawBackground(int address);
 
 public:
    SpriteEngine(olc::PixelGameEngine*, const byte*);

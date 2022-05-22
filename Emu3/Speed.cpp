@@ -27,7 +27,6 @@ void Speed::reset()
 
 void Speed::doOneOp()
  {
-   waitNow = false;
    ++ticks;
    // At 1 MHz and 30 fps, we redraw the screen every 33333 clock cycles.
    // We will achieve this by sleeping for the remaining time, every time we hit this event.
@@ -41,6 +40,7 @@ void Speed::doOneOp()
 
 void Speed::performWait()
  {
+   waitNow = false;
    last += std::chrono::microseconds(33333);
    std::this_thread::sleep_until(last);
  }

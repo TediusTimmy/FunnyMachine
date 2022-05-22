@@ -20,8 +20,69 @@ SpriteEngine::SpriteEngine(olc::PixelGameEngine* engine, const byte* VRAM) : eng
  {
  }
 
+void SpriteEngine::pullBGSpritesFrom(int bg_base)
+ {
+   for (int i = 0; i < (80 * 60 * 2); i += 2)
+    {
+      int tile = ((int)VRAM[bg_base + i]) | ((int)VRAM[bg_base + i + 1]) << 8;
+      if (bg_tiles.end() == bg_tiles.find(tile))
+       {
+         bg_sprites.emplace_back(std::make_unique<olc::Sprite>(16, 16)); // All background tiles are 16x16
+         bg_decals.emplace_back(std::make_unique<olc::Decal>(bg_sprites.back().get()));
+         bg_tiles[tile] = bg_decals.size() - 1;
+         int base = 192 * 4096 + 16 * 16 * 1 * (tile & 0x1FF); // Bank 192, 16 rows, 16 columns, 8 bit color.
+         for (int y = 0; y < 16; ++y)
+          {
+            for (int x = 0; x < 16; ++x)
+             {
+               bg_sprites.back()->GetData()[y * 16 + x] = palettes[tile >> 9][VRAM[base + y * 16 + x]];
+             }
+          }
+       }
+    }
+ }
+
+void SpriteEngine::drawBackground(int bg_base)
+ {
+   for (int y = 0; y < 80; ++y)
+    {
+      for (int x = 0; x < 60; ++x)
+       {
+         int tile = ((int)VRAM[bg_base + (y * 60 + x) * 2]) | ((int)VRAM[bg_base + (y * 60 + x) * 2 + 1]) << 8;
+         engine->DrawDecal({x * 16.0f, y * 16.0f}, bg_decals[bg_tiles[tile]].get());
+       }
+    }
+ }
+
 void SpriteEngine::updateScreen()
  {
+   // Step 0: Convert all of the Palettes.
+   for (int p = 0; p < 64; ++p)
+    {
+      // Bank 224, 1K per palette, 4 bytes per color, 256 colors.
+      std::memcpy(reinterpret_cast<void*>(&palettes[p][0]), reinterpret_cast<const void*>(&VRAM[224 * 4096 + 1024 * p]), 1024);
+      palettes[p][0] = olc::Pixel(0, 0, 0, 0); // Transparent Black
+      for (int c = 1; c < 256; ++c)
+       {
+         palettes[p][c].c.a = 255; // Set to opaque
+       }
+    }
    // Step 1: Convert all backgrounds and sprites to decals.
    // Do all of them, all of the time, so that we don't have magical slowdowns in complex programs.
+   bg_sprites.clear();
+   bg_decals.clear();
+   bg_tiles.clear();
+   // We handle background tiles in this inefficient way because they can have one of 64 palettes applied.
+   pullBGSpritesFrom(240 * 4096); // Bank 240 : BG1
+   pullBGSpritesFrom(244 * 4096); // Bank 244 : BG2
+   pullBGSpritesFrom(248 * 4096); // Bank 248 : BG2
+
+   // Display
+   for (auto& thing : bg_decals)
+    {
+      thing->Update();
+    }
+   drawBackground(240 * 4096); // Bank 240 : BG1
+   drawBackground(244 * 4096); // Bank 244 : BG2
+   drawBackground(248 * 4096); // Bank 248 : BG2
  }
