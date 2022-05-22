@@ -270,3 +270,13 @@ Objects:
     * Horizontal mirror
     * Priority (2 bits : 11 - in front, 10 - between BG1 and BG2, 01 - between BG2 and BG3, 00 - behind BG3)
     * Palette (6 bits)
+
+Bank 255 (extended screen attributes):
+0000-0001 - Background 1 X displacement  
+0002-0003 - Background 1 Y displacement  
+0004-0005 - Background 2 X displacement  
+0006-0007 - Background 2 Y displacement  
+0008-0009 - Background 3 X displacement  
+000A-000B - Background 3 Y displacement  
+
+These displacements move the screen relative to the background.

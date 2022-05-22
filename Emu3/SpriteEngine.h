@@ -31,7 +31,7 @@ private:
    std::map<word, size_t> bg_tiles;
 
    void pullBGSpritesFrom(int address);
-   void drawBackground(int address);
+   void drawBackground(int address, int offsets);
 
 public:
    SpriteEngine(olc::PixelGameEngine*, const byte*);

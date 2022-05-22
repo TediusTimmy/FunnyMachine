@@ -42,8 +42,10 @@ void SpriteEngine::pullBGSpritesFrom(int bg_base)
     }
  }
 
-void SpriteEngine::drawBackground(int bg_base)
+void SpriteEngine::drawBackground(int bg_base, int offsets)
  {
+   int x_offset = ((int)VRAM[255 * 4096 + offsets]) | ((int)VRAM[255 * 4096 + offsets + 1]) << 8;
+   int y_offset = ((int)VRAM[255 * 4096 + offsets + 2]) | ((int)VRAM[255 * 4096 + offsets + 3]) << 8;
    for (int y = 0; y < 80; ++y)
     {
       for (int x = 0; x < 60; ++x)
@@ -53,7 +55,7 @@ void SpriteEngine::drawBackground(int bg_base)
          int shl = 6 - ((y * 60 + x) & 3) * 2;
          float vMirror = (VRAM[loc] & (2 << shl)) ? -1.0f : 1.0f;
          float hMirror = (VRAM[loc] & (1 << shl)) ? -1.0f : 1.0f;
-         engine->DrawDecal({x * 16.0f + (hMirror < 0.0f ? 16.0f : 0.0f), y * 16.0f + (vMirror < 0.0f ? 16.0f : 0.0f)},
+         engine->DrawDecal({x * 16.0f + (hMirror < 0.0f ? 16.0f : 0.0f) - x_offset, y * 16.0f + (vMirror < 0.0f ? 16.0f : 0.0f) - y_offset},
             bg_decals[bg_tiles[tile]].get(), {hMirror, vMirror});
        }
     }
@@ -88,7 +90,7 @@ void SpriteEngine::updateScreen()
     {
       thing->Update();
     }
-   drawBackground(240 * 4096); // Bank 240 : BG1
-   drawBackground(244 * 4096); // Bank 244 : BG2
-   drawBackground(248 * 4096); // Bank 248 : BG2
+   drawBackground(240 * 4096, 0); // Bank 240 : BG1
+   drawBackground(244 * 4096, 4); // Bank 244 : BG2
+   drawBackground(248 * 4096, 8); // Bank 248 : BG2
  }
