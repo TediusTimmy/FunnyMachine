@@ -37,10 +37,8 @@ void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 void DB_panic (const std::string & msg, size_t lineNo)
  {
    std::cerr << msg << std::endl;
-
    std::cerr << "    At line " << lineNo << std::endl;
-
-   throw std::exception();
+   std::exit(1);
  }
 
 void Lexer::Error (const std::string & errorMessage)

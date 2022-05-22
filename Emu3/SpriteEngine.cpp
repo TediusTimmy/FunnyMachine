@@ -49,7 +49,12 @@ void SpriteEngine::drawBackground(int bg_base)
       for (int x = 0; x < 60; ++x)
        {
          int tile = ((int)VRAM[bg_base + (y * 60 + x) * 2]) | ((int)VRAM[bg_base + (y * 60 + x) * 2 + 1]) << 8;
-         engine->DrawDecal({x * 16.0f, y * 16.0f}, bg_decals[bg_tiles[tile]].get());
+         int loc = bg_base + 3 * 4096 + (y * 60 + x) / 4;
+         int shl = 6 - ((y * 60 + x) & 3) * 2;
+         float vMirror = (VRAM[loc] & (2 << shl)) ? -1.0f : 1.0f;
+         float hMirror = (VRAM[loc] & (1 << shl)) ? -1.0f : 1.0f;
+         engine->DrawDecal({x * 16.0f + (hMirror < 0.0f ? 16.0f : 0.0f), y * 16.0f + (vMirror < 0.0f ? 16.0f : 0.0f)},
+            bg_decals[bg_tiles[tile]].get(), {hMirror, vMirror});
        }
     }
  }

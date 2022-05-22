@@ -253,7 +253,7 @@ Backgrounds:
 * First array is 2 bytes per tile:
   * Low 9 bits select tile
   * High 6 bits select palette
-* Second array is at kilobyte boundary, 2 bits per tile (left shifts extract data):
+* Second array is at the last bank, 2 bits per tile (left shifts extract data):
   * Vertical mirror
   * Horizontal mirror
 

@@ -516,7 +516,7 @@ int DerefVar::evaluate(const CallingContext& context) const
       int index = rhs->evaluate(context);
       if ((array < 0xE000) || (array > 0xFFFF))
        {
-         DB_panic("Array Dereference not a constants.", lineNo);
+         DB_panic("Array Dereference not a constant.", lineNo);
        }
       int mem = (index * 2 + (array - 0xE000)) / 2;
       if ((mem < 0) || (static_cast<size_t>(mem) > context.m_constantData->size()))
