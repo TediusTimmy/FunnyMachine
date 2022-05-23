@@ -175,11 +175,13 @@ There are 256, 8KB banks of RAM that can be selected. Bank FF is special and you
 ## The System Area
 TODO: put in things as I implement them, aiming to document Emu3.
 
-B000-B008 - Bank registers. Readable and writable, control where the banks are pointing.  
+B000-B007 - Bank registers. Readable and writable, control where the banks are pointing.  
 B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.  
 B010-B020 - DMA controllers. See description in Emu2.  
 B100 - Screen frame : roughly a 1/30 sec timer  
 B101 - Screen seconds : rolling count of 30 frame intervals  
+BFFC - Key pressed request (write the key code of the key you are interested in to this address)  
+BFFD - Key pressed result (get result from this address: 1 currently pressed, 0 not pressed : TODO keymap)  
 BFFF - Writing to this memory location will stop the emulator.
 
 ## The VRAM memory map
@@ -228,12 +230,6 @@ Each DMA controller has 4 control bytes:
 ## EMU3
 
 This is in progress. This is planned to have a sprite engine and sound engine. I'm using Javidx9's Pixel Game Engine (https://github.com/OneLoneCoder/olcPixelGameEngine), as I have experience with it.
-
-### System Area
-Changes from Emu2:
-
-BFFC - Key pressed request (write the key code of the key you are interested in to this address)  
-BFFD - Key pressed result (get result from this address: 1 currently pressed, 0 not pressed)
 
 ### VRAM
 Bank 128 - 191 : Sprite memory  
