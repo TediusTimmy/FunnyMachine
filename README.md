@@ -271,7 +271,7 @@ Objects:
     * Horizontal mirror
     * Vertical mirror
 
-Bank 255 (extended screen attributes):
+Bank 255 (extended screen attributes):  
 0000-0001 - Background 1 X displacement  
 0002-0003 - Background 1 Y displacement  
 0004-0005 - Background 2 X displacement  
