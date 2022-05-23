@@ -29,9 +29,16 @@ private:
    std::vector<std::unique_ptr<olc::Sprite> > bg_sprites;
    std::vector<std::unique_ptr<olc::Decal> > bg_decals;
    std::map<word, size_t> bg_tiles;
+   std::vector<std::unique_ptr<olc::Sprite> > usr_sprites;
+   std::vector<std::unique_ptr<olc::Decal> > usr_decals;
+   std::vector<int> spr_3;
+   std::vector<int> spr_2;
+   std::vector<int> spr_1;
+   std::vector<int> spr_0;
 
    void pullBGSpritesFrom(int address);
    void drawBackground(int address, int offsets);
+   void drawSprites(const std::vector<int>& list);
 
 public:
    SpriteEngine(olc::PixelGameEngine*, const byte*);

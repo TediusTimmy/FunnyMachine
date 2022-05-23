@@ -265,11 +265,11 @@ Objects:
     * 12 bit tile selector
     * 2 bit vertical size (00 - 1 tile, 01 - 2 tiles, 10 - 4 tiles, 11 - 8 tiles)
     * 2 bit horizontal size
-  * Attributes (2 bytes, only 10 bits used)
-    * Vertical mirror
-    * Horizontal mirror
-    * Priority (2 bits : 11 - in front, 10 - between BG1 and BG2, 01 - between BG2 and BG3, 00 - behind BG3)
+  * Attributes (2 bytes, only 10 bits used, low bits to high bits)
     * Palette (6 bits)
+    * Priority (2 bits : 11 - in front, 10 - between BG1 and BG2, 01 - between BG2 and BG3, 00 - behind BG3)
+    * Horizontal mirror
+    * Vertical mirror
 
 Bank 255 (extended screen attributes):
 0000-0001 - Background 1 X displacement  

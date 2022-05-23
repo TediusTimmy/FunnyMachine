@@ -18,6 +18,21 @@
 
 SpriteEngine::SpriteEngine(olc::PixelGameEngine* engine, const byte* VRAM) : engine(engine), VRAM(VRAM)
  {
+   bg_sprites.reserve(512); // This ought to handle simple games well.
+   bg_decals.reserve(512);
+
+   usr_sprites.reserve(256);
+   usr_decals.reserve(256);
+   for (int i = 0; i < 256; ++i)
+    {
+      // Initialize these to the maximum sprite size so we don't have to do further allocations.
+      usr_sprites.emplace_back(std::make_unique<olc::Sprite>(64, 64));
+      usr_decals.emplace_back(std::make_unique<olc::Decal>(usr_sprites[i].get()));
+    }
+   spr_3.reserve(256);
+   spr_2.reserve(256);
+   spr_1.reserve(256);
+   spr_0.reserve(256);
  }
 
 void SpriteEngine::pullBGSpritesFrom(int bg_base)
@@ -61,6 +76,30 @@ void SpriteEngine::drawBackground(int bg_base, int offsets)
     }
  }
 
+void SpriteEngine::drawSprites(const std::vector<int>& list)
+ {
+   for (int thing : list)
+    {
+      int base = 252 * 4096 + thing * 8;
+      int x = ((int)VRAM[base + 0]) | ((int)VRAM[base + 1]) << 8;
+      int y = ((int)VRAM[base + 2]) | ((int)VRAM[base + 3]) << 8;
+      float vMirror = 1.0f;
+      float hMirror = 1.0f;
+      if (VRAM[base + 7] & 2)
+       {
+         vMirror = -1.0f;
+         y += usr_sprites[thing]->height;
+       }
+      if (VRAM[base + 7] & 1)
+       {
+         hMirror = -1.0f;
+         x += usr_sprites[thing]->width;
+       }
+      usr_decals[thing]->Update();
+      engine->DrawDecal({static_cast<float>(x), static_cast<float>(y)}, usr_decals[thing].get(), {hMirror, vMirror});
+    }
+ }
+
 void SpriteEngine::updateScreen()
  {
    // Step 0: Convert all of the Palettes.
@@ -84,13 +123,46 @@ void SpriteEngine::updateScreen()
    pullBGSpritesFrom(240 * 4096); // Bank 240 : BG1
    pullBGSpritesFrom(244 * 4096); // Bank 244 : BG2
    pullBGSpritesFrom(248 * 4096); // Bank 248 : BG2
+   // Now sprites
+   spr_3.clear();
+   spr_2.clear();
+   spr_1.clear();
+   spr_0.clear();
+   for (int i = 255; i > -1; --i) // Backwards so that our priority lists are in order.
+    {
+      int base = 252 * 4096 + i * 8;
+      int palette = VRAM[base + 6] & 0x3F;
+      int priority = VRAM[base + 6] >> 6;
+      switch (priority)
+       {
+         case 3: spr_3.push_back(i); break;
+         case 2: spr_2.push_back(i); break;
+         case 1: spr_1.push_back(i); break;
+         case 0: spr_0.push_back(i); break;
+       }
+      // WHAT AM I DOING? This seems so bad.
+      usr_sprites[i]->height = 1 << (3 + ((VRAM[base + 5] >> 4) & 3));
+      usr_sprites[i]->width = 1 << (3 + ((VRAM[base + 5] >> 6) & 3));
+      int tile = ((int)VRAM[base + 4]) | ((int)VRAM[base + 5] & 15) << 8;
+      for (int y = 0; y < usr_sprites[i]->height; ++y)
+       {
+         for (int x = 0; x < usr_sprites[i]->width; ++x)
+          {
+            usr_sprites[i]->GetData()[y * usr_sprites[i]->width + x] = palettes[palette][VRAM[128 * 4096 + 64 * tile + y * usr_sprites[i]->width + x]];
+          }
+       }
+    }
 
-   // Display
+   // Step 2: Display
    for (auto& thing : bg_decals)
     {
       thing->Update();
     }
-   drawBackground(240 * 4096, 0); // Bank 240 : BG1
+   drawSprites(spr_0);
+   drawBackground(248 * 4096, 8); // Bank 248 : BG3
+   drawSprites(spr_1);
    drawBackground(244 * 4096, 4); // Bank 244 : BG2
-   drawBackground(248 * 4096, 8); // Bank 248 : BG2
+   drawSprites(spr_2);
+   drawBackground(240 * 4096, 0); // Bank 240 : BG1
+   drawSprites(spr_3);
  }

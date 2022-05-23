@@ -14,3 +14,7 @@ Far-term FUTURE list (maybe never):
 - Add a scratchpad: use scratchpad location 0 like a register.
 - Add a proper divide instruction
 - LDN, MIN, MAX
+
+Emu3
+- Create a keymap so that we're not using the PixelGameEngine enum values.
+- Check depth ordering
