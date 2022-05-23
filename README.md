@@ -236,12 +236,12 @@ BFFC - Key pressed request (write the key code of the key you are interested in 
 BFFD - Key pressed result (get result from this address: 1 currently pressed, 0 not pressed)
 
 ### VRAM
-Bank 128 - 191 : Sprite memory
-Bank 192 - 223 : Background memory
-Bank 224 - 239 : Palette memory
-Bank 240 - 243 : Background 1
-Bank 244 - 247 : Background 2
-Bank 248 - 251 : Background 3
+Bank 128 - 191 : Sprite memory  
+Bank 192 - 223 : Background memory  
+Bank 224 - 239 : Palette memory  
+Bank 240 - 243 : Background 1  
+Bank 244 - 247 : Background 2  
+Bank 248 - 251 : Background 3  
 Bank 252 - 255 : Object Memory (Actually only takes up the first half of Bank 252)
 
 Sprite memory is 4096 tiles, which are 8x8 pixels and 256 colors.  
