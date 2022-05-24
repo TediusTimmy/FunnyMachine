@@ -40,9 +40,9 @@ function setPalette()
    screen[3] := 65280
    screen[4] := 65280
    screen[5] := 65280
-   screen[7] := 65536
-   screen[8] := 65536
-   screen[9] := 65536
+   screen[7] := 65535
+   screen[8] := 65535
+   screen[9] := 65535
    return
 end function
 
