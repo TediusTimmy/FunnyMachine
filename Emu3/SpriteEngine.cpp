@@ -61,13 +61,13 @@ void SpriteEngine::drawBackground(int bg_base, int offsets)
  {
    int x_offset = ((int)VRAM[255 * 4096 + offsets]) | ((int)VRAM[255 * 4096 + offsets + 1]) << 8;
    int y_offset = ((int)VRAM[255 * 4096 + offsets + 2]) | ((int)VRAM[255 * 4096 + offsets + 3]) << 8;
-   for (int y = 0; y < 80; ++y)
+   for (int y = 0; y < 60; ++y)
     {
-      for (int x = 0; x < 60; ++x)
+      for (int x = 0; x < 80; ++x)
        {
-         int tile = ((int)VRAM[bg_base + (y * 60 + x) * 2]) | ((int)VRAM[bg_base + (y * 60 + x) * 2 + 1]) << 8;
-         int loc = bg_base + 3 * 4096 + (y * 60 + x) / 4;
-         int shl = 6 - ((y * 60 + x) & 3) * 2;
+         int tile = ((int)VRAM[bg_base + (y * 80 + x) * 2]) | ((int)VRAM[bg_base + (y * 80 + x) * 2 + 1]) << 8;
+         int loc = bg_base + 3 * 4096 + (y * 80 + x) / 4;
+         int shl = 6 - ((y * 80 + x) & 3) * 2;
          float vMirror = (VRAM[loc] & (2 << shl)) ? -1.0f : 1.0f;
          float hMirror = (VRAM[loc] & (1 << shl)) ? -1.0f : 1.0f;
          engine->DrawDecal({x * 16.0f + (hMirror < 0.0f ? 16.0f : 0.0f) - x_offset, y * 16.0f + (vMirror < 0.0f ? 16.0f : 0.0f) - y_offset},

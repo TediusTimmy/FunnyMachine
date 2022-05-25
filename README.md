@@ -206,7 +206,7 @@ This is as finished as I want to make it. It has a more fully featured screen de
 ### System Area
 The halt command is still there. The print character has been removed.
 
-B008-B000 - Bank registers. Readable and writable, control where the banks are pointing.  
+B000-B007 - Bank registers. Readable and writable, control where the banks are pointing.  
 B009 - VRAM bus locked. Reads of VRAM and writes to VRAM while this is 1 will fail.  
 B010-B020 - DMA controllers. See description.  
 B100 - Screen frame : roughly a 1/30 sec timer  

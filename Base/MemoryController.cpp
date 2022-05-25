@@ -50,7 +50,7 @@ void MemoryController::reset()
 
 bool MemoryController::readROMFile(const std::string& fileName)
  {
-   std::ifstream rom (fileName);
+   std::ifstream rom (fileName, std::ios_base::binary);
    if (rom.fail())
     {
       return false;
@@ -314,7 +314,7 @@ void MemoryController::doOneOp()
             DMA[DMA1_R] = 0;
           }
        }
-      else // Didn't Understand That
+      else if (1 != DMA[DMA1_R]) // Didn't Understand That
        {
          DMA[DMA1_R] = 0;
        }
@@ -347,7 +347,7 @@ void MemoryController::doOneOp()
             DMA[DMA2_R] = 0;
           }
        }
-      else // Didn't Understand That
+      else if (1 != DMA[DMA2_R]) // Didn't Understand That
        {
          DMA[DMA2_R] = 0;
        }
@@ -383,7 +383,7 @@ void MemoryController::doOneOp()
             DMA[DMA3_R] = 0;
           }
        }
-      else // Didn't Understand That
+      else if (1 != DMA[DMA3_R]) // Didn't Understand That
        {
          DMA[DMA3_R] = 0;
        }
@@ -419,7 +419,7 @@ void MemoryController::doOneOp()
             DMA[DMA4_R] = 0;
           }
        }
-      else // Didn't Understand That
+      else if (1 != DMA[DMA4_R]) // Didn't Understand That
        {
          DMA[DMA4_R] = 0;
        }
