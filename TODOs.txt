@@ -16,5 +16,5 @@ Far-term FUTURE list (maybe never):
 - LDN, MIN, MAX
 
 Emu3
-- Create a keymap so that we're not using the PixelGameEngine enum values.
+* Create a keymap so that we're not using the PixelGameEngine enum values.
 * Check depth ordering

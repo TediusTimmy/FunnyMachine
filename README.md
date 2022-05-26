@@ -276,3 +276,11 @@ Bank 255 (extended screen attributes):
 000A-000B - Background 3 Y displacement  
 
 These displacements move the screen relative to the background.
+
+### KeyMap
+
+The keys are generally represented by the ASCII character that would appear when the key is pressed, assuming Caps Lock is off and Shift isn't pressed (yes, the code for A is 97). Then, you have 8 for backspace, 9 for tab, 13 for enter, 27 for escape, and 127 for delete. Finally, we start at 128 and just start assigning keys to numbers: F1 to F12, Caps Lock, Shift, Control, Scroll Lock, Pause/Break, Insert, Home, Page Up, End, Page Down, Up, Left, Down, and Right. To finish off with the number pad: divide, multiply, subtract, add, decimal point, then zero to nine.
+
+It's a lot to take in: the code is probably the best resource.
+
+We don't handle the Alt key, because Pixel Game Engine doesn't (VK_MENU?). It also doesn't distinguish between left and right shift/control.
