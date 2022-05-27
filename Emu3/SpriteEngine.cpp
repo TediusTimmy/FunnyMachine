@@ -83,6 +83,8 @@ void SpriteEngine::drawSprites(const std::vector<int>& list)
       int base = 252 * 4096 + thing * 8;
       int x = ((int)VRAM[base + 0]) | ((int)VRAM[base + 1]) << 8;
       int y = ((int)VRAM[base + 2]) | ((int)VRAM[base + 3]) << 8;
+      if (x & 32768) x |= -65536;
+      if (y & 32768) y |= -65536;
       float vMirror = 1.0f;
       float hMirror = 1.0f;
       if (VRAM[base + 7] & 2)

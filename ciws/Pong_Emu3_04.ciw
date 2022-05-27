@@ -1,0 +1,333 @@
+//   Copyright (C) 2022 Thomas DiModica <ricinwich@yahoo.com>
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// Compile this with the alternative ciw compiler.
+dim rand; lpad; rpad; xloc; yloc; xvel; yvel; lread; rread; reset; @40960 screen [2048]; @45312 counter; @49148 input
+
+function setPalette()
+   // Set the VRAM Bank to Palette
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI 5"
+   asm "        OR  1, 0"
+   asm "        LDI 224"
+   asm "        STB 0, 1"
+   // Colors: (black), red, green, blue, white
+   screen[2] := 255
+   screen[3] := 65280
+   screen[4] := 65280
+   screen[5] := 65280
+   screen[7] := 65535
+   screen[8] := 65535
+   screen[9] := 65535
+   screen[10] := 32 + 32 * 256
+   screen[11] := 32 + 255 * 256
+   return
+end function
+
+function drawCourt()
+      // Copy ROM to VRAM
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI $17"
+   asm " @add   OR  1, 0"
+   asm " @val   LDI 1"
+   asm "        STB val, add"
+   asm " @add   DEC add"
+   asm " @val   INC val"
+   asm "        STB val, add"
+   asm " @val   LDI 192"
+   asm " @add   DEC add"
+   asm "        STB val, add"
+   asm " @add   DEC add"
+   asm " @val   LDI 2"
+   asm "        STB val, add"
+         // Set the VRAM Bank to BG1
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI 5"
+   asm "        OR  1, 0"
+   asm "        LDI 240"
+   asm "        STB 0, 1"
+   screen[ 0 * 80 + 19] := 1
+   screen[ 0 * 80 + 20] := 1
+   screen[ 2 * 80 + 19] := 1
+   screen[ 2 * 80 + 20] := 1
+   screen[ 4 * 80 + 19] := 1
+   screen[ 4 * 80 + 20] := 1
+   screen[ 6 * 80 + 19] := 1
+   screen[ 6 * 80 + 20] := 1
+   screen[ 8 * 80 + 19] := 1
+   screen[ 8 * 80 + 20] := 1
+   screen[10 * 80 + 19] := 1
+   screen[10 * 80 + 20] := 1
+   screen[12 * 80 + 19] := 1
+   screen[12 * 80 + 20] := 1
+   screen[17 * 80 + 19] := 1
+   screen[17 * 80 + 20] := 1
+   screen[19 * 80 + 19] := 1
+   screen[19 * 80 + 20] := 1
+   screen[21 * 80 + 19] := 1
+   screen[21 * 80 + 20] := 1
+   screen[23 * 80 + 19] := 1
+   screen[23 * 80 + 20] := 1
+   screen[25 * 80 + 19] := 1
+   screen[25 * 80 + 20] := 1
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI 5"
+   asm "        OR  1, 0"
+   asm "        LDI 241"
+   asm "        STB 0, 1"
+   screen[27 * 80 - 2048 + 19] := 1
+   screen[27 * 80 - 2048 + 20] := 1
+   screen[29 * 80 - 2048 + 19] := 1
+   screen[29 * 80 - 2048 + 20] := 1
+         // Set the VRAM Bank to BG1 Mirroring
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI 5"
+   asm "        OR  1, 0"
+   asm "        LDI 243"
+   asm "        STB 0, 1"
+   screen[( 0 * 80 + 20) / 8] := 16384
+   screen[( 2 * 80 + 20) / 8] := 16384
+   screen[( 4 * 80 + 20) / 8] := 16384
+   screen[( 6 * 80 + 20) / 8] := 16384
+   screen[( 8 * 80 + 20) / 8] := 16384
+   screen[(10 * 80 + 20) / 8] := 16384
+   screen[(12 * 80 + 20) / 8] := 16384
+   screen[(17 * 80 + 20) / 8] := 16384
+   screen[(19 * 80 + 20) / 8] := 16384
+   screen[(21 * 80 + 20) / 8] := 16384
+   screen[(23 * 80 + 20) / 8] := 16384
+   screen[(25 * 80 + 20) / 8] := 16384
+   screen[(27 * 80 + 20) / 8] := 16384
+   screen[(29 * 80 + 20) / 8] := 16384
+   return
+end function
+
+function drawBall()
+      // Copy ROM to VRAM
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI $17"
+   asm " @add   OR  1, 0"
+   asm " @val   LDI 1"
+   asm "        STB val, add"
+   asm " @add   DEC add"
+   asm "        STB val, add"
+   asm " @val   LDI 128"
+   asm " @add   DEC add"
+   asm "        STB val, add"
+   asm " @add   DEC add"
+   asm " @val   LDI 2"
+   asm "        STB val, add"
+      // Set the VRAM Bank to Sprite Data
+   asm "        LDI $B00"
+   asm "        LDI 4"
+   asm "        SHL 1, 0"
+   asm "        LDI 5"
+   asm "        OR  1, 0"
+   asm "        LDI 252"
+   asm "        STB 0, 1"
+   screen[ 4 + 0] := xloc
+   screen[ 4 + 1] := yloc
+   screen[ 4 + 2] := 1
+   screen[ 4 + 3] := 192
+   screen[ 8 + 0] := xloc + 8
+   screen[ 8 + 1] := yloc
+   screen[ 8 + 2] := 1
+   screen[ 8 + 3] := 448
+   screen[12 + 0] := xloc
+   screen[12 + 1] := yloc + 8
+   screen[12 + 2] := 1
+   screen[12 + 3] := 704
+   screen[16 + 0] := xloc + 8
+   screen[16 + 1] := yloc + 8
+   screen[16 + 2] := 1
+   screen[16 + 3] := 960
+   screen[20 + 0] := 8
+   screen[20 + 1] := lpad
+   screen[20 + 2] := 2 + (3 << 12) + (1 << 14)
+   screen[20 + 3] := 192
+   screen[24 + 0] := 616
+   screen[24 + 1] := rpad
+   screen[24 + 2] := 2 + 16 + (3 << 12) + (1 << 14)
+   screen[24 + 3] := 192
+   return
+end function
+
+function updateBall()
+   if xloc = 24 then
+      if (yvel > 0) && (yloc >= lpad - 16) && (yloc <= lpad + 64) then
+         xvel := -xvel
+         if yloc < lpad - 12 then
+            yvel := -yvel
+         fi
+      fi
+      if (yvel < 0) && (yloc >= lpad - 8) && (yloc <= lpad + 72) then
+         xvel := -xvel
+         if yloc > lpad + 68 then
+            yvel := -yvel
+         fi
+      fi
+   fi
+   if xloc = 600 then
+      if (yvel > 0) && (yloc >= rpad - 16) && (yloc <= rpad + 64) then
+         xvel := -xvel
+         if yloc < rpad - 12 then
+            yvel := -yvel
+         fi
+      fi
+      if (yvel < 0) && (yloc >= rpad - 8) && (yloc <= rpad + 72) then
+         xvel := -xvel
+         if yloc > rpad + 68 then
+            yvel := -yvel
+         fi
+      fi
+   fi
+
+   xloc := xloc + xvel
+   if (xloc = -8) || (xloc = 632) then
+      reset = 1
+   fi
+   yloc := yloc + yvel
+   if (yloc = 0) || (yloc = 464) then
+      yvel := -yvel
+   fi
+
+   screen[ 4 + 0] := xloc
+   screen[ 4 + 1] := yloc
+   screen[ 8 + 0] := xloc + 8
+   screen[ 8 + 1] := yloc
+   screen[12 + 0] := xloc
+   screen[12 + 1] := yloc + 8
+   screen[16 + 0] := xloc + 8
+   screen[16 + 1] := yloc + 8
+   return
+end function
+
+function checkInput()
+   dim temp
+   input := 119
+   temp := input >> 8
+   if temp = 1 then
+      lread := -8
+   fi
+   input := 115
+   temp := input >> 8
+   if temp = 1 then
+      lread := 8
+   fi
+   input := 112
+   temp := input >> 8
+   if temp = 1 then
+      rread := -8
+   fi
+   input := 108
+   temp := input >> 8
+   if temp = 1 then
+      rread := 8
+   fi
+   input := 54
+   temp := input >> 8
+   if temp = 1 then
+      reset := 1
+   fi
+   return
+end function
+
+function busyWait(target)
+   if target # (counter & 255) then
+      return
+   fi
+   call checkInput()
+   tailcall target
+end function
+
+function updateLeft()
+   if lread then
+      lpad := lpad + lread
+      if lpad < 0 then
+         lpad := 0
+      fi
+      if lpad > 416 then
+         lpad := 416
+      fi
+      lread := 0
+   fi
+   screen[20 + 1] := lpad
+   return
+end function
+
+function updateRight()
+   if rread then
+      rpad := rpad + rread
+      if rpad < 0 then
+         rpad := 0
+      fi
+      if rpad > 416 then
+         rpad := 416
+      fi
+      rread := 0
+   fi
+   screen[24 + 1] := rpad
+   return
+end function
+
+function mainLoop()
+   call busyWait(counter & 255)
+
+   call updateLeft()
+   call updateRight()
+   call updateBall()
+
+   if reset then
+      return
+   fi
+   tailcall
+end function
+
+function program ()
+   call setPalette()
+   call drawCourt()
+   rand := rand + 151
+   lpad := 208
+   rpad := 208
+   xloc := 312
+   yloc := (((rand >> 4) & 15) << 4) + 120
+   call drawBall()
+   if rand & 16 then
+      xvel := 2
+   else
+      xvel := -2
+   fi
+   if rand & 32 then
+      yvel := 2
+   else
+      yvel := -2
+   fi
+   reset := 0
+
+   call mainLoop()
+   tailcall
+end function

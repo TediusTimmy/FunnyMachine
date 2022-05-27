@@ -36,7 +36,7 @@ int main (int argc, char ** argv)
       return 1;
     }
 
-   std::ofstream out (argv[2]);
+   std::ofstream out (argv[2], std::ios_base::binary);
    if (true == out.fail())
     {
       printf("error opening file: %s\n", argv[2]);
