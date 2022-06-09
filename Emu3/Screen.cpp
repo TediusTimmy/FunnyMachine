@@ -16,6 +16,7 @@
  */
 #include "Screen.h"
 #include "SpriteEngine.h"
+#include "SoundEngine.h"
 
 Screen::Screen() : sprite_engine(nullptr), pixel_engine(nullptr)
  {
@@ -43,7 +44,8 @@ void Screen::doOneOp()
    ++ticks;
    // At 1 MHz and 30 fps, we redraw the screen every 33333 clock cycles.
    // Our "video card" will read the 512K bytes of screen in 3277 cycles (160 bytes per instruction).
-   if (ticks < (33333 - 3277))
+   // Our "sound card" will read its 64K in 410 cycles, with a 46 cycle gap for write-back.
+   if (ticks < (33333 - 3733))
     {
       return;
     }
@@ -68,6 +70,8 @@ void Screen::doOneOp()
     }
    // Redraw the screen.
    reinterpret_cast<SpriteEngine*>(sprite_engine)->updateScreen();
+   // Update the song lists.
+   reinterpret_cast<SoundEngine*>(sound_engine)->updateARAM();
  }
 
 bool Screen::doRead(word addr, word& OUT_) // windows.h #defines OUT as ... something.

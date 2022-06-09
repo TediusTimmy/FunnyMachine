@@ -1,5 +1,5 @@
-emu: ClockController.o Core.o MemoryController.o KeyBoard.o Screen.o Speed.o SpriteEngine.o main.o
-	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -std=c++17 -O2 -o emu ClockController.o Core.o MemoryController.o KeyBoard.o Screen.o Speed.o SpriteEngine.o main.o -luser32 -lgdi32 -lgdiplus -lopengl32 -lSHlwapi -ldwmapi -lstdc++fs -lwinmm
+emu: ClockController.o Core.o MemoryController.o KeyBoard.o Screen.o Speed.o SpriteEngine.o SoundEngine.o main.o
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -std=c++17 -O2 -o emu ClockController.o Core.o MemoryController.o KeyBoard.o Screen.o Speed.o SpriteEngine.o SoundEngine.o main.o -luser32 -lgdi32 -lgdiplus -lopengl32 -lSHlwapi -ldwmapi -lstdc++fs -lwinmm
 
 clean:
 	rm *.o emu.exe
@@ -24,6 +24,9 @@ Speed.o: Speed.cpp
 
 SpriteEngine.o: SpriteEngine.cpp
 	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -std=c++17 -O2 -c SpriteEngine.cpp
+
+SoundEngine.o: SoundEngine.cpp
+	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -std=c++17 -O2 -c SoundEngine.cpp
 
 main.o: main.cpp
 	x86_64-w64-mingw32-g++.exe -Wall -Wextra -Wpedantic -std=c++17 -O2 -c main.cpp

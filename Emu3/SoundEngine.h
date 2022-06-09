@@ -14,33 +14,23 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FM_SCREEN_H
-#define FM_SCREEN_H
+#ifndef FM_SOUND_ENGINE_H
+#define FM_SOUND_ENGINE_H
 
 #include "../Base/Base.h"
 
-class Screen : public ClockDevice, public IODevice
+class SoundEngine // In olc::PGEX::SOUND, Engine Knows YOU
  {
-private:
-   int ticks;
-   byte frame;
-   byte sec;
-   MemoryController* M; // Our view into memory
-   void * sprite_engine;
-
 public:
-   Screen();
-   virtual ~Screen();
+   SoundEngine();
 
-   void attach(MemoryController*); // DO THIS FIRST!
-   void reset() override;
-   void doOneOp() override;
+      // This is going to be oddly distended from the operation of the emulator.
+      // Hopefully, no one will notice.
+   double synthFun(int /*nChannel*/, double /*fGlobalTime*/, double /*fTimeStep*/);
 
-   bool doRead(word addr, word& OUT) override;
-   bool doWrite(word addr, word val) override;
+   void updateARAM();
 
-   void * pixel_engine;
-   void * sound_engine;
+   const byte* VRAM;
  };
 
-#endif /* FM_SCREEN_H */
+#endif /* FM_SOUND_ENGINE_H */

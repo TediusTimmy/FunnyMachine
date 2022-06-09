@@ -19,11 +19,15 @@
 #include "KeyBoard.h"
 #include "Speed.h"
 
+#include "SoundEngine.h"
+
 #include <cstdio>
 #include <memory>
 
 #define OLC_PGE_APPLICATION
 #include "external/olcPixelGameEngine.h"
+#define OLC_PGEX_SOUND
+#include "external/olcPGEX_Sound.h"
 
 const int SCREEN_X = 640;
 const int SCREEN_Y = 480;
@@ -65,6 +69,8 @@ public:
 public:
    bool OnUserCreate() override
     {
+      olc::SOUND::InitialiseAudio(48000, 1, 8, 512);
+      olc::SOUND::SetUserSynthFunction(std::bind(&SoundEngine::synthFun, &sound, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
       return true;
     }
 
@@ -78,8 +84,15 @@ public:
       return doRun;
     }
 
+   bool OnUserDestroy()
+    {
+      olc::SOUND::DestroyAudio();
+      return true;
+    }
+
    ClockController* devs;
    Speed* speed;
+   SoundEngine sound;
 
  };
 
@@ -110,6 +123,7 @@ int main (int argc, char** argv)
    Screen screen;
    screen.attach(bus.get());
    screen.pixel_engine = reinterpret_cast<void*>(&engine);
+   screen.sound_engine = reinterpret_cast<void*>(&engine.sound);
    devs.attach(&screen);
    bus->attach(&screen);
 
@@ -134,6 +148,7 @@ int main (int argc, char** argv)
 
    engine.devs = &devs;
    engine.speed = &speed;
+   engine.sound.VRAM = bus->vram();
    if (engine.Construct(SCREEN_X, SCREEN_Y, SCALE_X, SCALE_Y))
     {
       engine.Start();

@@ -14,33 +14,17 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FM_SCREEN_H
-#define FM_SCREEN_H
+#include "SoundEngine.h"
 
-#include "../Base/Base.h"
-
-class Screen : public ClockDevice, public IODevice
+SoundEngine::SoundEngine()
  {
-private:
-   int ticks;
-   byte frame;
-   byte sec;
-   MemoryController* M; // Our view into memory
-   void * sprite_engine;
+ }
 
-public:
-   Screen();
-   virtual ~Screen();
+double SoundEngine::synthFun(int /*nChannel*/, double /*fGlobalTime*/, double /*fTimeStep*/)
+ {
+   return 0.0;
+ }
 
-   void attach(MemoryController*); // DO THIS FIRST!
-   void reset() override;
-   void doOneOp() override;
-
-   bool doRead(word addr, word& OUT) override;
-   bool doWrite(word addr, word val) override;
-
-   void * pixel_engine;
-   void * sound_engine;
- };
-
-#endif /* FM_SCREEN_H */
+void SoundEngine::updateARAM()
+ {
+ }
