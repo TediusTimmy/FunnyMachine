@@ -79,7 +79,7 @@ This returns from the current function. A blank `return` is equivalent to `retur
 ```
    tailcall 13; 14; 15
 ```
-This is the same as `return function(13;14;15)`, but this doesn't create a new stack frame. The Pong program makes use of this because I wasn't done implementing do-loop when I wrote it. It's an alternative way of looping.
+This is the same as `return function(13;14;15)`, but this doesn't create a new stack frame. The Pong program makes use of this because I wasn't done implementing do-loop when I wrote it. It's an alternative way of looping. Currently, it is implemented incorrectly.
 
 #### If
 ```

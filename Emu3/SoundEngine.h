@@ -18,6 +18,19 @@
 #define FM_SOUND_ENGINE_H
 
 #include "../Base/Base.h"
+#include <functional>
+
+class Note
+ {
+public:
+   bool inUse;
+   double startTime;
+   double endTime;
+   double frequency;
+   double volume;
+   std::function<double(double, double, double, double)> instrument;
+   int voice;
+ };
 
 class SoundEngine // In olc::PGEX::SOUND, Engine Knows YOU
  {
@@ -31,6 +44,7 @@ public:
    void updateARAM();
 
    const byte* VRAM;
+   Note notes[16];
  };
 
 #endif /* FM_SOUND_ENGINE_H */
