@@ -66,6 +66,7 @@ void Expression::emitPush(const CallingContext& context, GlobalData& data) const
    if (true == canEvaluate(context))
     {
       int result = evaluate(context);
+      std::cout << "    ; Folded constant sub-expression to " << result << " : " << lineNo << std::endl;
       beltVal(result);
       std::cout << "        SDO4 0" << std::endl;
       return;
@@ -86,6 +87,7 @@ std::string Expression::emitNext(const CallingContext& context, GlobalData& data
    if (true == canEvaluate(context))
     {
       int value = evaluate(context);
+      std::cout << "    ; Folded constant sub-expression to " << value << " : " << lineNo << std::endl;
       std::string result = data.getNextResult();
       beltVal(value, result);
       return result;
@@ -98,6 +100,7 @@ std::string Expression::emitResult(const CallingContext& context, GlobalData& da
    if (true == canEvaluate(context))
     {
       int value = evaluate(context);
+      std::cout << "    ; Folded constant sub-expression to " << value << " : " << lineNo << std::endl;
       std::string result = data.getNextResult();
       beltVal(value, result);
       return result;

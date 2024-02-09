@@ -50,37 +50,72 @@ void Assignment::emit(const CallingContext& context, GlobalData& data) const
     }
    else
     {
-      rhs->emitPush(context, data);
-      index->emit(context, data);
-      std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
-      if (location < 128)
+      if ((index->index->beltResults(context) + Expression::valueResults(location & ~1) + 3) > 14)
        {
-         beltVal(location & ~1);
-         std::cout << "        LDS 1" << std::endl;
-         std::cout << "        ADD 0, 1" << std::endl;
-         if (0 == (location & 1)) // If an array, the name is the address.
-          {
-            std::cout << "        LD  0" << std::endl;
-          }
-       }
-      else
-       {
-         if (0 == (location & 1))
+         rhs->emitPush(context, data);
+         index->emit(context, data);
+         std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
+         if (location < 128)
           {
             beltVal(location & ~1);
-            std::cout << "        LD  0" << std::endl;
+            std::cout << "        LDS 1" << std::endl;
+            std::cout << "        ADD 0, 1" << std::endl;
+            if (0 == (location & 1)) // If an array, the name is the address.
+             {
+               std::cout << "        LD  0" << std::endl;
+             }
           }
          else
           {
-            beltVal(location & ~1);
+            if (0 == (location & 1))
+             {
+               beltVal(location & ~1);
+               std::cout << "        LD  0" << std::endl;
+             }
+            else
+             {
+               beltVal(location & ~1);
+             }
           }
+         std::cout << "        SDO5" << std::endl; // belt -> index base
+         std::cout << "        SDO5" << std::endl; // belt -> rhs index base
+         std::cout << "        LDI 1" << std::endl;
+         std::cout << "        SHL 2, 0" << std::endl;
+         std::cout << "        ADD 0, 4" << std::endl;
+         std::cout << "        ST  3, 0" << std::endl;
        }
-      std::cout << "        SDO5" << std::endl; // belt -> index base
-      std::cout << "        SDO5" << std::endl; // belt -> rhs index base
-      std::cout << "        LDI 1" << std::endl;
-      std::cout << "        SHL 2, 0" << std::endl;
-      std::cout << "        ADD 0, 4" << std::endl;
-      std::cout << "        ST  3, 0" << std::endl;
+      else
+       {
+         std::string RHS = rhs->emitResult(context, data);
+         std::string INDEX = index->index->emitResult(context, data);
+         std::cout << "    ; Assignment [] to " << lhs << " " << lineNo << std::endl;
+         if (location < 128)
+          {
+            beltVal(location & ~1);
+            std::cout << "        LDS 1" << std::endl;
+            std::cout << "        ADD 0, 1" << std::endl;
+            if (0 == (location & 1)) // If an array, the name is the address.
+             {
+               std::cout << "        LD  0" << std::endl;
+             }
+          }
+         else
+          {
+            if (0 == (location & 1))
+             {
+               beltVal(location & ~1);
+               std::cout << "        LD  0" << std::endl;
+             }
+            else
+             {
+               beltVal(location & ~1);
+             }
+          }
+         std::cout << "        LDI 1" << std::endl;
+         std::cout << "        SHL " << INDEX << ", 0" << std::endl;
+         std::cout << "        ADD 0, 2" << std::endl;
+         std::cout << "        ST  " << RHS << ", 0" << std::endl;
+       }
     }
  }
 
