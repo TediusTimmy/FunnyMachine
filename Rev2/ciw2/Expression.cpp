@@ -24,27 +24,41 @@ void DB_panic (const std::string &, size_t) __attribute__ ((__noreturn__));
 void beltVal(short val)
  {
    if ((val > 0x7FF) || (val < -0x800))
-   {
-      std::cout << "        LDI " << (val & 0xFFF) << std::endl;
-      std::cout << "        LHN 0, " << ((val >> 12) & 0xF) << std::endl;
-   }
+    {
+      if (0 != (val & 0xFFF))
+       {
+         std::cout << "        LDI " << (val & 0xFFF) << std::endl;
+         std::cout << "        LHN 0, " << ((val >> 12) & 0xF) << std::endl;
+       }
+      else
+       {
+         std::cout << "        LHN 15, " << ((val >> 12) & 0xF) << std::endl;
+       }
+    }
    else
-   {
+    {
       std::cout << "        LDI " << val << std::endl;
-   }
+    }
  }
 
 void beltVal(short val, const std::string& name)
  {
    if ((val > 0x7FF) || (val < -0x800))
-   {
-      std::cout << "        LDI " << (val & 0xFFF) << std::endl;
-      std::cout << " @" << name << " LHN 0, " << ((val >> 12) & 0xF) << std::endl;
-   }
+    {
+      if (0 != (val & 0xFFF))
+       {
+         std::cout << "        LDI " << (val & 0xFFF) << std::endl;
+         std::cout << " @" << name << " LHN 0, " << ((val >> 12) & 0xF) << std::endl;
+       }
+      else
+       {
+         std::cout << " @" << name << " LHN 15, " << ((val >> 12) & 0xF) << std::endl;
+       }
+    }
    else
-   {
+    {
       std::cout << " @" << name << " LDI " << val << std::endl;
-   }
+    }
  }
 
 void VS_pushAddr (short addr)
@@ -56,8 +70,18 @@ void VS_pushAddr (short addr)
 
 void VS_pushVal (short val)
  {
-   beltVal(val);
-   std::cout << "        SDO4 0" << std::endl;
+   if (0 != val)
+    {
+      beltVal(val);
+      std::cout << "        SDO4 0" << std::endl;
+    }
+   else
+    {
+         // I don't like this, because, based on how the architecture is defined,
+         // we are telling the SDO to store an invalid belt location.
+         // However ... it's going to save us instructions.
+      std::cout << "        SDO4 15" << std::endl;
+    }
  }
 
 
@@ -67,8 +91,16 @@ void Expression::emitPush(const CallingContext& context, GlobalData& data) const
     {
       int result = evaluate(context);
       std::cout << "    ; Folded constant sub-expression to " << result << " : " << lineNo << std::endl;
-      beltVal(result);
-      std::cout << "        SDO4 0" << std::endl;
+      if (0 != result)
+       {
+         beltVal(result);
+         std::cout << "        SDO4 0" << std::endl;
+       }
+      else
+       {
+            // See comment in VS_pushVal
+         std::cout << "        SDO4 15" << std::endl;
+       }
       return;
     }
    if (true == canBelt(context))
@@ -88,9 +120,13 @@ std::string Expression::emitNext(const CallingContext& context, GlobalData& data
     {
       int value = evaluate(context);
       std::cout << "    ; Folded constant sub-expression to " << value << " : " << lineNo << std::endl;
-      std::string result = data.getNextResult();
-      beltVal(value, result);
-      return result;
+      if (0 != value)
+       {
+         std::string result = data.getNextResult();
+         beltVal(value, result);
+         return result;
+       }
+      return "15";
     }
    return emitBelt(context, data);
  }
@@ -101,9 +137,13 @@ std::string Expression::emitResult(const CallingContext& context, GlobalData& da
     {
       int value = evaluate(context);
       std::cout << "    ; Folded constant sub-expression to " << value << " : " << lineNo << std::endl;
-      std::string result = data.getNextResult();
-      beltVal(value, result);
-      return result;
+      if (0 != value)
+       {
+         std::string result = data.getNextResult();
+         beltVal(value, result);
+         return result;
+       }
+      return "15";
     }
    if (true == canBelt(context))
     {
