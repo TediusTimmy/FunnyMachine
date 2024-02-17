@@ -359,7 +359,7 @@ std::string ShortOr::emitBelt(const CallingContext& context, GlobalData& data) c
    std::string RHS = rhs->emitNext(context, data);
    std::cout << "        ADD 15, " << RHS << std::endl;
    std::string result = data.getNextResult();
-   std::cout << dest << ": @" << result << " ADD 0, 15" << std::endl;
+   std::cout << dest << ":\n @" << result << " ADD 0, 15" << std::endl;
    return result;
  }
 
@@ -406,7 +406,7 @@ std::string ShortAnd::emitBelt(const CallingContext& context, GlobalData& data) 
    std::string RHS = rhs->emitNext(context, data);
    std::cout << "        ADD 15, " << RHS << std::endl;
    std::string result = data.getNextResult();
-   std::cout << dest << ": @" << result << " ADD 0, 15" << std::endl;
+   std::cout << dest << ":\n @" << result << " ADD 0, 15" << std::endl;
    return result;
  }
 
