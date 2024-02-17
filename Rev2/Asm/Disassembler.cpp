@@ -33,37 +33,37 @@ void disassemble (unsigned short I)
       switch (A3)
        {
       case 2:
-         std::printf("INT $%x", A1);
+         std::printf("INT $%x\n", A1);
          break;
       case 3:
-         std::printf("RTI");
+         std::printf("RTI\n");
          break;
       case 4:
-         std::printf("CLI");
+         std::printf("CLI\n");
          break;
       case 5:
-         std::printf("ENI");
+         std::printf("ENI\n");
          break;
       case 6:
-         std::printf("WAIT");
+         std::printf("WAIT\n");
          break;
       case 7:
-         std::printf("HALT");
+         std::printf("HALT\n");
          break;
       case 8:
-         std::printf("INTER $%x, $%x", A1, A2);
+         std::printf("INTER $%x, $%x\n", A1, A2);
          break;
       case 15:
-         std::printf("ENDOP $%x, $%x", A1, A2);
+         std::printf("ENDOP $%x, $%x\n", A1, A2);
          break;
       default:
-         std::printf("NOP");
+         std::printf("NOP\n");
          break;
        }
       break;
    case  1: // LD
       if (I & 32)
-         std::printf("LDS $%x\n", A1, R[A1]);
+         std::printf("LDS $%x\n", A1);
       else if (I & 16)
          std::printf("LD $%x\n", A1);
       else
@@ -71,7 +71,7 @@ void disassemble (unsigned short I)
       break;
    case  2: // ST
       if (I & 32)
-         std::printf("STS $%x, $%x", A1, A2);
+         std::printf("STS $%x, $%x\n", A1, A2);
       else if (I & 16)
          std::printf("ST $%x, $%x\n", A1, A2);
       else
@@ -149,7 +149,7 @@ void disassemble (unsigned short I)
        }
       break;
    case  6: // SDOx
-      std::printf("SDO%c $%x, $%x", ((A3 < 10) ? (A3 + '0') : (A3 - 10 + 'A')), A1, A2);
+      std::printf("SDO%c $%x, $%x\n", ((A3 < 10) ? (A3 + '0') : (A3 - 10 + 'A')), A1, A2);
       break;
    case  7: // RET
       switch ((I >> 4) & 7)

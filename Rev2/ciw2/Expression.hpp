@@ -42,7 +42,7 @@ public:
     // Emit only belt code
    virtual std::string emitBelt(const CallingContext&, GlobalData&) const = 0;
     // Count the number of results needed to generate this result, assuming all belt code
-   static int valueResults(int value) { if ((value > 0x7FF) || (value < -0x800)) return 2; return 1; }
+   static int valueResults(int value) { if (((value > 0x7FF) || (value < -0x800)) && (0 != (value & 0xFFF))) return 2; return 1; }
    virtual int beltResults(const CallingContext&) const = 0;
     // arg1->canBelt() && arg2->canBelt() && (arg2->beltResults() < 14)
     // only false on function call
@@ -288,10 +288,10 @@ public:
    int beltResults(const CallingContext& context) const override
     {
       if (true == canEvaluate(context)) return valueResults(evaluate(context));
-      return lhs->beltResults(context) + rhs->beltResults(context) + 4;
+      return lhs->beltResults(context) + rhs->beltResults(context) + 3;
     }
-    // Two extra because we shift RHS first
-   bool canBelt (const CallingContext& context) const override { return lhs->canBelt(context) && rhs->canBelt(context) && (rhs->beltResults(context) < 12); }
+    // One extra because we shift RHS first
+   bool canBelt (const CallingContext& context) const override { return lhs->canBelt(context) && rhs->canBelt(context) && (rhs->beltResults(context) < 13); }
    int evaluate(const CallingContext&) const override;
    bool canEvaluate (const CallingContext&) const override;
  };

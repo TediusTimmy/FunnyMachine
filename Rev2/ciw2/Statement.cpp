@@ -79,10 +79,9 @@ void Assignment::emit(const CallingContext& context, GlobalData& data) const
           }
          std::cout << "        SDO5" << std::endl; // belt -> index base
          std::cout << "        SDO5" << std::endl; // belt -> rhs index base
-         std::cout << "        LDI 1" << std::endl;
-         std::cout << "        SHL 2, 0" << std::endl;
-         std::cout << "        ADD 0, 4" << std::endl;
-         std::cout << "        ST  3, 0" << std::endl;
+         std::cout << "        ADD 1, 1" << std::endl;
+         std::cout << "        ADD 0, 3" << std::endl;
+         std::cout << "        ST  2, 0" << std::endl;
        }
       else
        {
@@ -111,9 +110,8 @@ void Assignment::emit(const CallingContext& context, GlobalData& data) const
                beltVal(location & ~1);
              }
           }
-         std::cout << "        LDI 1" << std::endl;
-         std::cout << "        SHL " << INDEX << ", 0" << std::endl;
-         std::cout << "        ADD 0, 2" << std::endl;
+         std::cout << "        ADD " << INDEX << ", " << INDEX << std::endl;
+         std::cout << "        ADD 0, 1" << std::endl;
          std::cout << "        ST  " << RHS << ", 0" << std::endl;
        }
     }
