@@ -1,0 +1,6 @@
+function program ()
+   dim x; y
+   x <- 9
+   y <- 6
+   return x * y
+end function
