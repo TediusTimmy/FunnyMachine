@@ -117,16 +117,16 @@ void Core::printDecompiled(word I, word pc) const
             std::printf("SUB $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case  4:
-         std::printf("SHL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
-         break;
-      case  5:
-         std::printf("SHL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
-         break;
-      case  6:
          std::printf("SHR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
-      case  7:
+      case  5:
          std::printf("ASR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         break;
+      case  6:
+         std::printf("SHL $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
+         break;
+      case  7:
+         std::printf("LHN $%x(%04x), $%x", A1, V1, A2);
          break;
       case  8:
          std::printf("AND $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
@@ -138,7 +138,7 @@ void Core::printDecompiled(word I, word pc) const
          std::printf("XOR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 11:
-         std::printf("LHN $%x(%04x), $%x", A1, V1, A2);
+         std::printf("ROR $%x(%04x), $%x(%04x)", A1, V1, A2, V2);
          break;
       case 12:
          std::printf("NAND $%x(%04x), $%x(%04x)", A1, V1, A2, V2);

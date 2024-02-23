@@ -225,13 +225,6 @@ class RotateRight : public BinaryOperation
 public:
    void emitStack(const CallingContext&, GlobalData&) const override;
    std::string emitBelt(const CallingContext&, GlobalData&) const override;
-   int beltResults(const CallingContext& context) const override
-    {
-      if (true == canEvaluate(context)) return valueResults(evaluate(context));
-      return lhs->beltResults(context) + rhs->beltResults(context) + 2;
-    }
-    // One extra because we negate RHS first
-   bool canBelt (const CallingContext& context) const override { return lhs->canBelt(context) && rhs->canBelt(context) && (rhs->beltResults(context) < 13); }
    int evaluate(const CallingContext&) const override;
  };
 

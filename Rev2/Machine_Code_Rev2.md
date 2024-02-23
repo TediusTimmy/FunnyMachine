@@ -67,14 +67,14 @@ Group B is the operation to perform:
 * 1 - Add with Carry In
 * 2 - Subtract with Borrow
 * 3 - Subtract
-* 4 - Logical Shift Left (note : for the shift and rotate operations, only the least-significant four bits of the argument are used in the shift count)
-* 5 - Arithmetic Shift Left (yes, this is the same as a logical shift)
-* 6 - Logical Shift Right
-* 7 - Arithmetic Shift Right
+* 4 - Logical Shift Right (note : for the shift and rotate operations, only the least-significant four bits of the argument are used in the shift count)
+* 5 - Arithmetic Shift Right
+* 6 - Logical Shift Left
+* 7 - Load High Nibble
 * 8 - AND
 * 9 - OR
 * 10 - XOR
-* 11 - Load High Nibble
+* 11 - Rotate Right
 * 12 - NAND
 * 13 - NOR
 * 14 - XNOR

@@ -772,8 +772,7 @@ void RotateRight::emitStack(const CallingContext& context, GlobalData& data) con
    rhs->emitPush(context, data);
    std::cout << "    ; >>< " << lineNo << std::endl;
    std::cout << "        SDO0" << std::endl;
-   std::cout << "        NEG 1" << std::endl;
-   std::cout << "        ROL 1, 0" << std::endl;
+   std::cout << "        ROR 0, 1" << std::endl;
    std::cout << "        SDO1 0" << std::endl;
  }
 
@@ -782,9 +781,8 @@ std::string RotateRight::emitBelt(const CallingContext& context, GlobalData& dat
    std::string LHS = lhs->emitNext(context, data);
    std::string RHS = rhs->emitNext(context, data);
    std::cout << "    ; <<> " << lineNo << std::endl;
-   std::cout << "        NEG " << RHS << std::endl;
    std::string result = data.getNextResult();
-   std::cout << " @" << result << " ROL " << LHS << ", 0" << std::endl;
+   std::cout << " @" << result << " ROR " << LHS << ", " << RHS << std::endl;
    return result;
  }
 

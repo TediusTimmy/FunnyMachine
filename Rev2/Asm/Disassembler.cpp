@@ -108,16 +108,16 @@ void disassemble (unsigned short I)
             std::printf("SUB $%x, $%x\n", A1, A2);
          break;
       case  4:
-         std::printf("SHL $%x, $%x\n", A1, A2);
-         break;
-      case  5:
-         std::printf("SHL $%x, $%x\n", A1, A2);
-         break;
-      case  6:
          std::printf("SHR $%x, $%x\n", A1, A2);
          break;
-      case  7:
+      case  5:
          std::printf("ASR $%x, $%x\n", A1, A2);
+         break;
+      case  6:
+         std::printf("SHL $%x, $%x\n", A1, A2);
+         break;
+      case  7:
+         std::printf("LHN $%x, $%x\n", A1, A2);
          break;
       case  8:
          std::printf("AND $%x, $%x\n", A1, A2);
@@ -129,7 +129,7 @@ void disassemble (unsigned short I)
          std::printf("XOR $%x, $%x\n", A1, A2);
          break;
       case 11:
-         std::printf("LHN $%x, $%x\n", A1, A2);
+         std::printf("ROR $%x, $%x\n", A1, A2);
          break;
       case 12:
          std::printf("NAND $%x, $%x\n", A1, A2);

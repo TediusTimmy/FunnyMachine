@@ -252,16 +252,16 @@ void Core::doOneOp()
          t = A1 - A2;
          break;
       case  4:
-         t = A1 << (A2 & 15);
-         break;
-      case  5:
-         t = A1 << (A2 & 15);
-         break;
-      case  6:
          t = A1 >> (A2 & 15);
          break;
-      case  7:
+      case  5:
          t = (word)(((signed short)A1) >> (A2 & 15));
+         break;
+      case  6:
+         t = A1 << (A2 & 15);
+         break;
+      case  7:
+         t = (A1 & 0xFFF) | (I2 << 12);
          break;
       case  8:
          t = A1 & A2;
@@ -273,7 +273,7 @@ void Core::doOneOp()
          t = A1 ^ A2;
          break;
       case 11:
-         t = (A1 & 0xFFF) | (I2 << 12);
+         t = (A1 >> (A2 & 15)) | (A1 << (-A2 & 15));
          break;
       case 12:
          t = ~(A1 & A2);

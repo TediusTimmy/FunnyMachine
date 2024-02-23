@@ -3,6 +3,8 @@ Instruction Set Revision Two
 
 I finally implemented a revision to the ISA that I've been sitting on for a while now.
 
+Revision 2.1: The opcode for arithmetic shift left has been removed. The shift operations have been shuffled around so that rotate right has returned. The result is source compatible, but not binary compatible.
+
 ## The Instructions:
 * No Operation (REALLY!)
 * Load from memory
@@ -46,6 +48,7 @@ I finally implemented a revision to the ISA that I've been sitting on for a whil
 * NOR    - Logical Nor
 * XNOR   - Logical Xnor
 * ROL    - Rotate Left
+* ROL    - Rotate Right
 * LHN    - Load High Nibble (the high nibble of the opcode becomes the high nibble of the belt value)
 * SDO0   - Software-defined operation 0
 * SDO1   - Software-defined operation 1
