@@ -888,8 +888,7 @@ std::string Divide::emitBelt(const CallingContext& context, GlobalData& data) co
    std::string RHS = rhs->emitNext(context, data);
    std::cout << "    ; / " << lineNo << std::endl;
    std::string result = data.getNextResult();
-   std::cout << "        SDO3 " << LHS << ", " << RHS << std::endl;
-   std::cout << " @" << result << " ADD 1, 15" << std::endl;
+   std::cout << " @" << result << " SDO3 " << LHS << ", " << RHS << std::endl;
    return result;
  }
 
@@ -915,7 +914,8 @@ std::string Remainder::emitBelt(const CallingContext& context, GlobalData& data)
    std::string RHS = rhs->emitNext(context, data);
    std::cout << "    ; % " << lineNo << std::endl;
    std::string result = data.getNextResult();
-   std::cout << " @" << result << " SDO3 " << LHS << ", " << RHS << std::endl;
+   std::cout << "        SDO3 " << LHS << ", " << RHS << std::endl;
+   std::cout << " @" << result << " ADD 0, 15" << std::endl;
    return result;
  }
 

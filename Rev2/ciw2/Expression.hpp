@@ -270,6 +270,11 @@ class Remainder : public BinaryOperation
 public:
    void emitStack(const CallingContext&, GlobalData&) const override;
    std::string emitBelt(const CallingContext&, GlobalData&) const override;
+   int beltResults(const CallingContext& context) const override
+    {
+      if (true == canEvaluate(context)) return valueResults(evaluate(context));
+      return lhs->beltResults(context) + rhs->beltResults(context) + 3;
+    }
    int evaluate(const CallingContext&) const override;
  };
 

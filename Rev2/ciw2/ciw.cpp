@@ -180,6 +180,15 @@ int main (int argc, char ** argv)
    std::cout << "        RETC 1, loop" << std::endl;
    std::cout << "        ENDOP 0, 15" << std::endl;
    std::cout << "divmod_op:" << std::endl;
+   std::cout << " @zero  ADD 15, 15" << std::endl;
+   std::cout << "        LRA nz_dividend" << std::endl;
+   std::cout << "        RETC 2, 0" << std::endl;
+   std::cout << "        ENDOP zero, zero" << std::endl;
+   std::cout << "nz_dividend:" << std::endl;
+   std::cout << "        LRA nz_divisor" << std::endl;
+   std::cout << "        RETC 4, 0" << std::endl;
+   std::cout << "        ENDOP 3, zero" << std::endl;
+   std::cout << "nz_divisor:" << std::endl;
    std::cout << "        HALT" << std::endl;
    std::cout << "real_push:" << std::endl;
    std::cout << "        LDI 2" << std::endl;
