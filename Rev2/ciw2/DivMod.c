@@ -2,7 +2,7 @@
 
 void divmod(short dnd, short dor, short* q, short* r)
  {
-   short quo, bit;
+   short quo, run, count;
    if (dnd == 0)
     {
       *q = 0;
@@ -15,25 +15,31 @@ void divmod(short dnd, short dor, short* q, short* r)
       *r = dnd;
       return;
     }
-   quo = 0;
-   bit = 1;
-   while (dor < dnd)
+   count = 16;
+   while (0 == (dnd & 0x8000))
     {
-      dor <<= 1;
-      bit <<= 1;
+      dnd <<= 1;
+      --count;
     }
-   while (bit != 0)
+   dnd <<= 1;
+   --count;
+   quo = 0;
+   run = 1;
+   while (count != 0)
     {
-      if (dnd >= dor)
+      quo <<= 1;
+      run <<= 1;
+      run |= ((dnd >> 15) & 1);
+      dnd <<= 1;
+      --count;
+      if (run >= dor)
        {
-         dnd -= dor;
-         quo += bit;
+         run -= dor;
+         quo |= 1;
        }
-      dor >>= 1;
-      bit >>= 1;
     }
    *q = quo;
-   *r = dnd;
+   *r = run;
  }
 
 int main (void)

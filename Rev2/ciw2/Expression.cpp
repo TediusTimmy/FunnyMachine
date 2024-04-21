@@ -894,7 +894,7 @@ std::string Divide::emitBelt(const CallingContext& context, GlobalData& data) co
 
 int Divide::evaluate(const CallingContext& context) const
  {
-   return lhs->evaluate(context) / rhs->evaluate(context);
+   return (lhs->evaluate(context) & 0xFFFF) / (rhs->evaluate(context) & 0xFFFF);
  }
 
 
